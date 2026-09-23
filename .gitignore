@@ -1,0 +1,34 @@
+# Dependencies
+node_modules/
+*/node_modules/
+.pnp
+.pnp.*
+
+# Next.js and build outputs
+.next/
+*/.next/
+out/
+*/out/
+build/
+*/build/
+dist/
+*/dist/
+
+# Debug and error logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Environment files
+.env*.local
+*.pem
+
+# OS and system files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+
+# TypeScript caches
+*.tsbuildinfo
+next-env.d.ts
