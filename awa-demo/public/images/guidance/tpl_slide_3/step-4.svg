@@ -1,122 +1,68 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="100%" height="100%">
   <defs>
-    <!-- Gradients -->
     <linearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#050B17"/>
-      <stop offset="50%" stop-color="#091428"/>
-      <stop offset="100%" stop-color="#060D1E"/>
+      <stop offset="0%" stop-color="#060A14"/>
+      <stop offset="50%" stop-color="#091224"/>
+      <stop offset="100%" stop-color="#070C18"/>
     </linearGradient>
-    <linearGradient id="panelGrad" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#0E1E38" stop-opacity="0.95"/>
-      <stop offset="100%" stop-color="#081426" stop-opacity="0.95"/>
-    </linearGradient>
-    <linearGradient id="cardGrad" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#142647" stop-opacity="0.8"/>
-      <stop offset="100%" stop-color="#0A162B" stop-opacity="0.9"/>
-    </linearGradient>
-    <linearGradient id="accentGrad" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0%" stop-color="#8B5CF6"/>
-      <stop offset="100%" stop-color="#818CF8"/>
-    </linearGradient>
-    <linearGradient id="glowGrad" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#8B5CF6" stop-opacity="0.25"/>
-      <stop offset="100%" stop-color="#8B5CF6" stop-opacity="0"/>
-    </linearGradient>
-    <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
-      <feGaussianBlur stdDeviation="16" result="blur"/>
-      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
-    </filter>
+    <pattern id="gridDots" x="0" y="0" width="24" height="24" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1" fill="#1E293B" fill-opacity="0.5"/>
+    </pattern>
   </defs>
 
-  <style>
-    .font-sans { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
-    .font-mono { font-family: "JetBrains Mono", "Fira Code", Menlo, Monaco, Consolas, monospace; }
-  </style>
-
   <!-- Background Base -->
-  <rect width="800" height="500" rx="20" fill="url(#bgGrad)"/>
-  <rect width="800" height="500" rx="20" fill="none" stroke="#1E3A8A" stroke-width="1.5" stroke-opacity="0.5"/>
+  <rect width="800" height="500" rx="16" fill="url(#bgGrad)"/>
+  <rect width="800" height="500" rx="16" fill="url(#gridDots)"/>
+  <rect width="800" height="500" rx="16" fill="none" stroke="#1E293B" stroke-width="1.5"/>
 
-  <!-- Ambient Glow -->
-  <ellipse cx="400" cy="180" rx="350" ry="140" fill="url(#glowGrad)"/>
+  <!-- Step Header (Clean, Authentic, No Fabricated Browser Controls) -->
+  <g transform="translate(40, 36)">
+    <!-- Top Step Pill -->
+    <rect x="0" y="0" width="160" height="24" rx="6" fill="#A855F7" fill-opacity="0.15" stroke="#A855F7" stroke-width="1" stroke-opacity="0.6"/>
+    <text x="12" y="16" fill="#A855F7" font-size="10" font-weight="800" letter-spacing="1" font-family="monospace">STEP 04 // OF 05</text>
 
-  <!-- Top Browser / App Window Chrome -->
-  <rect x="0" y="0" width="800" height="48" rx="20" fill="#0A152A" fill-opacity="0.9"/>
-  <line x1="0" y1="48" x2="800" y2="48" stroke="#1E3A8A" stroke-width="1" stroke-opacity="0.6"/>
+    <!-- Right Side Tool Indicator -->
+    <rect x="580" y="0" width="140" height="24" rx="6" fill="#0C1425" stroke="#1E293B" stroke-width="1"/>
+    <circle cx="592" cy="12" r="4" fill="#A855F7"/>
+    <text x="604" y="16" fill="#E2E8F0" font-size="10" font-weight="600" font-family="monospace">Gamma Deck 2.0</text>
 
-  <!-- Window Controls -->
-  <circle cx="28" cy="24" r="6" fill="#EF4444" fill-opacity="0.85"/>
-  <circle cx="48" cy="24" r="6" fill="#F59E0B" fill-opacity="0.85"/>
-  <circle cx="68" cy="24" r="6" fill="#10B981" fill-opacity="0.85"/>
-
-  <!-- Address / Tool Tab Pill -->
-  <rect x="180" y="10" width="440" height="28" rx="8" fill="#0E1E38" stroke="#2563EB" stroke-width="0.8" stroke-opacity="0.4"/>
-  <circle cx="200" cy="24" r="4" fill="#8B5CF6"/>
-  <text x="214" y="28" fill="#93C5FD" font-size="11" class="font-mono font-sans" opacity="0.85">gamma.app/create</text>
-
-  <!-- Top Right Tool Badge -->
-  <rect x="660" y="12" width="116" height="24" rx="6" fill="#8B5CF6" fill-opacity="0.15" stroke="#8B5CF6" stroke-width="1" stroke-opacity="0.5"/>
-  <text x="718" y="28" fill="#E2E8F0" font-size="10" font-weight="700" text-anchor="middle" class="font-sans">PITCH DECKS</text>
-
-  <!-- Step Header Banner -->
-  <g transform="translate(32, 66)">
-    <!-- Step Badge -->
-    <rect x="0" y="0" width="190" height="22" rx="6" fill="#8B5CF6" fill-opacity="0.2" stroke="#8B5CF6" stroke-width="1" stroke-opacity="0.7"/>
-    <text x="10" y="15" fill="#8B5CF6" font-size="10" font-weight="800" letter-spacing="1" class="font-mono">STEP 04 // CLIENT ARTWORK UPLOAD</text>
-
-    <!-- Step Title -->
-    <text x="0" y="44" fill="#F8FAFC" font-size="20" font-weight="800" class="font-sans">Replace Placeholders with Real Work</text>
-    <!-- Step Subtitle -->
-    <text x="0" y="64" fill="#94A3B8" font-size="12" class="font-sans">Upload your high-resolution branding, UI designs, and campaign stills</text>
+    <!-- Main Step Title -->
+    <text x="0" y="52" fill="#F8FAFC" font-size="20" font-weight="800" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif">Replace Placeholders with Hero Artwork</text>
+    <!-- Subtitle / Action directive -->
+    <text x="0" y="74" fill="#94A3B8" font-size="12" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif">Click each image placeholder card, select &quot;Upload&quot;, and insert your actual ...</text>
   </g>
 
-  <!-- Visual Type: Studio Lighting &amp; Staging Schematic -->
-  <g transform="translate(32, 146)">
-    <rect x="0" y="0" width="736" height="320" rx="14" fill="url(#panelGrad)" stroke="#1E3A8A" stroke-width="1.2"/>
+  
+      <!-- Master Delivery & Export Schematic -->
+      <g transform="translate(40, 140)">
+        <rect width="720" height="300" rx="14" fill="#0C1425" stroke="#1E293B" stroke-width="1.2"/>
 
-    <!-- Studio Floor Grid (Isometric Perspective) -->
-    <g stroke="#1E3A8A" stroke-opacity="0.4" stroke-width="0.8">
-      <line x1="120" y1="280" x2="360" y2="40"/>
-      <line x1="200" y1="280" x2="440" y2="40"/>
-      <line x1="280" y1="280" x2="520" y2="40"/>
-      <line x1="160" y1="120" x2="520" y2="120"/>
-      <line x1="120" y1="200" x2="560" y2="200"/>
-    </g>
+        <!-- Left Finished Asset Preview Canvas -->
+        <rect x="24" y="24" width="360" height="252" rx="10" fill="#070D1A" stroke="#A855F7" stroke-width="1.4"/>
+        <ellipse cx="204" cy="190" rx="110" ry="32" fill="#13233F" opacity="0.6"/>
+        <rect x="164" y="60" width="80" height="120" rx="12" fill="#1E3A8A" stroke="#60A5FA" stroke-width="1.5"/>
+        <circle cx="204" cy="95" r="16" fill="#A855F7" fill-opacity="0.4"/>
+        <text x="204" y="145" fill="#FFFFFF" font-size="10" font-weight="800" text-anchor="middle" font-family="monospace">MASTER</text>
 
-    <!-- Center Stage / Pedestal -->
-    <ellipse cx="360" cy="180" rx="90" ry="40" fill="#0D2347" stroke="#8B5CF6" stroke-width="1.5"/>
-    <ellipse cx="360" cy="170" rx="70" ry="28" fill="#14325E" stroke="#60A5FA" stroke-width="1"/>
-    <!-- Product Silhouette -->
-    <rect x="340" y="90" width="40" height="70" rx="8" fill="#38BDF8" fill-opacity="0.8" stroke="#FFFFFF" stroke-width="1.2"/>
-    <text x="360" y="130" fill="#0A162B" font-size="9" font-weight="800" text-anchor="middle" class="font-mono">HERO</text>
+        <!-- Compliance & Verification Pill -->
+        <rect x="40" y="40" width="168" height="28" rx="6" fill="#070D1A" stroke="#10B981" stroke-width="1"/>
+        <circle cx="54" cy="54" r="4" fill="#10B981"/>
+        <text x="66" y="58" fill="#34D399" font-size="10" font-weight="700" font-family="monospace">100% SPEC COMPLIANT</text>
 
-    <!-- Key Light Softbox (Top-Left) -->
-    <g transform="translate(110, 60)">
-      <polygon points="0,15 45,0 55,30 10,45" fill="#8B5CF6" fill-opacity="0.3" stroke="#8B5CF6" stroke-width="1.5"/>
-      <line x1="45" y1="20" x2="280" y2="130" stroke="#8B5CF6" stroke-width="1.5" stroke-dasharray="4,4" stroke-opacity="0.7"/>
-      <circle cx="25" cy="22" r="5" fill="#FFFFFF"/>
-      <text x="0" y="-8" fill="#93C5FD" font-size="11" font-weight="700" class="font-sans">Slide 4: Hero Branding Stills</text>
-    </g>
+        <!-- Right Export Parameters & Actions -->
+        <rect x="404" y="24" width="292" height="252" rx="10" fill="#070D1A" stroke="#1E293B" stroke-width="1"/>
+        <text x="424" y="52" fill="#94A3B8" font-size="11" font-weight="700" letter-spacing="1" font-family="monospace">DELIVERY MANIFEST</text>
 
-    <!-- Rim Light (Right Back) -->
-    <g transform="translate(560, 70)">
-      <circle cx="20" cy="20" r="16" fill="#F59E0B" fill-opacity="0.25" stroke="#F59E0B" stroke-width="1.5"/>
-      <line x1="10" y1="30" x2="-140" y2="100" stroke="#F59E0B" stroke-width="1.5" stroke-dasharray="4,4" stroke-opacity="0.8"/>
-      <text x="-40" y="-8" fill="#FCD34D" font-size="11" font-weight="700" class="font-sans">Slide 5: Mobile App UI Mockups</text>
-    </g>
+        <rect x="424" y="68" width="252" height="46" rx="8" fill="#0F1B30" stroke="#1E293B" stroke-width="1"/>
+        <text x="438" y="88" fill="#94A3B8" font-size="10" font-family="monospace">TARGET OUTPUT</text>
+        <text x="438" y="104" fill="#F8FAFC" font-size="12" font-weight="600" font-family="-apple-system, BlinkMacSystemFont, sans-serif">Replace Placeholders with Hero Artwork</text>
 
-    <!-- Fill Card / Reflector (Bottom-Right) -->
-    <g transform="translate(480, 200)">
-      <rect x="0" y="0" width="60" height="24" rx="4" transform="rotate(-25)" fill="#FFFFFF" fill-opacity="0.2" stroke="#FFFFFF" stroke-width="1.2"/>
-      <text x="-10" y="44" fill="#E2E8F0" font-size="11" font-weight="600" class="font-sans">Slide 6: Packaging &amp; Print Collateral</text>
-    </g>
+        <rect x="424" y="122" width="252" height="66" rx="8" fill="#0F1B30" stroke="#A855F7" stroke-width="1" stroke-opacity="0.4"/>
+        <text x="438" y="142" fill="#A855F7" font-size="10" font-weight="700" font-family="monospace">EXPECTED ASSET DELIVERABLE</text>
+        <text x="438" y="160" fill="#CBD5E1" font-size="11" font-family="-apple-system, BlinkMacSystemFont, sans-serif">Stunning case study presentation featuring authent...</text>
 
-    <!-- Bottom Legend Bar -->
-    <rect x="24" y="260" width="688" height="38" rx="8" fill="#0A162B" stroke="#1E3A8A" stroke-width="1"/>
-    <circle cx="44" cy="279" r="4" fill="#8B5CF6"/>
-    <text x="56" y="283" fill="#E2E8F0" font-size="11" font-weight="600" class="font-sans">Staging Target: Slide 7: Measurable ROI &amp; Metrics</text>
-    <rect x="580" y="266" width="120" height="26" rx="6" fill="#8B5CF6" fill-opacity="0.2"/>
-    <text x="640" y="283" fill="#93C5FD" font-size="10" font-weight="700" text-anchor="middle" class="font-mono">CALIBRATED ✓</text>
-  </g>
-
+        <rect x="424" y="200" width="252" height="44" rx="8" fill="#A855F7"/>
+        <text x="550" y="227" fill="#FFFFFF" font-size="12" font-weight="700" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, sans-serif">Download Production Master ↓</text>
+      </g>
+    
 </svg>

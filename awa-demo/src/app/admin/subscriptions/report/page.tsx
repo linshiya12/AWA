@@ -22,6 +22,24 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
+import { Card } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+} from '@/components/ui/table';
 
 interface PlanBreakdownItem {
   plan_id: string;
@@ -98,320 +116,299 @@ export default function AdminSubscriptionReportPage() {
           <div className="flex items-center gap-2 mb-1">
             <Link
               href="/admin/subscriptions"
-              className="text-xs text-slate-400 hover:text-white inline-flex items-center gap-1 transition-colors"
+              className="text-xs text-slate-500 hover:text-slate-900 dark:hover:text-slate-200 flex items-center gap-1 transition-colors"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
-              Back to Subscription Management
+              Back to Subscriptions
             </Link>
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-white flex items-center gap-2.5">
-            <BarChart3 className="w-6 h-6 text-cyan-400" />
-            <span>Subscription Report & Analytics</span>
-            <Badge variant="outline" className="text-xs bg-cyan-500/10 text-cyan-400 border-cyan-500/30">
-              Screen A9-R
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-2.5">
+            <BarChart3 className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+            <span>Subscription & Revenue Report</span>
+            <Badge variant="outline" className="text-xs bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/30">
+              Screen A10
             </Badge>
           </h1>
-          <p className="text-sm text-slate-400 mt-1">
-            Live metrics, subscription revenue attribution, active vs. expired breakdown, and plan adoption (04 §4A, 07 §5.5).
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+            Accounting and subscriber cohort breakdown by time period, revenue share, and plan performance (04 §4A, 06 §9.1).
           </p>
         </div>
 
-        <div className="flex items-center gap-2.5 flex-wrap">
-          <Link href="/admin/subscriptions">
-            <Button
-              variant="outline"
-              size="sm"
-              className="border-slate-700 bg-slate-900 text-slate-300 hover:text-white text-xs h-9"
-            >
-              <CalendarCheck className="w-3.5 h-3.5 mr-1.5" />
-              Manage Subscriptions
-            </Button>
-          </Link>
-
+        <div className="flex items-center gap-2.5">
           <Button
             variant="outline"
             size="sm"
             onClick={fetchReport}
-            className="border-slate-700 bg-slate-800/60 hover:bg-slate-800 text-xs h-9"
-            title="Refresh report metrics"
+            className="text-xs h-9"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`w-3.5 h-3.5 mr-1.5 ${loading ? 'animate-spin' : ''}`} />
+            Refresh
           </Button>
         </div>
       </div>
 
-      {/* Date Period Filter Bar */}
-      <div className="rounded-xl border border-slate-800 bg-[#080d1a] p-4 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-sm">
-        <div className="flex items-center gap-1.5 bg-slate-900 p-1 rounded-lg border border-slate-800 text-xs">
-          <button
-            onClick={() => {
-              setPeriod('all');
-              setFromDate('');
-              setToDate('');
-            }}
-            className={`px-3 py-1.5 rounded-md font-medium transition-colors ${
-              period === 'all' ? 'bg-blue-600 text-white shadow' : 'text-slate-400 hover:text-white'
-            }`}
-          >
-            All Time
-          </button>
-          <button
-            onClick={() => {
-              setPeriod('30d');
-              setFromDate('');
-              setToDate('');
-            }}
-            className={`px-3 py-1.5 rounded-md font-medium transition-colors ${
-              period === '30d' ? 'bg-blue-600 text-white shadow' : 'text-slate-400 hover:text-white'
-            }`}
-          >
-            Last 30 Days
-          </button>
-          <button
-            onClick={() => {
-              setPeriod('90d');
-              setFromDate('');
-              setToDate('');
-            }}
-            className={`px-3 py-1.5 rounded-md font-medium transition-colors ${
-              period === '90d' ? 'bg-blue-600 text-white shadow' : 'text-slate-400 hover:text-white'
-            }`}
-          >
-            Last 90 Days
-          </button>
-          <button
-            onClick={() => {
-              setPeriod('year');
-              setFromDate('');
-              setToDate('');
-            }}
-            className={`px-3 py-1.5 rounded-md font-medium transition-colors ${
-              period === 'year' ? 'bg-blue-600 text-white shadow' : 'text-slate-400 hover:text-white'
-            }`}
-          >
-            This Year
-          </button>
-        </div>
+      {/* Filter Toolbar */}
+      <Card className="p-4 border-slate-200/80 dark:border-blue-900/40 bg-white dark:bg-[#0c162e]/80 shadow-sm">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-xs font-semibold text-slate-700 dark:text-slate-300 mr-1">Period:</span>
+            {[
+              { id: 'all', label: 'All Time' },
+              { id: 'this_month', label: 'This Month' },
+              { id: 'last_month', label: 'Last Month' },
+              { id: 'this_year', label: 'This Year' },
+              { id: 'custom', label: 'Custom Range' },
+            ].map((p) => (
+              <Button
+                key={p.id}
+                type="button"
+                variant={period === p.id ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setPeriod(p.id)}
+                className={`h-8 px-3 text-xs font-medium cursor-pointer ${
+                  period === p.id
+                    ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-xs'
+                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-transparent hover:bg-slate-200 dark:hover:bg-slate-700'
+                }`}
+              >
+                {p.label}
+              </Button>
+            ))}
+          </div>
 
-        {/* Custom Date Range */}
-        <div className="flex items-center gap-2 text-xs">
-          <span className="text-slate-400 text-[11px]">Custom Range:</span>
-          <Input
-            type="date"
-            value={fromDate}
-            onChange={(e) => {
-              setFromDate(e.target.value);
-              setPeriod('custom');
-            }}
-            className="bg-slate-900 border-slate-700 text-[11px] h-8 text-slate-300 w-32 px-2"
-          />
-          <span className="text-slate-500">to</span>
-          <Input
-            type="date"
-            value={toDate}
-            onChange={(e) => {
-              setToDate(e.target.value);
-              setPeriod('custom');
-            }}
-            className="bg-slate-900 border-slate-700 text-[11px] h-8 text-slate-300 w-32 px-2"
-          />
+          {/* Custom Date Inputs */}
+          {period === 'custom' && (
+            <div className="flex items-center gap-2 animate-in fade-in text-xs">
+              <span className="text-slate-500">From:</span>
+              <Input
+                type="date"
+                value={fromDate}
+                onChange={(e) => setFromDate(e.target.value)}
+                className="text-xs h-8 px-2 w-36"
+              />
+              <span className="text-slate-500">To:</span>
+              <Input
+                type="date"
+                value={toDate}
+                onChange={(e) => setToDate(e.target.value)}
+                className="text-xs h-8 px-2 w-36"
+              />
+            </div>
+          )}
         </div>
-      </div>
+      </Card>
 
       {/* Error state */}
       {error && (
-        <div className="rounded-xl border border-rose-500/30 bg-rose-500/10 p-4 text-xs text-rose-300 flex items-center gap-2">
-          <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0" />
-          <span>{error}</span>
-        </div>
+        <Alert variant="destructive">
+          <AlertTriangle className="w-4 h-4" />
+          <AlertTitle>Report Generation Error</AlertTitle>
+          <AlertDescription className="flex items-center justify-between">
+            <span>{error}</span>
+            <Button size="sm" variant="outline" onClick={fetchReport} className="ml-4">
+              <RefreshCw className="w-3.5 h-3.5 mr-1" /> Retry
+            </Button>
+          </AlertDescription>
+        </Alert>
       )}
 
-      {/* KPI Cards Grid */}
-      {loading && !report ? (
-        <div className="rounded-2xl border border-slate-800 bg-[#080d1a] p-12 text-center text-slate-400 text-xs">
-          <RefreshCw className="w-5 h-5 animate-spin inline-block mr-2 text-cyan-400" />
-          Calculating metrics from real private database records...
+      {/* Report Content */}
+      {loading ? (
+        // Loading state
+        <div className="space-y-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <Card key={i} className="p-4 space-y-2">
+                <Skeleton className="h-4 w-24" />
+                <Skeleton className="h-7 w-20" />
+                <Skeleton className="h-3 w-16" />
+              </Card>
+            ))}
+          </div>
+          <Card className="p-6 h-64">
+            <Skeleton className="h-6 w-48 mb-4" />
+            <Skeleton className="h-36 w-full rounded-xl" />
+          </Card>
         </div>
       ) : report ? (
-        <div className="space-y-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+        <div className="space-y-6 animate-in fade-in duration-300">
+          {/* Key Metrics Grid */}
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
             {/* 1. Active Subscriptions */}
-            <div className="rounded-xl border border-slate-800 bg-[#080d1a] p-4 shadow-sm hover:border-slate-700 transition-colors">
-              <div className="flex items-center justify-between text-slate-400 text-xs mb-1.5">
-                <span className="font-medium">Active Memberships</span>
-                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+            <Card className="p-4 border-slate-200/80 dark:border-blue-900/40 bg-white dark:bg-[#0c162e]/80 shadow-xs hover:border-slate-300 dark:hover:border-blue-800 transition-colors">
+              <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 text-xs mb-1.5">
+                <span className="font-medium">Active Subscribers</span>
+                <Users className="w-4 h-4 text-emerald-500" />
               </div>
-              <div className="text-2xl font-bold text-white font-mono">
+              <div className="text-2xl font-bold text-slate-900 dark:text-white font-mono">
                 {report.active_subscriptions}
               </div>
-              <p className="text-[11px] text-emerald-400 mt-1 font-medium">
-                Entitled to prompt text (FR-026)
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
+                Currently paid & active
               </p>
-            </div>
+            </Card>
 
             {/* 2. Total Subscription Revenue */}
-            <div className="rounded-xl border border-slate-800 bg-[#080d1a] p-4 shadow-sm hover:border-slate-700 transition-colors">
-              <div className="flex items-center justify-between text-slate-400 text-xs mb-1.5">
+            <Card className="p-4 border-slate-200/80 dark:border-blue-900/40 bg-white dark:bg-[#0c162e]/80 shadow-xs hover:border-slate-300 dark:hover:border-blue-800 transition-colors">
+              <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 text-xs mb-1.5">
                 <span className="font-medium">Subscription Revenue</span>
-                <Coins className="w-4 h-4 text-cyan-400" />
+                <Coins className="w-4 h-4 text-cyan-500" />
               </div>
-              <div className="text-2xl font-bold text-cyan-300 font-mono">
+              <div className="text-2xl font-bold text-cyan-600 dark:text-cyan-300 font-mono">
                 ₹{report.total_revenue.toLocaleString('en-IN')}
               </div>
-              <p className="text-[10px] text-slate-400 mt-1 truncate" title={report.revenue_note}>
-                Verified paid transactions only
+              <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-1 truncate" title={report.revenue_note}>
+                Verified paid only
               </p>
-            </div>
+            </Card>
 
             {/* 3. New Subscriptions */}
-            <div className="rounded-xl border border-slate-800 bg-[#080d1a] p-4 shadow-sm hover:border-slate-700 transition-colors">
-              <div className="flex items-center justify-between text-slate-400 text-xs mb-1.5">
+            <Card className="p-4 border-slate-200/80 dark:border-blue-900/40 bg-white dark:bg-[#0c162e]/80 shadow-xs hover:border-slate-300 dark:hover:border-blue-800 transition-colors">
+              <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 text-xs mb-1.5">
                 <span className="font-medium">New Subscriptions</span>
-                <TrendingUp className="w-4 h-4 text-blue-400" />
+                <TrendingUp className="w-4 h-4 text-blue-500" />
               </div>
-              <div className="text-2xl font-bold text-white font-mono">
+              <div className="text-2xl font-bold text-slate-900 dark:text-white font-mono">
                 {report.new_subscriptions}
               </div>
-              <p className="text-[11px] text-slate-400 mt-1">
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
                 Started in period
               </p>
-            </div>
+            </Card>
 
             {/* 4. Upcoming Expirations */}
-            <div className="rounded-xl border border-slate-800 bg-[#080d1a] p-4 shadow-sm hover:border-slate-700 transition-colors">
-              <div className="flex items-center justify-between text-slate-400 text-xs mb-1.5">
+            <Card className="p-4 border-slate-200/80 dark:border-blue-900/40 bg-white dark:bg-[#0c162e]/80 shadow-xs hover:border-slate-300 dark:hover:border-blue-800 transition-colors">
+              <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 text-xs mb-1.5">
                 <span className="font-medium">Expiring Soon (≤ 30d)</span>
-                <Clock className="w-4 h-4 text-amber-400" />
+                <Clock className="w-4 h-4 text-amber-500" />
               </div>
-              <div className="text-2xl font-bold text-amber-300 font-mono">
+              <div className="text-2xl font-bold text-amber-600 dark:text-amber-300 font-mono">
                 {report.upcoming_expirations}
               </div>
-              <p className="text-[11px] text-slate-400 mt-1">
-                Annual renewal targets
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
+                Renewal targets
               </p>
-            </div>
+            </Card>
 
             {/* 5. Expired Subscriptions */}
-            <div className="rounded-xl border border-slate-800 bg-[#080d1a] p-4 shadow-sm hover:border-slate-700 transition-colors">
-              <div className="flex items-center justify-between text-slate-400 text-xs mb-1.5">
+            <Card className="p-4 border-slate-200/80 dark:border-blue-900/40 bg-white dark:bg-[#0c162e]/80 shadow-xs hover:border-slate-300 dark:hover:border-blue-800 transition-colors">
+              <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 text-xs mb-1.5">
                 <span className="font-medium">Expired Memberships</span>
-                <AlertTriangle className="w-4 h-4 text-rose-400" />
+                <AlertTriangle className="w-4 h-4 text-rose-500" />
               </div>
-              <div className="text-2xl font-bold text-slate-300 font-mono">
+              <div className="text-2xl font-bold text-slate-700 dark:text-slate-300 font-mono">
                 {report.expired_subscriptions}
               </div>
-              <p className="text-[11px] text-slate-400 mt-1">
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
                 Retain delivered prompts
               </p>
-            </div>
+            </Card>
 
             {/* 6. Renewals */}
-            <div className="rounded-xl border border-slate-800 bg-[#080d1a] p-4 shadow-sm hover:border-slate-700 transition-colors">
-              <div className="flex items-center justify-between text-slate-400 text-xs mb-1.5">
+            <Card className="p-4 border-slate-200/80 dark:border-blue-900/40 bg-white dark:bg-[#0c162e]/80 shadow-xs hover:border-slate-300 dark:hover:border-blue-800 transition-colors">
+              <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 text-xs mb-1.5">
                 <span className="font-medium">Renewals</span>
-                <CalendarCheck className="w-4 h-4 text-purple-400" />
+                <CalendarCheck className="w-4 h-4 text-purple-500" />
               </div>
-              <div className="text-2xl font-bold text-white font-mono">
+              <div className="text-2xl font-bold text-slate-900 dark:text-white font-mono">
                 {report.renewals}
               </div>
-              <p className="text-[11px] text-slate-400 mt-1">
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
                 Repeat subscribers
               </p>
-            </div>
+            </Card>
           </div>
 
           {/* Plan Breakdown Section */}
-          <div className="rounded-2xl border border-slate-800 bg-[#080d1a] p-6 shadow-xl space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-800/80 pb-4">
+          <Card className="p-6 space-y-4 border-slate-200/80 dark:border-blue-900/40 bg-white dark:bg-[#0c162e]/80 shadow-md">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-800/80 pb-4">
               <div>
-                <h2 className="text-base font-bold text-white flex items-center gap-2">
-                  <Layers className="w-4 h-4 text-blue-400" />
+                <h2 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                  <Layers className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                   Breakdown by Plan
                 </h2>
-                <p className="text-xs text-slate-400 mt-0.5">
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                   Comparative performance and revenue contribution between Creator Yearly (₹199) and Studio Lifetime (₹999).
                 </p>
               </div>
 
-              <span className="text-xs font-mono text-cyan-400 bg-cyan-500/10 px-2.5 py-1 rounded border border-cyan-500/20">
+              <Badge variant="outline" className="text-xs font-mono text-cyan-600 dark:text-cyan-400 bg-cyan-500/10 border-cyan-500/20 px-3 py-1">
                 Total Revenue: ₹{report.total_revenue.toLocaleString('en-IN')}
-              </span>
+              </Badge>
             </div>
 
             {/* Plan Breakdown Table */}
-            <div className="overflow-x-auto">
-              <table className="w-full text-xs text-left">
-                <thead className="border-b border-slate-800 text-slate-400 uppercase tracking-wider text-[10px]">
-                  <tr>
-                    <th className="py-2.5 px-3 font-semibold">Plan Name</th>
-                    <th className="py-2.5 px-3 font-semibold">Term & Price</th>
-                    <th className="py-2.5 px-3 font-semibold text-center">Total Subscribers</th>
-                    <th className="py-2.5 px-3 font-semibold text-center">Active Now</th>
-                    <th className="py-2.5 px-3 font-semibold text-right">Revenue (INR)</th>
-                    <th className="py-2.5 px-3 font-semibold text-right">Revenue Share</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-800/60">
-                  {report.plan_breakdown.map((item) => (
-                    <tr key={item.plan_id} className="hover:bg-slate-800/20 transition-colors">
-                      <td className="py-3 px-3">
-                        <span className="font-semibold text-white block">
-                          {item.plan_name}
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="font-semibold">Plan Name</TableHead>
+                  <TableHead className="font-semibold">Term & Price</TableHead>
+                  <TableHead className="font-semibold text-center">Total Subscribers</TableHead>
+                  <TableHead className="font-semibold text-center">Active Now</TableHead>
+                  <TableHead className="font-semibold text-right">Revenue (INR)</TableHead>
+                  <TableHead className="font-semibold text-right">Revenue Share</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {report.plan_breakdown.map((item) => (
+                  <TableRow key={item.plan_id} className="transition-colors">
+                    <TableCell>
+                      <span className="font-semibold text-slate-900 dark:text-white block text-sm">
+                        {item.plan_name}
+                      </span>
+                      <span className="text-[10px] text-slate-400 font-mono">
+                        {item.plan_id}
+                      </span>
+                    </TableCell>
+
+                    <TableCell>
+                      <div>
+                        <span className="font-medium text-cyan-600 dark:text-cyan-300">₹{item.price}</span>
+                        <span className="text-slate-500 text-[11px]"> / {item.term_length}</span>
+                      </div>
+                    </TableCell>
+
+                    <TableCell className="text-center font-mono font-semibold text-slate-700 dark:text-slate-200">
+                      {item.total_subscribers}
+                    </TableCell>
+
+                    <TableCell className="text-center">
+                      <Badge variant="emerald" className="text-[10px] font-mono">
+                        {item.active_subscribers} Active
+                      </Badge>
+                    </TableCell>
+
+                    <TableCell className="text-right font-mono font-bold text-cyan-600 dark:text-cyan-300">
+                      ₹{item.revenue.toLocaleString('en-IN')}
+                    </TableCell>
+
+                    <TableCell className="text-right">
+                      <div className="flex items-center justify-end gap-2">
+                        <span className="font-mono text-slate-700 dark:text-slate-300 font-medium text-xs">
+                          {item.revenue_share_percentage}%
                         </span>
-                        <span className="text-[10px] text-slate-400 font-mono">
-                          {item.plan_id}
-                        </span>
-                      </td>
-
-                      <td className="py-3 px-3 text-slate-300">
-                        <div>
-                          <span className="font-medium text-cyan-300">₹{item.price}</span>
-                          <span className="text-slate-500 text-[11px]"> / {item.term_length}</span>
+                        <div className="w-16 h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-gradient-to-r from-blue-500 to-cyan-400 rounded-full"
+                            style={{ width: `${Math.min(100, item.revenue_share_percentage)}%` }}
+                          />
                         </div>
-                      </td>
-
-                      <td className="py-3 px-3 text-center font-mono font-semibold text-slate-200">
-                        {item.total_subscribers}
-                      </td>
-
-                      <td className="py-3 px-3 text-center">
-                        <Badge className="bg-emerald-500/10 text-emerald-400 border-emerald-500/30 text-[10px] font-mono">
-                          {item.active_subscribers} Active
-                        </Badge>
-                      </td>
-
-                      <td className="py-3 px-3 text-right font-mono font-bold text-cyan-300">
-                        ₹{item.revenue.toLocaleString('en-IN')}
-                      </td>
-
-                      <td className="py-3 px-3 text-right">
-                        <div className="flex items-center justify-end gap-2">
-                          <span className="font-mono text-slate-300 font-medium text-xs">
-                            {item.revenue_share_percentage}%
-                          </span>
-                          <div className="w-16 h-2 bg-slate-800 rounded-full overflow-hidden">
-                            <div
-                              className="h-full bg-gradient-to-r from-blue-500 to-cyan-400 rounded-full"
-                              style={{ width: `${Math.min(100, item.revenue_share_percentage)}%` }}
-                            />
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </Card>
 
           {/* Integrity & Attribution Notice */}
-          <div className="rounded-xl border border-slate-800 bg-[#090d18] p-4 text-xs text-slate-400 flex items-start gap-3">
-            <ShieldCheck className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+          <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white/70 dark:bg-[#090d18] p-4 text-xs text-slate-600 dark:text-slate-400 flex items-start gap-3 shadow-xs">
+            <ShieldCheck className="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" />
             <div className="space-y-1">
-              <span className="font-semibold text-slate-200 text-xs block">
+              <span className="font-semibold text-slate-900 dark:text-slate-200 text-xs block">
                 Accounting & Evidence Integrity Guarantee
               </span>
-              <p className="text-[11px] leading-relaxed text-slate-400">
+              <p className="text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">
                 {report.revenue_note} In accordance with <code>07-DATABASE.md §5.6</code> and <code>06 §9.1</code>,
                 revenue figures are aggregated directly from immutable payment transactions. Unpaid (pending or failed)
                 subscriptions and complimentary manual admin grants are tracked for access control but strictly excluded

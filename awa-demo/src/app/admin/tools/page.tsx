@@ -16,6 +16,11 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import {
   Dialog,
   DialogContent,
@@ -45,6 +50,7 @@ interface Model {
 export default function AdminToolsPage() {
   const [tools, setTools] = useState<Tool[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   // Tool Modal
   const [isToolModalOpen, setIsToolModalOpen] = useState(false);
@@ -64,18 +70,21 @@ export default function AdminToolsPage() {
   const [toolModels, setToolModels] = useState<Model[]>([]);
   const [newModelName, setNewModelName] = useState('');
 
-  // Withdraw Confirmation Modal (11-UI-UX A5: Withdrawing shows how many assignments reference it)
+  // Withdraw Confirmation Modal
   const [isWithdrawOpen, setIsWithdrawOpen] = useState(false);
   const [withdrawTarget, setWithdrawTarget] = useState<Tool | null>(null);
 
   const fetchTools = async () => {
     setLoading(true);
+    setError(null);
     try {
       const res = await fetch('/api/v1/admin/tools');
+      if (!res.ok) throw new Error('Failed to retrieve AI tool registry');
       const data = await res.json();
       setTools(data.tools || []);
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+      setError(err.message || 'Error communicating with tool registry');
     } finally {
       setLoading(false);
     }
@@ -193,13 +202,13 @@ export default function AdminToolsPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-white flex items-center gap-2.5">
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-2.5">
             <span>AI Tool & Model Registry</span>
-            <Badge variant="outline" className="text-xs bg-blue-500/10 text-blue-400 border-blue-500/30">
+            <Badge variant="outline" className="text-xs bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/30">
               Screen A5
             </Badge>
           </h1>
-          <p className="text-sm text-slate-400 mt-1">
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
             Maintain external destination tools, model variants, and the required reasoning lines shown to subscribers (FEAT-016).
           </p>
         </div>
@@ -208,45 +217,73 @@ export default function AdminToolsPage() {
             variant="outline"
             size="sm"
             onClick={fetchTools}
-            className="border-slate-700 bg-slate-800/60 hover:bg-slate-800 text-xs"
+            className="text-xs"
           >
             <RefreshCw className="w-3.5 h-3.5 mr-1.5" />
             Refresh
           </Button>
-          <Button size="sm" onClick={openAddTool} className="bg-blue-600 hover:bg-blue-500 text-white text-xs">
+          <Button size="sm" onClick={openAddTool} className="bg-blue-600 hover:bg-blue-700 text-white text-xs">
             <Plus className="w-3.5 h-3.5 mr-1.5" />
             Register AI Tool
           </Button>
         </div>
       </div>
 
+      {/* Error state */}
+      {error && (
+        <Alert variant="destructive">
+          <AlertTriangle className="w-4 h-4" />
+          <AlertTitle>Tool Registry Error</AlertTitle>
+          <AlertDescription className="flex items-center justify-between">
+            <span>{error}</span>
+            <Button size="sm" variant="outline" onClick={fetchTools} className="ml-4">
+              <RefreshCw className="w-3.5 h-3.5 mr-1" /> Retry
+            </Button>
+          </AlertDescription>
+        </Alert>
+      )}
+
       {/* Tools Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {loading ? (
-          <div className="col-span-2 py-12 flex justify-center text-slate-400 text-xs">
-            <RefreshCw className="w-4 h-4 animate-spin mr-2 text-blue-500" />
-            Loading AI tools and models...
-          </div>
+          // Loading Skeletons
+          Array.from({ length: 4 }).map((_, idx) => (
+            <Card key={idx} className="p-6 space-y-4">
+              <div className="flex justify-between items-center">
+                <Skeleton className="h-6 w-32" />
+                <Skeleton className="h-5 w-20 rounded-full" />
+              </div>
+              <Skeleton className="h-16 w-full rounded-xl" />
+              <div className="grid grid-cols-2 gap-2">
+                <Skeleton className="h-10 w-full" />
+                <Skeleton className="h-10 w-full" />
+              </div>
+              <div className="pt-4 flex justify-between">
+                <Skeleton className="h-8 w-28 rounded-lg" />
+                <Skeleton className="h-8 w-16 rounded-lg" />
+              </div>
+            </Card>
+          ))
         ) : (
           tools.map((tool) => (
-            <div
+            <Card
               key={tool.tool_id}
-              className={`p-6 rounded-2xl border transition-all flex flex-col justify-between ${
+              className={`p-6 flex flex-col justify-between transition-all shadow-sm ${
                 tool.is_available
-                  ? 'border-slate-800 bg-[#0a0f1d] hover:border-slate-700 shadow-xl'
-                  : 'border-slate-800/40 bg-slate-900/30 opacity-60'
+                  ? 'border-slate-200/80 dark:border-blue-900/40 bg-white dark:bg-[#0c162e]/80'
+                  : 'border-slate-200/40 dark:border-slate-800/40 bg-slate-50/50 dark:bg-slate-900/30 opacity-60'
               }`}
             >
               <div>
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2.5">
-                    <span className="font-bold text-base text-white">{tool.name}</span>
+                    <span className="font-bold text-base text-slate-900 dark:text-white">{tool.name}</span>
                     {tool.is_available ? (
-                      <Badge className="text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                      <Badge variant="emerald" className="text-[10px]">
                         Available
                       </Badge>
                     ) : (
-                      <Badge variant="outline" className="text-[10px] bg-rose-500/10 text-rose-400 border-rose-500/30">
+                      <Badge variant="rose" className="text-[10px]">
                         Withdrawn
                       </Badge>
                     )}
@@ -256,7 +293,7 @@ export default function AdminToolsPage() {
                     href={tool.destination}
                     target="_blank"
                     rel="noreferrer"
-                    className="text-xs text-slate-400 hover:text-blue-400 flex items-center gap-1"
+                    className="text-xs text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 flex items-center gap-1 font-medium"
                   >
                     <span>Launch</span>
                     <ExternalLink className="w-3 h-3" />
@@ -264,33 +301,33 @@ export default function AdminToolsPage() {
                 </div>
 
                 {/* Required Reasoning (FEAT-016: Reason shown to users) */}
-                <div className="p-3 rounded-xl bg-blue-500/5 border border-blue-500/10 text-xs text-blue-200 mb-4">
-                  <span className="font-semibold text-blue-400 block text-[10px] uppercase tracking-wider mb-0.5">
+                <div className="p-3 rounded-xl bg-blue-500/5 border border-blue-500/15 text-xs text-blue-950 dark:text-blue-200 mb-4">
+                  <span className="font-semibold text-blue-600 dark:text-blue-400 block text-[10px] uppercase tracking-wider mb-0.5">
                     Reasoning Shown to Users (Required)
                   </span>
                   &quot;{tool.reasoning}&quot;
                 </div>
 
-                <div className="grid grid-cols-2 gap-2 text-xs text-slate-400 mb-4">
+                <div className="grid grid-cols-2 gap-2 text-xs text-slate-500 dark:text-slate-400 mb-4">
                   <div>
                     <span className="block text-[10px] uppercase text-slate-400">Pricing Note</span>
-                    <span className="text-slate-300 font-medium">{tool.pricing_note || 'N/A'}</span>
+                    <span className="text-slate-800 dark:text-slate-200 font-medium">{tool.pricing_note || 'N/A'}</span>
                   </div>
                   <div>
                     <span className="block text-[10px] uppercase text-slate-400">Quality Note</span>
-                    <span className="text-slate-300 font-medium">{tool.quality_note || 'N/A'}</span>
+                    <span className="text-slate-800 dark:text-slate-200 font-medium">{tool.quality_note || 'N/A'}</span>
                   </div>
                 </div>
               </div>
 
-              <div className="pt-4 border-t border-slate-800 flex items-center justify-between text-xs">
+              <div className="pt-4 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-xs">
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => openModels(tool)}
-                  className="h-8 border-slate-700 bg-slate-900 text-slate-300 text-xs"
+                  className="h-8 text-xs font-medium"
                 >
-                  <Cpu className="w-3.5 h-3.5 mr-1 text-cyan-400" />
+                  <Cpu className="w-3.5 h-3.5 mr-1 text-cyan-600 dark:text-cyan-400" />
                   Manage Models
                 </Button>
 
@@ -299,7 +336,7 @@ export default function AdminToolsPage() {
                     variant="ghost"
                     size="sm"
                     onClick={() => openEditTool(tool)}
-                    className="h-8 text-slate-300 hover:text-white text-xs"
+                    className="h-8 text-xs"
                   >
                     <Edit2 className="w-3.5 h-3.5 mr-1" />
                     Edit
@@ -309,97 +346,98 @@ export default function AdminToolsPage() {
                       variant="ghost"
                       size="sm"
                       onClick={() => openWithdrawModal(tool)}
-                      className="h-8 text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 text-xs"
+                      className="h-8 text-rose-600 dark:text-rose-400 hover:text-rose-700 dark:hover:text-rose-300 hover:bg-rose-500/10 text-xs"
                     >
                       Withdraw
                     </Button>
                   )}
                 </div>
               </div>
-            </div>
+            </Card>
           ))
         )}
       </div>
 
       {/* MODAL 1: ADD/EDIT TOOL */}
       <Dialog open={isToolModalOpen} onOpenChange={setIsToolModalOpen}>
-        <DialogContent className="border-slate-800 bg-[#0d1222] text-slate-100 max-w-lg">
+        <DialogContent className="max-w-lg">
           <DialogHeader>
             <DialogTitle>{editingToolId ? 'Edit AI Tool' : 'Register AI Tool'}</DialogTitle>
-            <DialogDescription className="text-slate-400 text-xs">
+            <DialogDescription className="text-xs">
               Every tool recommendation must carry a reasoning statement explaining why it is suggested (FEAT-016).
             </DialogDescription>
           </DialogHeader>
 
           <form onSubmit={handleToolSubmit} className="space-y-4 text-xs mt-2">
-            <div>
-              <label className="block text-slate-300 font-medium mb-1">Tool Name *</label>
+            <div className="space-y-1.5">
+              <Label htmlFor="tool_name">Tool Name *</Label>
               <Input
+                id="tool_name"
                 value={toolForm.name}
                 onChange={(e) => setToolForm({ ...toolForm, name: e.target.value })}
                 placeholder="e.g. FLUX.1"
                 required
-                className="bg-slate-900 border-slate-700 text-slate-100"
               />
             </div>
 
-            <div>
-              <label className="block text-slate-300 font-medium mb-1">Destination URL *</label>
+            <div className="space-y-1.5">
+              <Label htmlFor="tool_dest">Destination URL *</Label>
               <Input
+                id="tool_dest"
                 value={toolForm.destination}
                 onChange={(e) => setToolForm({ ...toolForm, destination: e.target.value })}
                 placeholder="https://blackforestlabs.ai"
                 required
-                className="bg-slate-900 border-slate-700 text-slate-100"
               />
             </div>
 
-            <div>
-              <label className="block text-slate-300 font-medium mb-1 flex items-center justify-between">
-                <span>Reasoning Line (Shown to Users) *</span>
-                <span className="text-[10px] text-blue-400">Required FEAT-016</span>
-              </label>
-              <textarea
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between">
+                <Label htmlFor="tool_reason">Reasoning Line (Shown to Users) *</Label>
+                <span className="text-[10px] text-blue-600 dark:text-blue-400 font-semibold">Required FEAT-016</span>
+              </div>
+              <Textarea
+                id="tool_reason"
                 value={toolForm.reasoning}
                 onChange={(e) => setToolForm({ ...toolForm, reasoning: e.target.value })}
                 placeholder="e.g. Unmatched typography adherence and text rendering on product labels."
                 required
                 rows={2}
-                className="w-full rounded-md border border-slate-700 bg-slate-900 px-3 py-2 text-slate-100 text-xs"
+                className="text-xs"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="block text-slate-300 font-medium mb-1">Pricing Note</label>
+              <div className="space-y-1.5">
+                <Label htmlFor="tool_pricing">Pricing Note</Label>
                 <Input
+                  id="tool_pricing"
                   value={toolForm.pricing_note}
                   onChange={(e) => setToolForm({ ...toolForm, pricing_note: e.target.value })}
                   placeholder="e.g. Free open weights & API"
-                  className="bg-slate-900 border-slate-700 text-xs"
                 />
               </div>
-              <div>
-                <label className="block text-slate-300 font-medium mb-1">Quality Note</label>
+              <div className="space-y-1.5">
+                <Label htmlFor="tool_quality">Quality Note</Label>
                 <Input
+                  id="tool_quality"
                   value={toolForm.quality_note}
                   onChange={(e) => setToolForm({ ...toolForm, quality_note: e.target.value })}
                   placeholder="e.g. Top fidelity photorealism"
-                  className="bg-slate-900 border-slate-700 text-xs"
                 />
               </div>
             </div>
 
-            <DialogFooter className="pt-3 border-t border-slate-800">
+            <DialogFooter className="pt-3 border-t border-slate-200 dark:border-slate-800">
               <Button
                 type="button"
                 variant="ghost"
                 onClick={() => setIsToolModalOpen(false)}
-                className="text-xs text-slate-400"
+                className="text-xs"
               >
                 Cancel
               </Button>
-              <Button type="submit" className="bg-blue-600 hover:bg-blue-500 text-white text-xs">
+              <Button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white text-xs">
                 Save AI Tool
               </Button>
             </DialogFooter>
@@ -409,10 +447,10 @@ export default function AdminToolsPage() {
 
       {/* MODAL 2: MANAGE MODEL VARIANTS */}
       <Dialog open={isModelModalOpen} onOpenChange={setIsModelModalOpen}>
-        <DialogContent className="border-slate-800 bg-[#0d1222] text-slate-100 max-w-md">
+        <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>Model Variants: {activeToolForModel?.name}</DialogTitle>
-            <DialogDescription className="text-slate-400 text-xs">
+            <DialogDescription className="text-xs">
               Configure specific versions (e.g. Sora, Gen-3 Alpha, FLUX.1 dev) that feed the model filter (FEAT-034).
             </DialogDescription>
           </DialogHeader>
@@ -423,9 +461,9 @@ export default function AdminToolsPage() {
                 value={newModelName}
                 onChange={(e) => setNewModelName(e.target.value)}
                 placeholder="New variant name (e.g. FLUX.1 [schnell])"
-                className="bg-slate-900 border-slate-700 text-xs"
+                className="text-xs"
               />
-              <Button type="submit" size="sm" className="bg-blue-600 hover:bg-blue-500 text-xs shrink-0">
+              <Button type="submit" size="sm" className="bg-blue-600 hover:bg-blue-700 text-xs shrink-0 text-white">
                 Add Model
               </Button>
             </form>
@@ -434,10 +472,10 @@ export default function AdminToolsPage() {
               {toolModels.map((m) => (
                 <div
                   key={m.model_id}
-                  className="p-2.5 rounded-lg border border-slate-800 bg-slate-900 flex items-center justify-between"
+                  className="p-2.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 flex items-center justify-between"
                 >
-                  <span className="font-semibold text-slate-200">{m.name}</span>
-                  <Badge variant="outline" className="text-[10px] text-emerald-400 border-emerald-500/30">
+                  <span className="font-semibold text-slate-800 dark:text-slate-200">{m.name}</span>
+                  <Badge variant="emerald" className="text-[10px]">
                     Active
                   </Badge>
                 </div>
@@ -445,11 +483,12 @@ export default function AdminToolsPage() {
             </div>
           </div>
 
-          <DialogFooter className="pt-3 border-t border-slate-800">
+          <DialogFooter className="pt-3 border-t border-slate-200 dark:border-slate-800">
             <Button
               type="button"
               onClick={() => setIsModelModalOpen(false)}
-              className="bg-slate-800 hover:bg-slate-700 text-xs"
+              className="text-xs"
+              variant="outline"
             >
               Done
             </Button>
@@ -457,30 +496,30 @@ export default function AdminToolsPage() {
         </DialogContent>
       </Dialog>
 
-      {/* MODAL 3: WITHDRAW CONFIRMATION (11-UI-UX A5: Withdrawing shows reference count before confirming) */}
+      {/* MODAL 3: WITHDRAW CONFIRMATION */}
       <Dialog open={isWithdrawOpen} onOpenChange={setIsWithdrawOpen}>
-        <DialogContent className="border-slate-800 bg-[#0d1222] text-slate-100 max-w-md">
+        <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-rose-400 flex items-center gap-2">
+            <DialogTitle className="text-rose-600 dark:text-rose-400 flex items-center gap-2">
               <AlertTriangle className="w-5 h-5" />
               Withdraw AI Tool: {withdrawTarget?.name}?
             </DialogTitle>
-            <DialogDescription className="text-slate-300 text-xs leading-relaxed pt-2">
+            <DialogDescription className="text-xs leading-relaxed pt-2">
               Withdrawing removes this tool from public recommendations and model filters immediately.
               Existing delivered records referencing it remain readable (FR-041).
             </DialogDescription>
           </DialogHeader>
 
-          <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs my-2">
+          <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-800 dark:text-amber-300 text-xs my-2">
             The system will audit all template assignments currently referencing this tool.
           </div>
 
-          <DialogFooter className="pt-3 border-t border-slate-800">
+          <DialogFooter className="pt-3 border-t border-slate-200 dark:border-slate-800">
             <Button
               type="button"
               variant="ghost"
               onClick={() => setIsWithdrawOpen(false)}
-              className="text-xs text-slate-400"
+              className="text-xs"
             >
               Cancel
             </Button>

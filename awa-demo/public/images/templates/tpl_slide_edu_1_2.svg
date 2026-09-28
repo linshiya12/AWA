@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="100%" height="100%">
+  <rect width="1920" height="1080" fill="#0C1427"/>
+  <text x="120" y="130" fill="#60A5FA" font-family="system-ui, sans-serif" font-size="18" font-weight="bold" letter-spacing="2">02 · PROMPT ANATOMY</text>
+  <text x="120" y="210" fill="#F8FAFC" font-family="system-ui, sans-serif" font-size="56" font-weight="900">The 4-Part Production Structure</text>
+  <g transform="translate(120, 290)">
+    <rect width="380" height="520" rx="24" fill="#14213D" stroke="#253A66" stroke-width="2"/>
+    <text x="30" y="60" fill="#60A5FA" font-family="system-ui, sans-serif" font-size="24" font-weight="bold">1. Subject Staging</text>
+    <text x="30" y="110" fill="#94A3B8" font-family="system-ui, sans-serif" font-size="16">Specific geometric form, material composition, surface finishes.</text>
+  </g>
+  <g transform="translate(540, 290)">
+    <rect width="380" height="520" rx="24" fill="#14213D" stroke="#253A66" stroke-width="2"/>
+    <text x="30" y="60" fill="#60A5FA" font-family="system-ui, sans-serif" font-size="24" font-weight="bold">2. Lighting Vectors</text>
+    <text x="30" y="110" fill="#94A3B8" font-family="system-ui, sans-serif" font-size="16">Three-point softbox, rim edge isolation, color temperature (3200K vs 5600K).</text>
+  </g>
+  <g transform="translate(960, 290)">
+    <rect width="380" height="520" rx="24" fill="#14213D" stroke="#253A66" stroke-width="2"/>
+    <text x="30" y="60" fill="#60A5FA" font-family="system-ui, sans-serif" font-size="24" font-weight="bold">3. Camera &amp; Optics</text>
+    <text x="30" y="110" fill="#94A3B8" font-family="system-ui, sans-serif" font-size="16">Focal length (120mm macro), aperture (f/11 for edge sharpness), shutter speed.</text>
+  </g>
+  <g transform="translate(1380, 290)">
+    <rect width="380" height="520" rx="24" fill="#14213D" stroke="#253A66" stroke-width="2"/>
+    <text x="30" y="60" fill="#60A5FA" font-family="system-ui, sans-serif" font-size="24" font-weight="bold">4. Negative Flags</text>
+    <text x="30" y="110" fill="#94A3B8" font-family="system-ui, sans-serif" font-size="16">Suppressing lens distortion, glare, artifacts, and chromatic aberration.</text>
+  </g>
+  <text x="1800" y="980" fill="#475569" font-family="system-ui, sans-serif" font-size="18" font-weight="bold">02 / 04</text>
+</svg>

@@ -8,7 +8,7 @@ interface RouteContext {
   params: Promise<{ id: string }>;
 }
 
-// POST /api/v1/templates/[id]/prompt — Deliver prompt text (API-003, 07 §6.1, 08-API.md)
+// POST /api/v1/templates/[id]/prompt — Deliver prompt text and guidance steps (API-003, 07 §6.1, 08-API.md)
 // Enforces protected delivery boundary: prompt text is never exposed in public catalog payloads
 export async function POST(request: NextRequest, context: RouteContext) {
   const { id } = await context.params;
@@ -21,16 +21,20 @@ export async function POST(request: NextRequest, context: RouteContext) {
     return NextResponse.json({ error: 'Template not found' }, { status: 404 });
   }
 
-  const isSample = publicTemplate?.is_sample ?? (catalogMatch?.template.id === 'tpl_web_1' || catalogMatch?.template.id === 'tpl_web_bakery' || catalogMatch?.template.id === 'tpl_1');
+  const isSample = publicTemplate?.is_sample ?? false;
 
   // 2. Resolve User & Verify Subscription Entitlement
   const user = resolveUserFromRequest(request);
   const isSubscriberHeader = request.headers.get('x-awa-subscribed') === 'true';
   const isSubscriberCookie = request.cookies.get('awa_subscribed')?.value === 'true';
-  const isAdmin = user?.role === 'administrator';
+  const isExplicitAdmin = request.headers.get('x-awa-role') === 'admin' || request.cookies.get('awa_role')?.value === 'admin';
+  const isAdminUser = user?.role === 'administrator';
+  const hasDbActiveSubscription = Boolean(
+    user && privateDb.getSubscriptions({ status: 'active' }).some((s) => s.user_id === user.user_id)
+  );
 
-  // Sample templates are accessible without subscription (05-MVP.md §3.3)
-  const isEntitled = isSample || isAdmin || isSubscriberHeader || isSubscriberCookie;
+  // Subscribed users or explicit admins only
+  const isEntitled = isSubscriberHeader || isSubscriberCookie || isExplicitAdmin || isAdminUser || hasDbActiveSubscription;
 
   if (!isEntitled) {
     return NextResponse.json(
@@ -94,11 +98,46 @@ export async function POST(request: NextRequest, context: RouteContext) {
       return NextResponse.json({ error: 'No prompt available for this template' }, { status: 404 });
     }
 
+    const finalUiPrompt = delivered.ui_prompt || catalogMatch?.template.uiPrompt || null;
+    const finalContextPrompt = delivered.context_prompt || catalogMatch?.template.contextPrompt || null;
+
+    const publicGuidance = publicDb.getGuidanceForScope('template', id);
+    let resolvedGuidance = catalogMatch?.template.guidance || [];
+
+    if (publicGuidance && publicGuidance.steps.length > 0) {
+      // If publicGuidance is directly assigned to this template, use it (enables admin edits)
+      if (!publicGuidance.isInherited) {
+        resolvedGuidance = publicGuidance.steps.map((s, idx) => ({
+          step: s.position || idx + 1,
+          title: s.title || `Step ${s.position || idx + 1}`,
+          description: s.instruction,
+          image: s.image_url || (s.media ? s.media.storage_reference : '') || '/images/guidance/tpl_1/step-1.svg',
+          image_alt: s.image_alt || (s.title ? `${s.title} preview` : `Guidance step ${s.position || idx + 1}`),
+          media_id: s.media_id || null,
+          tip: s.tip || undefined,
+          text: s.instruction,
+        }));
+      } else if (!resolvedGuidance || resolvedGuidance.length === 0) {
+        // Only fall back to inherited category guidance if template-specific guidance is completely absent
+        resolvedGuidance = publicGuidance.steps.map((s, idx) => ({
+          step: s.position || idx + 1,
+          title: s.title || `Step ${s.position || idx + 1}`,
+          description: s.instruction,
+          image: s.image_url || (s.media ? s.media.storage_reference : '') || '/images/guidance/tpl_1/step-1.svg',
+          image_alt: s.image_alt || (s.title ? `${s.title} preview` : `Guidance step ${s.position || idx + 1}`),
+          media_id: s.media_id || null,
+          tip: s.tip || undefined,
+          text: s.instruction,
+        }));
+      }
+    }
+
     return NextResponse.json({
       deliveredPromptId: delivered.delivered_prompt_id,
       promptText: delivered.prompt_text,
-      uiPrompt: delivered.ui_prompt,
-      contextPrompt: delivered.context_prompt,
+      uiPrompt: finalUiPrompt,
+      contextPrompt: finalContextPrompt,
+      guidance: resolvedGuidance,
       versionId: delivered.base_version_id,
       isSample,
       isCustomized: delivered.is_customized,
@@ -110,3 +149,8 @@ export async function POST(request: NextRequest, context: RouteContext) {
     );
   }
 }
+
+export async function GET(request: NextRequest, context: RouteContext) {
+  return POST(request, context);
+}
+

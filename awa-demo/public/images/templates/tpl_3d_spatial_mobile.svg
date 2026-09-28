@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 390 844" width="390" height="844">
+  <defs>
+    <linearGradient id="sp_m_bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#050814"/>
+      <stop offset="50%" stop-color="#0c1028"/>
+      <stop offset="100%" stop-color="#03050d"/>
+    </linearGradient>
+  </defs>
+  <rect width="390" height="844" fill="url(#sp_m_bg)"/>
+  <text x="32" y="38" fill="#fff" font-family="sans-serif" font-size="14" font-weight="bold">9:41</text>
+  <text x="24" y="90" fill="#818cf8" font-family="sans-serif" font-size="11" font-weight="bold" letter-spacing="1">AURA SPATIAL</text>
+  <text x="24" y="118" fill="#ffffff" font-family="sans-serif" font-size="20" font-weight="bold">Binaural 3D Canvas</text>
+  <rect x="20" y="140" width="350" height="460" rx="20" fill="#0b0f1d" stroke="#1e293b" stroke-width="1"/>
+  <g transform="translate(195, 360)">
+    <circle cx="0" cy="0" r="100" fill="none" stroke="#818cf8" stroke-width="1.5" opacity="0.6"/>
+    <circle cx="0" cy="0" r="50" fill="none" stroke="#c084fc" stroke-width="1" stroke-dasharray="4 4"/>
+    <circle cx="0" cy="0" r="24" fill="#6366f1"/>
+    <circle cx="-60" cy="-40" r="12" fill="#38bdf8"/>
+    <circle cx="60" cy="50" r="12" fill="#f43f5e"/>
+  </g>
+  <rect x="30" y="630" width="330" height="70" rx="18" fill="#121829" stroke="#818cf8" stroke-width="1"/>
+  <text x="50" y="660" fill="#ffffff" font-family="sans-serif" font-size="13" font-weight="bold">Active Spatial Field: Stereo 3D</text>
+  <text x="50" y="682" fill="#94a3b8" font-family="sans-serif" font-size="11">Move phone to shift gyro acoustic angle</text>
+</svg>

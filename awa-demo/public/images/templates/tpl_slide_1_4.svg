@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="100%" height="100%">
+  <rect width="1920" height="1080" fill="#080E1E"/>
+  <text x="120" y="130" fill="#38BDF8" font-family="system-ui, sans-serif" font-size="18" font-weight="bold" letter-spacing="2">04 · FINANCING &amp; USE OF FUNDS</text>
+  <text x="120" y="210" fill="#F8FAFC" font-family="system-ui, sans-serif" font-size="56" font-weight="900">Raising $3.5M Seed to Scale Enterprise GTM</text>
+
+  <g transform="translate(120, 290)">
+    <rect width="800" height="540" rx="24" fill="#111C36" stroke="#223259" stroke-width="2"/>
+    <text x="50" y="60" fill="#F8FAFC" font-family="system-ui, sans-serif" font-size="24" font-weight="bold">Allocation Breakdown</text>
+    <rect x="50" y="110" width="700" height="48" rx="12" fill="#38BDF8"/>
+    <text x="70" y="141" fill="#080E1E" font-family="system-ui, sans-serif" font-size="18" font-weight="bold">50% Core AI Architecture &amp; Prompt Engineering</text>
+    <rect x="50" y="180" width="420" height="48" rx="12" fill="#818CF8"/>
+    <text x="70" y="211" fill="#080E1E" font-family="system-ui, sans-serif" font-size="18" font-weight="bold">30% Enterprise Sales &amp; DevRel</text>
+    <rect x="50" y="250" width="280" height="48" rx="12" fill="#34D399"/>
+    <text x="70" y="281" fill="#080E1E" font-family="system-ui, sans-serif" font-size="18" font-weight="bold">20% Infrastructure &amp; Security</text>
+
+    <text x="50" y="380" fill="#94A3B8" font-family="system-ui, sans-serif" font-size="18">18-Month Target Milestones:</text>
+    <text x="50" y="420" fill="#F8FAFC" font-family="system-ui, sans-serif" font-size="20" font-weight="bold">• Triple revenue run-rate to $5.5M ARR</text>
+    <text x="50" y="460" fill="#F8FAFC" font-family="system-ui, sans-serif" font-size="20" font-weight="bold">• Launch collaborative Enterprise Workspace suite</text>
+    <text x="50" y="500" fill="#F8FAFC" font-family="system-ui, sans-serif" font-size="20" font-weight="bold">• Achieve SOC2 Type II &amp; ISO 27001 readiness</text>
+  </g>
+
+  <g transform="translate(960, 290)">
+    <rect width="840" height="540" rx="24" fill="#111C36" stroke="#223259" stroke-width="2"/>
+    <text x="50" y="60" fill="#F8FAFC" font-family="system-ui, sans-serif" font-size="24" font-weight="bold">Round Structure</text>
+    
+    <g transform="translate(50, 110)">
+      <rect width="740" height="90" rx="16" fill="#18284A"/>
+      <text x="30" y="55" fill="#94A3B8" font-family="system-ui, sans-serif" font-size="20">Round Format:</text>
+      <text x="220" y="55" fill="#38BDF8" font-family="system-ui, sans-serif" font-size="22" font-weight="bold">Priced Preferred Seed Equity</text>
+    </g>
+    <g transform="translate(50, 220)">
+      <rect width="740" height="90" rx="16" fill="#18284A"/>
+      <text x="30" y="55" fill="#94A3B8" font-family="system-ui, sans-serif" font-size="20">Operational Runway:</text>
+      <text x="240" y="55" fill="#34D399" font-family="system-ui, sans-serif" font-size="22" font-weight="bold">24 Months to Series A</text>
+    </g>
+    <g transform="translate(50, 330)">
+      <rect width="740" height="150" rx="16" fill="#18284A"/>
+      <text x="30" y="45" fill="#94A3B8" font-family="system-ui, sans-serif" font-size="18">Syndicate Status:</text>
+      <text x="30" y="85" fill="#F8FAFC" font-family="system-ui, sans-serif" font-size="24" font-weight="bold">$2.0M Committed by Tier-1 DeepTech Seed Fund</text>
+      <text x="30" y="120" fill="#38BDF8" font-family="system-ui, sans-serif" font-size="18">$1.5M Allocation open to strategic partners</text>
+    </g>
+  </g>
+  <text x="1800" y="980" fill="#475569" font-family="system-ui, sans-serif" font-size="18" font-weight="bold">04 / 04</text>
+</svg>

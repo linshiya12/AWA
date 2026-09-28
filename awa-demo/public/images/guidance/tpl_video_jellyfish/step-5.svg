@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#060A14"/>
+      <stop offset="50%" stop-color="#091224"/>
+      <stop offset="100%" stop-color="#070C18"/>
+    </linearGradient>
+    <pattern id="gridDots" x="0" y="0" width="24" height="24" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1" fill="#1E293B" fill-opacity="0.5"/>
+    </pattern>
+  </defs>
+
+  <!-- Background Base -->
+  <rect width="800" height="500" rx="16" fill="url(#bgGrad)"/>
+  <rect width="800" height="500" rx="16" fill="url(#gridDots)"/>
+  <rect width="800" height="500" rx="16" fill="none" stroke="#1E293B" stroke-width="1.5"/>
+
+  <!-- Step Header (Clean, Authentic, No Fabricated Browser Controls) -->
+  <g transform="translate(40, 36)">
+    <!-- Top Step Pill -->
+    <rect x="0" y="0" width="160" height="24" rx="6" fill="#38BDF8" fill-opacity="0.15" stroke="#38BDF8" stroke-width="1" stroke-opacity="0.6"/>
+    <text x="12" y="16" fill="#38BDF8" font-size="10" font-weight="800" letter-spacing="1" font-family="monospace">STEP 05 // OF 05</text>
+
+    <!-- Right Side Tool Indicator -->
+    <rect x="580" y="0" width="140" height="24" rx="6" fill="#0C1425" stroke="#1E293B" stroke-width="1"/>
+    <circle cx="592" cy="12" r="4" fill="#38BDF8"/>
+    <text x="604" y="16" fill="#E2E8F0" font-size="10" font-weight="600" font-family="monospace">Runway Gen-3 / Pika</text>
+
+    <!-- Main Step Title -->
+    <text x="0" y="52" fill="#F8FAFC" font-size="20" font-weight="800" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif">Export Seamless Ambient Video Loop</text>
+    <!-- Subtitle / Action directive -->
+    <text x="0" y="74" fill="#94A3B8" font-size="12" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif">Export 4K widescreen MP4. Set up seamless crossfade loop in editing software for ambi...</text>
+  </g>
+
+  
+      <!-- Master Delivery & Export Schematic -->
+      <g transform="translate(40, 140)">
+        <rect width="720" height="300" rx="14" fill="#0C1425" stroke="#1E293B" stroke-width="1.2"/>
+
+        <!-- Left Finished Asset Preview Canvas -->
+        <rect x="24" y="24" width="360" height="252" rx="10" fill="#070D1A" stroke="#38BDF8" stroke-width="1.4"/>
+        <ellipse cx="204" cy="190" rx="110" ry="32" fill="#13233F" opacity="0.6"/>
+        <rect x="164" y="60" width="80" height="120" rx="12" fill="#1E3A8A" stroke="#60A5FA" stroke-width="1.5"/>
+        <circle cx="204" cy="95" r="16" fill="#38BDF8" fill-opacity="0.4"/>
+        <text x="204" y="145" fill="#FFFFFF" font-size="10" font-weight="800" text-anchor="middle" font-family="monospace">MASTER</text>
+
+        <!-- Compliance & Verification Pill -->
+        <rect x="40" y="40" width="168" height="28" rx="6" fill="#070D1A" stroke="#10B981" stroke-width="1"/>
+        <circle cx="54" cy="54" r="4" fill="#10B981"/>
+        <text x="66" y="58" fill="#34D399" font-size="10" font-weight="700" font-family="monospace">100% SPEC COMPLIANT</text>
+
+        <!-- Right Export Parameters & Actions -->
+        <rect x="404" y="24" width="292" height="252" rx="10" fill="#070D1A" stroke="#1E293B" stroke-width="1"/>
+        <text x="424" y="52" fill="#94A3B8" font-size="11" font-weight="700" letter-spacing="1" font-family="monospace">DELIVERY MANIFEST</text>
+
+        <rect x="424" y="68" width="252" height="46" rx="8" fill="#0F1B30" stroke="#1E293B" stroke-width="1"/>
+        <text x="438" y="88" fill="#94A3B8" font-size="10" font-family="monospace">TARGET OUTPUT</text>
+        <text x="438" y="104" fill="#F8FAFC" font-size="12" font-weight="600" font-family="-apple-system, BlinkMacSystemFont, sans-serif">Export Seamless Ambient Video Loop</text>
+
+        <rect x="424" y="122" width="252" height="66" rx="8" fill="#0F1B30" stroke="#38BDF8" stroke-width="1" stroke-opacity="0.4"/>
+        <text x="438" y="142" fill="#38BDF8" font-size="10" font-weight="700" font-family="monospace">EXPECTED ASSET DELIVERABLE</text>
+        <text x="438" y="160" fill="#CBD5E1" font-size="11" font-family="-apple-system, BlinkMacSystemFont, sans-serif">Production-ready ambient digital art motion video....</text>
+
+        <rect x="424" y="200" width="252" height="44" rx="8" fill="#38BDF8"/>
+        <text x="550" y="227" fill="#FFFFFF" font-size="12" font-weight="700" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, sans-serif">Download Production Master ↓</text>
+      </g>
+    
+</svg>

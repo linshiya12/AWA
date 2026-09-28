@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="100%" height="100%">
+  <rect width="1920" height="1080" fill="#06121E"/>
+  <text x="120" y="130" fill="#38BDF8" font-family="system-ui, sans-serif" font-size="18" font-weight="bold" letter-spacing="2">THE SOLUTION</text>
+  <text x="120" y="210" fill="#F8FAFC" font-family="system-ui, sans-serif" font-size="56" font-weight="900">Modular Headless Design System</text>
+  <g transform="translate(120, 300)">
+    <rect width="520" height="500" rx="24" fill="#0C2138" stroke="#1E3A5F" stroke-width="2"/>
+    <text x="40" y="60" fill="#38BDF8" font-family="system-ui, sans-serif" font-size="24" font-weight="bold">Tokenized Theme</text>
+    <text x="40" y="120" fill="#94A3B8" font-family="system-ui, sans-serif" font-size="18">Deep slate blue palette (#06121E) paired with high-contrast electric accents.</text>
+  </g>
+  <g transform="translate(680, 300)">
+    <rect width="520" height="500" rx="24" fill="#0C2138" stroke="#1E3A5F" stroke-width="2"/>
+    <text x="40" y="60" fill="#38BDF8" font-family="system-ui, sans-serif" font-size="24" font-weight="bold">Next.js Edge Runtime</text>
+    <text x="40" y="120" fill="#94A3B8" font-family="system-ui, sans-serif" font-size="18">Server-side rendered dynamic routes with instant caching across 300 global PoPs.</text>
+  </g>
+  <g transform="translate(1240, 300)">
+    <rect width="520" height="500" rx="24" fill="#0C2138" stroke="#1E3A5F" stroke-width="2"/>
+    <text x="40" y="60" fill="#38BDF8" font-family="system-ui, sans-serif" font-size="24" font-weight="bold">Micro-Interactions</text>
+    <text x="40" y="120" fill="#94A3B8" font-family="system-ui, sans-serif" font-size="18">Tactile haptic feedback and fluid 60fps springs on critical checkout actions.</text>
+  </g>
+  <text x="1800" y="980" fill="#475569" font-family="system-ui, sans-serif" font-size="18" font-weight="bold">03 / 04</text>
+</svg>

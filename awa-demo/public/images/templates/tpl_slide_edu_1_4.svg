@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="100%" height="100%">
+  <rect width="1920" height="1080" fill="#0C1427"/>
+  <text x="120" y="130" fill="#60A5FA" font-family="system-ui, sans-serif" font-size="18" font-weight="bold" letter-spacing="2">04 · PRACTICAL LAB</text>
+  <text x="120" y="210" fill="#F8FAFC" font-family="system-ui, sans-serif" font-size="56" font-weight="900">Hands-on Challenge: Studio Staging</text>
+  <g transform="translate(120, 290)">
+    <rect width="1680" height="520" rx="24" fill="#14213D" stroke="#253A66" stroke-width="2"/>
+    <text x="50" y="70" fill="#34D399" font-family="system-ui, sans-serif" font-size="24" font-weight="bold">Assignment Deliverable</text>
+    <text x="50" y="130" fill="#F8FAFC" font-family="system-ui, sans-serif" font-size="20">Craft a commercial studio prompt for a luxury frosted glass cosmetic vial:</text>
+    <text x="50" y="180" fill="#94A3B8" font-family="system-ui, sans-serif" font-size="18">1. Pure white seamless background (#FFFFFF) with true contact shadows.</text>
+    <text x="50" y="220" fill="#94A3B8" font-family="system-ui, sans-serif" font-size="18">2. Dual softbox setup: 45-degree key light left, crisp amber rim light right.</text>
+    <text x="50" y="260" fill="#94A3B8" font-family="system-ui, sans-serif" font-size="18">3. Lens specifications: 120mm macro prime, f/11 aperture, ISO 64.</text>
+    <text x="50" y="300" fill="#94A3B8" font-family="system-ui, sans-serif" font-size="18">4. Evaluation rubric: Zero chromatic aberration, tack-sharp typography on label.</text>
+    
+    <rect x="50" y="360" width="400" height="60" rx="16" fill="#60A5FA"/>
+    <text x="250" y="398" fill="#0C1427" font-family="system-ui, sans-serif" font-size="20" font-weight="bold" text-anchor="middle">Open Lab Workspace →</text>
+  </g>
+  <text x="1800" y="980" fill="#475569" font-family="system-ui, sans-serif" font-size="18" font-weight="bold">04 / 04</text>
+</svg>

@@ -153,6 +153,11 @@ Settled values. These are the rules the build implements; they are not open ques
 | **Retention of user-provided content** | **12 months** from creation, covering typed change requests, feedback comments and unmet-need descriptions. Stated to users before collection | `NFR-003`; `decisions.md` D-1 |
 | **Financial records** | Allowance ledger, payment transactions and audit entries are retained indefinitely | `07 §14` |
 
+### Architectural Resolution — Direct Context Customization vs AI Allowance Credits
+- **Conflict Identified:** Earlier specifications assumed all prompt customizations occur via external LLM rewrite calls deducting 1 credit from the user's allowance ledger (`FEAT-013`, `FEAT-026`), gating users with 402 allowance exhausted errors.
+- **Resolution:** In the template detail workflow, prompts are divided into a **UI Prompt** (optical/technical parameters, fixed) and a **Context Prompt** (subject/audience/business context). Subscribed creators customize the Context Prompt directly by inputting their thoughts in a compact in-tab editor. Clicking **Apply Customization** deterministically combines the original blueprint with those thoughts client-side.
+- **Credit Rule:** This direct Context Customization **does not require an AI call and consumes 0 credits**. The UI Prompt remains unchanged. Allowance credits (8 credits balance) and error safeguards (402, 422, 503) are preserved exclusively for heavy generative model rewrites.
+
 ## 3.4 Requires Product Decision
 
 Three items cannot be determined from the documentation. Each blocks a specific build stage.

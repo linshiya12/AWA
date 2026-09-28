@@ -49,17 +49,40 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// DELETE /api/v1/admin/media — Delete media asset (API-026)
+// DELETE /api/v1/admin/media — Delete media asset (API-026, 07 §4.7 & §14)
 export async function DELETE(request: NextRequest) {
   const auth = requireAdminApi(request);
   if ('errorResponse' in auth) return auth.errorResponse;
 
   const { searchParams } = new URL(request.url);
   const id = searchParams.get('id');
+  const force = searchParams.get('force') === 'true';
+
   if (!id) {
     return NextResponse.json({ error: 'id query param is required' }, { status: 400 });
   }
 
-  const success = publicDb.deleteMediaAsset(id);
-  return NextResponse.json({ success });
+  const result = publicDb.deleteMediaAsset(id, force);
+  if (!result.success) {
+    return NextResponse.json(
+      {
+        error: result.error || 'Cannot delete media asset',
+        code: 'MEDIA_RETENTION_RULE',
+        referenceCount: result.referenceCount,
+        references: result.references,
+      },
+      { status: 409 }
+    );
+  }
+
+  privateDb.recordAuditLog(
+    auth.adminUser.user_id,
+    'delete_media_asset',
+    'media_asset',
+    id,
+    null,
+    { id, force }
+  );
+
+  return NextResponse.json({ success: true, deleted_media_id: id });
 }

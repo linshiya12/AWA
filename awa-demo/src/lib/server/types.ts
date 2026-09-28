@@ -83,6 +83,12 @@ export interface GuidanceStep {
   guidance_id: string;
   position: number;
   instruction: string;
+  title?: string;
+  tip?: string;
+  media_id?: string | null;
+  image_url?: string | null;
+  image_alt?: string | null;
+  media?: MediaAsset | null;
 }
 
 export interface MediaAsset {
@@ -331,3 +337,48 @@ export interface AuditLogEntry {
   after: Record<string, unknown> | null;
   occurred_at: string;
 }
+
+// ==========================================
+// COLLECTION MANAGEMENT MODELS (07 & Admin Spec)
+// ==========================================
+
+export interface CuratedCollection {
+  collection_id: string;
+  name: string;
+  slug: string;
+  description: string;
+  cover_image: string | null;
+  is_active: boolean; // Active appears in recommendations; Inactive is excluded
+  position: number; // Display order
+  template_ids: string[]; // Ordered list of template IDs, no duplicates
+  created_at: string;
+  updated_at: string;
+  created_by: string; // User ID of creating admin
+}
+
+export interface UserCollection {
+  collection_id: string;
+  user_id: string;
+  name: string;
+  description?: string | null;
+  template_ids: string[];
+  created_at: string;
+  updated_at: string;
+}
+
+export interface UserCollectionWithDetails extends UserCollection {
+  user: {
+    user_id: string;
+    email: string;
+    display_name: string | null;
+  };
+  templates: Array<{
+    template_id: string;
+    name: string;
+    description: string;
+    preview_image?: string;
+    mainCategory?: string;
+    difficulty?: string;
+  }>;
+}
+

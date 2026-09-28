@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#050B17"/>
+      <stop offset="50%" stop-color="#091428"/>
+      <stop offset="100%" stop-color="#060D1E"/>
+    </linearGradient>
+    <linearGradient id="panelGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0E1E38" stop-opacity="0.95"/>
+      <stop offset="100%" stop-color="#081426" stop-opacity="0.95"/>
+    </linearGradient>
+    <linearGradient id="cardGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#142647" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#0A162B" stop-opacity="0.9"/>
+    </linearGradient>
+    <linearGradient id="accentGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#38BDF8"/>
+      <stop offset="100%" stop-color="#818CF8"/>
+    </linearGradient>
+    <linearGradient id="glowGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#38BDF8" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <style>
+    .font-sans { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+    .font-mono { font-family: "JetBrains Mono", "Fira Code", Menlo, Monaco, Consolas, monospace; }
+  </style>
+
+  <rect width="800" height="500" rx="20" fill="url(#bgGrad)"/>
+  <rect width="800" height="500" rx="20" fill="none" stroke="#1E3A8A" stroke-width="1.5" stroke-opacity="0.5"/>
+  <ellipse cx="400" cy="180" rx="350" ry="140" fill="url(#glowGrad)"/>
+
+  <!-- Top Browser Chrome -->
+  <rect x="0" y="0" width="800" height="48" rx="20" fill="#0A152A" fill-opacity="0.9"/>
+  <line x1="0" y1="48" x2="800" y2="48" stroke="#1E3A8A" stroke-width="1" stroke-opacity="0.6"/>
+  <circle cx="28" cy="24" r="6" fill="#EF4444" fill-opacity="0.85"/>
+  <circle cx="48" cy="24" r="6" fill="#F59E0B" fill-opacity="0.85"/>
+  <circle cx="68" cy="24" r="6" fill="#10B981" fill-opacity="0.85"/>
+  <rect x="180" y="10" width="440" height="28" rx="8" fill="#0E1E38" stroke="#38BDF8" stroke-width="0.8" stroke-opacity="0.5"/>
+  <circle cx="200" cy="24" r="4" fill="#38BDF8"/>
+  <text x="214" y="28" fill="#BAE6FD" font-size="11" class="font-mono" opacity="0.9">v0.dev/chat · Tailwind HUD Telemetry</text>
+
+  <!-- Step Header Banner -->
+  <g transform="translate(32, 66)">
+    <rect x="0" y="0" width="190" height="22" rx="6" fill="#38BDF8" fill-opacity="0.2" stroke="#38BDF8" stroke-width="1" stroke-opacity="0.7"/>
+    <text x="10" y="15" fill="#38BDF8" font-size="10" font-weight="800" letter-spacing="1" class="font-mono">STEP 03 // HUD &amp; TELEMETRY</text>
+    <text x="0" y="44" fill="#F8FAFC" font-size="20" font-weight="800" class="font-sans">Overlay Glassmorphic HUD Telemetry</text>
+    <text x="0" y="64" fill="#94A3B8" font-size="12" class="font-sans">Layer absolute-positioned Tailwind HUD cards for joint torque, servo angles, and stats</text>
+  </g>
+
+  <!-- Workspace Card -->
+  <g transform="translate(32, 146)">
+    <rect x="0" y="0" width="736" height="320" rx="14" fill="url(#panelGrad)" stroke="#1E3A8A" stroke-width="1.2"/>
+
+    <!-- 3D Canvas Background with HUD Overlays -->
+    <rect x="24" y="24" width="688" height="272" rx="12" fill="#030712" stroke="#1E3A8A" stroke-width="1"/>
+
+    <!-- Central 3D Ghost Model -->
+    <g transform="translate(368, 160)" opacity="0.4">
+      <ellipse cx="0" cy="50" rx="60" ry="14" fill="#1E293B" stroke="#64748B" stroke-width="2"/>
+      <line x1="0" y1="40" x2="-40" y2="-30" stroke="#FF6B00" stroke-width="8" stroke-linecap="round"/>
+      <circle cx="-40" cy="-30" r="14" fill="#0F172A" stroke="#38BDF8" stroke-width="2"/>
+      <line x1="-40" y1="-30" x2="30" y2="-75" stroke="#E2E8F0" stroke-width="6" stroke-linecap="round"/>
+    </g>
+
+    <!-- Top Left Glassmorphic Telemetry HUD -->
+    <g transform="translate(44, 44)">
+      <rect x="0" y="0" width="220" height="96" rx="10" fill="#0B1528" fill-opacity="0.85" stroke="#38BDF8" stroke-width="1.2"/>
+      <text x="16" y="24" fill="#38BDF8" font-size="10" font-weight="bold" class="font-mono">LIVE JOINT TORQUE</text>
+      <text x="16" y="56" fill="#F8FAFC" font-size="28" font-weight="900" class="font-mono">420 <tspan font-size="14" fill="#94A3B8">Nm</tspan></text>
+      <text x="16" y="80" fill="#10B981" font-size="10" font-weight="600" class="font-mono">● NOMINAL PEAK LOAD</text>
+    </g>
+
+    <!-- Top Right Performance Badge -->
+    <g transform="translate(488, 44)">
+      <rect x="0" y="0" width="204" height="64" rx="10" fill="#0B1528" fill-opacity="0.85" stroke="#10B981" stroke-width="1"/>
+      <text x="16" y="24" fill="#10B981" font-size="10" font-weight="bold" class="font-mono">FRAME RATE MONITOR</text>
+      <text x="16" y="50" fill="#F8FAFC" font-size="22" font-weight="800" class="font-mono">60.0 FPS</text>
+      <text x="120" y="50" fill="#94A3B8" font-size="11" class="font-mono">16ms Latency</text>
+    </g>
+
+    <!-- Bottom Controls Floating Dock -->
+    <g transform="translate(180, 230)">
+      <rect x="0" y="0" width="376" height="50" rx="12" fill="#0B1528" fill-opacity="0.9" stroke="#FF6B00" stroke-width="1.2"/>
+      <rect x="12" y="10" width="105" height="30" rx="8" fill="#FF6B00"/>
+      <text x="64" y="29" fill="#FFFFFF" font-size="11" font-weight="bold" text-anchor="middle" class="font-sans">Explode View</text>
+      
+      <rect x="127" y="10" width="115" height="30" rx="8" fill="#142647" stroke="#38BDF8" stroke-width="0.8"/>
+      <text x="184" y="29" fill="#BAE6FD" font-size="11" font-weight="bold" text-anchor="middle" class="font-sans">Wireframe Mode</text>
+      
+      <rect x="252" y="10" width="112" height="30" rx="8" fill="#142647" stroke="#64748B" stroke-width="0.8"/>
+      <text x="308" y="29" fill="#94A3B8" font-size="11" font-weight="bold" text-anchor="middle" class="font-sans">Reset Camera</text>
+    </g>
+  </g>
+</svg>

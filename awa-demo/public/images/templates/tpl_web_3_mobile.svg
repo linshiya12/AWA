@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 840" width="100%" height="100%">
+    <rect width="420" height="840" rx="48" fill="#0B0F19" stroke="#1E293B" stroke-width="6"/>
+    <!-- Dynamic Island -->
+    <rect x="150" y="18" width="120" height="28" rx="14" fill="#000000"/>
+    
+    <!-- Header -->
+    <text x="32" y="90" fill="#F8FAFC" font-family="system-ui, sans-serif" font-size="20" font-weight="bold">Bento Component System</text>
+    <text x="32" y="115" fill="#64748B" font-family="system-ui, sans-serif" font-size="12">Responsive Feature Stack</text>
+
+    <!-- Content Slot -->
+    <g transform="translate(24, 140)">
+      <rect width="372" height="150" rx="16" fill="#0F172A" stroke="#334155"/>
+   <text x="20" y="40" fill="#38BDF8" font-family="system-ui, sans-serif" font-size="14" font-weight="bold">BENTO MODULE 01</text>
+   <text x="20" y="75" fill="#F8FAFC" font-family="system-ui, sans-serif" font-size="20" font-weight="bold">Zero-Latency Ingestion</text>
+   <text x="20" y="110" fill="#94A3B8" font-family="system-ui, sans-serif" font-size="12">Streams raw prompt telemetry directly to edge nodes.</text>
+
+   <rect y="170" width="372" height="150" rx="16" fill="#0F172A" stroke="#334155"/>
+   <text x="20" y="210" fill="#34D399" font-family="system-ui, sans-serif" font-size="14" font-weight="bold">BENTO MODULE 02</text>
+   <text x="20" y="245" fill="#F8FAFC" font-family="system-ui, sans-serif" font-size="20" font-weight="bold">Encrypted Key Vault</text>
+   <text x="20" y="280" fill="#94A3B8" font-family="system-ui, sans-serif" font-size="12">Hardware-level enclave encryption for enterprise API keys.</text>
+    </g>
+
+    <!-- Bottom Indicator Bar -->
+    <rect x="140" y="818" width="140" height="5" rx="2.5" fill="#475569"/>
+  </svg>

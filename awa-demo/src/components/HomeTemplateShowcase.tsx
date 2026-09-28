@@ -4,6 +4,7 @@ import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { allTemplates, Template } from '@/lib/mockData';
 import { TemplateCard } from '@/components/TemplateCard';
+import { TemplateGallery } from '@/components/TemplateGallery';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, ChevronDown, Check } from 'lucide-react';
 import {
@@ -33,17 +34,28 @@ export function HomeTemplateShowcase() {
     if (selectedCategory !== 'All') {
       result = result.filter((t) => t.mainCategory === selectedCategory);
     } else {
-      // For 'All', curate the first 4 cards to showcase 4 distinct media types: Image, Websites, Video, Slides
-      const img = result.find((t) => t.mainCategory === 'Image');
-      const web = result.find((t) => t.mainCategory === 'Websites');
-      const vid = result.find((t) => t.mainCategory === 'Video');
-      const sld = result.find((t) => t.mainCategory === 'Slides');
-
-      const featuredIds = new Set([img?.id, web?.id, vid?.id, sld?.id].filter(Boolean));
-      const firstRow = [img, web, vid, sld].filter(Boolean) as Template[];
-      const remaining = result.filter((t) => !featuredIds.has(t.id));
-
-      result = [...firstRow, ...remaining];
+      // For 'All', curate a balanced 16-item subset showcasing mixed aspect ratios across all 4 categories
+      const curatedIds = [
+        'tpl_1',              // Square 1:1 - Studio Product on white
+        'tpl_img_aquatic',    // Portrait 3:4 - Aquatic Fragrance Spray
+        'tpl_web_1',          // Landscape 16:9 - Dark SaaS Hero
+        'tpl_2',              // Portrait 3:4 - Handheld Lifestyle Coffee
+        'tpl_slide_1',        // Landscape 16:9 - Pitch Deck
+        'tpl_video_1',        // Landscape 16:9 - Turntable Video Loop
+        'tpl_video_reel',     // Vertical 4:5 - Dynamic Social Launch Reel
+        'tpl_future_machine', // Landscape 16:9 - 3D Robotics Motion
+        'tpl_img_couture',    // Portrait 3:4 - Editorial Leather Tote
+        'tpl_4',              // Square 1:1 - Overhead Flat Lay
+        'tpl_slide_edu',      // Landscape 16:9 - Executive Masterclass Deck
+        'tpl_img_museum',     // Portrait 3:4 - Haute Couture Architectural Silhouette
+        'tpl_video_2',        // Landscape 16:9 - Macro Fluid Splash Video
+        'tpl_3d_timepiece',   // Landscape 16:9 - Haute Horology 3D Showcase
+        'tpl_mind_ai',        // Landscape 16:9 - 3D Holographic Spatial Motion
+        'tpl_web_bakery',     // Landscape 16:9 - Artisan Bakery & Cafe
+      ];
+      result = curatedIds
+        .map((id) => allTemplates.find((t) => t.id === id))
+        .filter(Boolean) as Template[];
     }
 
     // Tool filter
@@ -171,6 +183,8 @@ export function HomeTemplateShowcase() {
                     ? 'FLUX.1'
                     : toolFilter === 'runway'
                     ? 'Runway'
+                    : toolFilter === 'spline'
+                    ? 'Spline 3D'
                     : 'v0'}
                 </span>
                 <ChevronDown className="w-3.5 h-3.5 text-zinc-400" />
@@ -215,36 +229,40 @@ export function HomeTemplateShowcase() {
                 <span>v0</span>
                 {toolFilter === 'v0' && <Check className="w-3.5 h-3.5 text-blue-500" />}
               </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => setToolFilter('spline')}
+                className="flex items-center justify-between cursor-pointer"
+              >
+                <span>Spline 3D</span>
+                {toolFilter === 'spline' && <Check className="w-3.5 h-3.5 text-blue-500" />}
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
       </div>
 
-      {/* 4-COLUMN RESPONSIVE TEMPLATE GRID */}
-      {filteredTemplates.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
-          {filteredTemplates.map((template) => (
-            <TemplateCard key={template.id} template={template} />
-          ))}
-        </div>
-      ) : (
-        <div className="text-center py-20 border border-dashed border-zinc-300 dark:border-[#94A3B8]/20 rounded-2xl">
-          <p className="text-zinc-500 dark:text-[#94A3B8] text-sm mb-4">
-            No templates found matching your active filter.
-          </p>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => {
-              setSelectedCategory('All');
-              setToolFilter('all');
-            }}
-            className="rounded-full text-xs"
-          >
-            Reset Filters
-          </Button>
-        </div>
-      )}
+      {/* 4-COLUMN MASONRY TEMPLATE GALLERY */}
+      <TemplateGallery
+        templates={filteredTemplates}
+        emptyState={
+          <div className="text-center py-20 border border-dashed border-zinc-300 dark:border-[#94A3B8]/20 rounded-2xl">
+            <p className="text-zinc-500 dark:text-[#94A3B8] text-sm mb-4">
+              No templates found matching your active filter.
+            </p>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                setSelectedCategory('All');
+                setToolFilter('all');
+              }}
+              className="rounded-full text-xs"
+            >
+              Reset Filters
+            </Button>
+          </div>
+        }
+      />
 
       {/* Bottom CTA to Gallery */}
       <div className="mt-14 text-center">

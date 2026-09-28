@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="100%" height="100%">
+  <rect width="1920" height="1080" fill="#0B132B"/>
+  <text x="120" y="130" fill="#48CAE4" font-family="system-ui, sans-serif" font-size="18" font-weight="bold" letter-spacing="2">04 · STRATEGIC ROADMAP</text>
+  <text x="120" y="210" fill="#F8FAFC" font-family="system-ui, sans-serif" font-size="56" font-weight="900">Q4 Expansion Priorities</text>
+  <g transform="translate(120, 290)">
+    <rect width="1680" height="520" rx="24" fill="#1C2541" stroke="#3A506B" stroke-width="2"/>
+    <text x="50" y="80" fill="#48CAE4" font-family="system-ui, sans-serif" font-size="24" font-weight="bold">1. Enterprise Self-Serve Workspace Onboarding</text>
+    <text x="50" y="150" fill="#48CAE4" font-family="system-ui, sans-serif" font-size="24" font-weight="bold">2. Localized Multi-Language Prompt Catalog Rollout</text>
+    <text x="50" y="220" fill="#48CAE4" font-family="system-ui, sans-serif" font-size="24" font-weight="bold">3. Co-Marketing Integrations with Midjourney &amp; Framer</text>
+  </g>
+  <text x="1800" y="980" fill="#475569" font-family="system-ui, sans-serif" font-size="18" font-weight="bold">04 / 04</text>
+</svg>

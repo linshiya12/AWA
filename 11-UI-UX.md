@@ -145,16 +145,20 @@ Not a screen. Present in the header on every public screen once more than one la
 
 **After a successful copy**, the persistent control changes to a hint pointing at the tools below — reinforcing copy-then-leave without a modal.
 
-## The customize panel
+## The customize panel & context customization flow
 
-| | |
+The separate standalone Customize card has been removed from the detail page. Prompt customization is now integrated directly inside the **Context Prompt** tab:
+
+| Aspect | Specification |
 |---|---|
-| **Input** | **A text field. Typing is the only route** — FEAT-014 is excluded from the 44-feature launch scope (`05-MVP §3.2`), and no microphone control exists anywhere on this screen |
-| **Before running** | *"This uses 1 credit. You have 8."* |
-| **While running** | The previous prompt stays on screen, dimmed. A progress indicator. **This is the only real wait in the product** |
-| **On success** | The revised prompt replaces the displayed one. **"Back to original" is always available** |
+| **Location** | Inside the **Context Prompt** tab via a **Customize Context** button. The UI Prompt remains fixed and untouched |
+| **Input** | A compact input box (Textarea) for user thoughts (product specs, target audience, brand tone) |
+| **Execution** | **Apply Customization** deterministically combines the original Context Prompt blueprint with user thoughts. **Consumes 0 credits and makes no external AI calls** |
+| **Dual Presentation** | Both the **Customized Version** (prominent card with `Copy Customized Prompt`, `Edit Thoughts`, `Reset`) and the **Original Version** (blueprint card with `Copy Original Prompt`) are clearly displayed |
+| **Reset** | Tapping **Reset** clears the customization and returns immediately to the base context blueprint |
+| **Credits & Errors** | Allowance credits (8 credits) and credit deduction error states (402, 422, 503) are preserved for standalone generative AI rewrites, not this direct client-side synthesis |
 
-## Error states — all real in this stack
+## Error states — for generative rewrites
 
 | Condition | What the user sees |
 |---|---|

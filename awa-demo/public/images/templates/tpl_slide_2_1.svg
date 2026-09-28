@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="100%" height="100%">
+  <rect width="1920" height="1080" fill="#0B132B"/>
+  <rect x="120" y="100" width="200" height="36" rx="18" fill="#1C2541"/>
+  <text x="220" y="123" fill="#48CAE4" font-family="system-ui, sans-serif" font-size="13" font-weight="bold" text-anchor="middle">Q3 GROWTH REPORT</text>
+  <text x="120" y="320" fill="#F8FAFC" font-family="system-ui, sans-serif" font-size="70" font-weight="900">GLOBAL MARKETING &amp; ATTRIBUTION</text>
+  <text x="120" y="400" fill="#48CAE4" font-family="system-ui, sans-serif" font-size="36" font-weight="700">Quarterly Executive Performance Briefing</text>
+  <g transform="translate(120, 680)">
+    <rect width="360" height="160" rx="20" fill="#1C2541" stroke="#3A506B" stroke-width="2"/>
+    <text x="40" y="65" fill="#48CAE4" font-family="system-ui, sans-serif" font-size="44" font-weight="900">4.8x</text>
+    <text x="40" y="110" fill="#94A3B8" font-family="system-ui, sans-serif" font-size="18">Blended ROAS</text>
+  </g>
+  <g transform="translate(520, 680)">
+    <rect width="360" height="160" rx="20" fill="#1C2541" stroke="#3A506B" stroke-width="2"/>
+    <text x="40" y="65" fill="#34D399" font-family="system-ui, sans-serif" font-size="44" font-weight="900">$4,850</text>
+    <text x="40" y="110" fill="#94A3B8" font-family="system-ui, sans-serif" font-size="18">Enterprise LTV</text>
+  </g>
+  <g transform="translate(920, 680)">
+    <rect width="360" height="160" rx="20" fill="#1C2541" stroke="#3A506B" stroke-width="2"/>
+    <text x="40" y="65" fill="#F8FAFC" font-family="system-ui, sans-serif" font-size="44" font-weight="900">-28%</text>
+    <text x="40" y="110" fill="#94A3B8" font-family="system-ui, sans-serif" font-size="18">CAC Reduction</text>
+  </g>
+  <text x="1800" y="980" fill="#475569" font-family="system-ui, sans-serif" font-size="18" font-weight="bold">01 / 04</text>
+</svg>

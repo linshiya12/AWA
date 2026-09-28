@@ -92,15 +92,15 @@ export default function LandingPage() {
 
         {/* 8. FINAL CTA */}
         <section className="px-6 max-w-4xl mx-auto mb-20 relative">
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(110,168,255,0.15)_0%,_transparent_70%)] blur-2xl pointer-events-none"></div>
-          <div className="relative z-10 p-12 rounded-3xl border border-[#6EA8FF]/20 bg-[#0A1428]/80 backdrop-blur-md text-center shadow-[0_0_50px_rgba(110,168,255,0.1)]">
-            <h2 className="text-3xl md:text-5xl font-bold mb-6 tracking-tight">Your next great creation starts with a better prompt.</h2>
-            <p className="text-[#94A3B8] text-lg mb-10 max-w-2xl mx-auto">Explore templates and turn your idea into a prompt ready for your AI workflow.</p>
-            <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <Button asChild size="lg" className="px-8 py-6 rounded-full bg-white text-[#020817] text-base font-bold hover:shadow-[0_0_20px_rgba(255,255,255,0.3)] transition-all hover:-translate-y-0.5">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(37,99,235,0.08)_0%,_transparent_70%)] dark:bg-[radial-gradient(ellipse_at_center,_rgba(110,168,255,0.15)_0%,_transparent_70%)] blur-2xl pointer-events-none"></div>
+          <div className="relative z-10 p-10 sm:p-12 rounded-3xl border border-slate-200/90 dark:border-[#6EA8FF]/20 bg-white/95 dark:bg-[#0A1428]/80 backdrop-blur-md text-center shadow-lg dark:shadow-[0_0_50px_rgba(110,168,255,0.1)]">
+            <h2 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight text-slate-900 dark:text-white font-['var(--font-heading)']">Your next great creation starts with a better prompt.</h2>
+            <p className="text-slate-600 dark:text-[#94A3B8] text-base sm:text-lg mb-8 max-w-2xl mx-auto">Explore templates and turn your idea into a prompt ready for your AI workflow.</p>
+            <div className="flex flex-col sm:flex-row justify-center gap-3.5">
+              <Button asChild size="lg" className="px-8 py-5 rounded-full bg-blue-600 hover:bg-blue-700 text-white text-base font-semibold shadow-sm transition-all hover:-translate-y-0.5">
                 <Link href="/templates">Explore Templates</Link>
               </Button>
-              <Button asChild variant="outline" size="lg" className="px-8 py-6 rounded-full border border-[#94A3B8]/[0.16] bg-[#071126] text-[#F8FAFF] text-base font-bold hover:bg-[#1a253a] transition-all">
+              <Button asChild variant="outline" size="lg" className="px-8 py-5 rounded-full border border-slate-200 dark:border-[#94A3B8]/[0.16] bg-slate-50 dark:bg-[#071126] text-slate-800 dark:text-[#F8FAFF] text-base font-semibold hover:bg-slate-100 dark:hover:bg-[#1a253a] transition-all">
                 <Link href="/templates">Create a Prompt</Link>
               </Button>
             </div>

@@ -1,3 +1,5 @@
+import { ALL_GUIDANCE_CATALOG } from './guidanceCatalog';
+
 export interface Tool {
   id: string;
   name: string;
@@ -13,6 +15,8 @@ export interface GuidanceStep {
   title: string;
   description: string;
   image: string;
+  image_alt?: string;
+  media_id?: string | null;
   tip?: string;
   actionText?: string;
   actionUrl?: string;
@@ -37,6 +41,7 @@ export interface Template {
     slides?: string[];
     desktopPreview?: string;
     mobilePreview?: string;
+    motionPreviewUrl?: string;
   };
   tags: string[];
   difficulty: 'Easy' | 'Medium' | 'Hard';
@@ -185,13 +190,15 @@ export const mockCatalog: Category[] = [
             produces: 'Studio-grade, color-accurate isolated product photography on a pure white infinity cove with crisp contact shadows.',
             mainCategory: 'Image',
             media: {
-              thumbnail: '/images/templates/tpl_1_wide.jpg',
-              primaryImage: '/images/templates/tpl_1_wide.jpg',
-              gallery: ['/images/templates/tpl_1_wide.jpg']
+              thumbnail: '/images/templates/tpl_1.jpg',
+              primaryImage: '/images/templates/tpl_1.jpg',
+              gallery: ['/images/templates/tpl_1.jpg', '/images/templates/tpl_1_wide.jpg']
             },
             tags: ['Product', 'Minimalist', 'E-commerce', 'Amazon-Ready'],
             difficulty: 'Easy',
             models: ['Midjourney v6', 'DALL-E 3'],
+            uiPrompt: "[UI & OPTICS PROMPT]\nCamera & Optics: Shot on Hasselblad H6D-100c, 120mm macro prime lens, f/11 aperture for edge-to-edge tack-sharp focus, ISO 64, 1/160s shutter speed. Neutral commercial color profile, true-to-life surface micro-textures, zero chromatic aberration, natural soft contact shadow directly beneath base.\nStudio Environment: Seamless pure white infinity cove background (hex #FFFFFF), no visible horizon line or floor seam.\nLighting Architecture: Three-point softbox studio lighting — key light at 45-degree camera left through a 120cm octabox, rim light from camera right behind for crisp rim highlight and edge separation, 2:1 white foam fill card camera right for subtle shadow recovery.\nParameters: --ar 1:1 --v 6.0 --style raw --q 2",
+            contextPrompt: "[CONTEXT & SUBJECT PROMPT]\nSubject: Luxury cylindrical ceramic tumbler with tactile matte glaze, centered macro composition.\nCommercial Purpose: Clean hero asset suitable for Amazon, Shopify, or print catalogs requiring 100% white background (#FFFFFF) isolation and compliant Amazon hero standards.\nAudience & Tone: Discerning modern consumers looking for minimalist home goods and high-end ceramics. Clean, premium, uncluttered, and trustworthy.\nContent Requirements: The product must be centered, upright, fully isolated without cropping, displaying clean rim geometry, subtle matte reflections, and grounded contact shadows.",
             basePrompt: HERO_BASE_PROMPT,
             charCount: HERO_BASE_PROMPT.length,
             previewAccent: 'from-amber-500/20 via-rose-500/10 to-transparent',
@@ -260,13 +267,15 @@ export const mockCatalog: Category[] = [
             produces: 'Editorial lifestyle composition placing consumer goods in architectural interior spaces with warm ambient daylight.',
             mainCategory: 'Image',
             media: {
-              thumbnail: '/images/templates/tpl_2_wide.jpg',
-              primaryImage: '/images/templates/tpl_2_wide.jpg',
-              gallery: ['/images/templates/tpl_2_wide.jpg']
+              thumbnail: '/images/templates/tpl_2.jpg',
+              primaryImage: '/images/templates/tpl_2.jpg',
+              gallery: ['/images/templates/tpl_2.jpg', '/images/templates/tpl_2_wide.jpg']
             },
             tags: ['Lifestyle', 'Context', 'Social Media'],
             difficulty: 'Medium',
             models: ['Midjourney v6', 'Adobe Firefly'],
+            uiPrompt: "[UI & OPTICS PROMPT]\nCamera & Optics: Leica SL2, Summilux-SL 50mm f/1.4 ASPH at f/2.2 for cinematic shallow depth of field, creamy background bokeh, ISO 100, 1/250s. Medium-close angle, rule-of-thirds framing, product held at chest height in sharp focus.\nLighting Architecture: Golden hour morning sunlight at 3800K entering from camera left through sheer curtains, soft diffused bounce fill card camera right for delicate facial and mug shadow detail.\nPalette & Atmosphere: Warm ivory, natural oak honey tones, soft terracotta glaze, and muted sage green with gentle morning haze.\nParameters: --ar 4:5 --v 6.0 --style raw",
+            contextPrompt: "[CONTEXT & SUBJECT PROMPT]\nSubject & Setting: Authentic human hands holding a handcrafted textured ceramic coffee mug with both hands, seated near a sunlit window at a honed white oak breakfast bar in a modern Scandinavian kitchen.\nPurpose & Narrative: Editorial in-context photograph capturing mindful morning rituals, warmth, and daily grounding for brand lookbooks and digital lifestyle campaigns.\nAudience & Tone: Contemporary lifestyle consumers, specialty coffee lovers, and interior design advocates seeking cozy authenticity and tactile connection.",
             basePrompt: `Editorial lifestyle photograph of a consumer lifestyle product placed on a solid white oak coffee table in a sun-drenched Scandinavian apartment. Warm 10am morning daylight streaming through floor-to-ceiling loft windows, casting natural organic shadows.
 
 Environment: Clean minimalist interior with textured linen sofa and fiddle-leaf fig plant in soft background bokeh. Natural warm earth tones.
@@ -348,6 +357,8 @@ Parameters: --ar 4:5 --v 6.0 --style raw`,
             tags: ['Campaign', 'Holiday', 'Banner', 'E-commerce'],
             difficulty: 'Medium',
             models: ['Adobe Firefly', 'Midjourney v6'],
+            uiPrompt: "[UI & OPTICS PROMPT]\nCamera & Optics: ARRI Alexa Mini LF, Zeiss Supreme Prime 50mm T1.5 at T2.8, cinematic anamorphic horizontal streak flares, edge sharpness, zero optical distortion.\nLighting Architecture: Warm 3200K tungsten backlight creating crisp golden rim lighting around the bottle silhouette, soft frontal 5600K diffused fill card revealing rich label typography without glare.\nColor Palette: Deep royal crimson (#881337), champagne gold (#D4AF37), forest evergreen, and warm amber bokeh particles.\nParameters: --ar 16:9 --v 6.0 --style raw --q 2",
+            contextPrompt: "[CONTEXT & SUBJECT PROMPT]\nSubject & Setting: Luxury cosmetic glass flacon set amidst a lavish festive holiday composition on a dark midnight velvet drape, accented by frosted pine sprigs, champagne gold satin ribbon loops, and delicate crystal snowflakes.\nCommercial Purpose: High-converting seasonal advertising banner for holiday e-commerce sales, email headers, and social announcements.\nComposition Layout: Asymmetrical composition with product anchored in the left third, leaving soft, uncluttered negative space in the right two-thirds for typography overlay.\nAudience & Tone: Holiday gift shoppers and luxury beauty consumers looking for celebratory indulgence and premium gifting.",
             basePrompt: FESTIVE_BANNER_PROMPT,
             charCount: FESTIVE_BANNER_PROMPT.length,
             previewAccent: 'from-rose-500/20 via-amber-500/15 to-transparent',
@@ -408,13 +419,15 @@ Parameters: --ar 4:5 --v 6.0 --style raw`,
             produces: 'Overhead 90-degree knolling arrangement with balanced negative space and coordinated styling accessories.',
             mainCategory: 'Image',
             media: {
-              thumbnail: '/images/templates/tpl_4_wide.jpg',
-              primaryImage: '/images/templates/tpl_4_wide.jpg',
-              gallery: ['/images/templates/tpl_4_wide.jpg']
+              thumbnail: '/images/templates/tpl_4.jpg',
+              primaryImage: '/images/templates/tpl_4.jpg',
+              gallery: ['/images/templates/tpl_4.jpg', '/images/templates/tpl_4_wide.jpg']
             },
             tags: ['Flat Lay', 'Top-down', 'Instagram'],
             difficulty: 'Medium',
             models: ['DALL-E 3', 'Midjourney v6'],
+            uiPrompt: "[UI & OPTICS PROMPT]\nCamera & Perspective: Phase One XF 100MP, Schneider Kreuznach 80mm LS f/2.8 at f/10 for corner-to-corner clarity, zero barrel distortion, ISO 50. Perfectly level 90-degree overhead bird's-eye perspective (orthogonal knolling).\nSurface & Colors: Matte light-grey concrete surface (#E5E7EB), muted slate, rich cognac leather, warm brass accents, and neutral white linen.\nLighting Architecture: Large overhead diffused softbox creating gentle, natural directional cast shadows downward without harsh specular hotspots.\nParameters: --ar 4:3 --v 6.0 --style raw --q 2",
+            contextPrompt: "[CONTEXT & SUBJECT PROMPT]\nSubject & Items: Premium everyday carry essentials: full-grain cognac leather notebook, matte black brass rollerball pen, minimalist stainless steel mechanical timepiece with leather strap, raw linen textile swatch, and artisanal ceramic espresso cup.\nComposition & Purpose: Geometric knolling layout with intentional 25mm negative spacing between objects for editorial lookbooks, design blogs, and lifestyle brand storytelling.\nAudience & Tone: Creative professionals, architects, and industrial design enthusiasts valuing precision craftsmanship, curated utility, and organized calm.",
             basePrompt: `High-end commercial overhead flat-lay knolling photograph of an artisanal accessory centered on a matte concrete tabletop. Carefully arranged with minimal tonal props: an open textured linen notebook, brass mechanical pencil, and ceramic espresso cup.
 
 Lighting: Overhead diffused softbox lighting eliminating harsh directional glare, balanced 360-degree soft contact shadows.
@@ -470,6 +483,120 @@ Parameters: --ar 1:1 --v 6.0 --q 2`,
                 text: 'Check geometric alignment and download the high-resolution square asset.'
               }
             ]
+          },
+          {
+            id: 'tpl_img_aquatic',
+            name: 'Aquatic Luxury Fragrance',
+            title: 'Aquatic Luxury Fragrance',
+            subtitle: 'High-speed marine water splash and glass refraction',
+            category: 'Advertising & Campaigns',
+            description: 'A dramatic commercial advertising photograph of a luxury azure glass fragrance bottle with explosive high-speed ocean water splash ripples, suspended droplets, and crisp volumetric rim lighting.',
+            produces: 'High-speed commercial advertising visual with crystal-clear fluid crown dynamics and pristine refraction optics.',
+            mainCategory: 'Image',
+            media: {
+              thumbnail: '/images/templates/spray.jpg',
+              primaryImage: '/images/templates/spray.jpg',
+              gallery: ['/images/templates/spray.jpg']
+            },
+            tags: ['Fragrance', 'Water Splash', 'High-Speed', 'Luxury', 'Commercial'],
+            difficulty: 'Medium',
+            models: ['Midjourney v6', 'FLUX.1 Pro'],
+            uiPrompt: `[UI & OPTICS PROMPT]
+Camera & Optics: Hasselblad H6D-100c with HC 120mm II Macro lens, shot at f/8 for tack-sharp focus across both glass bottle facets and airborne water droplets, ISO 64, ultra-fast 1/8000s flash sync speed to freeze water droplets in mid-air with zero motion blur.
+Lighting Architecture: Dual Broncolor high-speed flash strobes positioned at 45-degree angles camera left and right, paired with a blue gelled background backlight (4800K) illuminating crystalline water crown ripples and creating glowing sapphire rim contours.
+Color Science: Marine azure (#0284C7), deep ocean navy (#0F172A), pristine foam white, and subtle platinum highlights on bottle cap.
+Parameters: --ar 3:4 --v 6.0 --style raw --q 2`,
+            contextPrompt: `[CONTEXT & SUBJECT PROMPT]
+Subject & Setting: Sleek geometric translucent marine-blue eau de parfum glass flacon with brushed titanium atomizer, submerged in shallow crystal water on a wet slate pedestal as a dynamic cresting ocean wave erupts around it.
+Commercial Purpose: High-impact hero advertising campaign visual for summer fragrance launches, billboard key visuals, and luxury department store displays.
+Audience & Tone: Luxury perfume aficionados and modern consumers seeking freshness, sensory elevation, and oceanic vitality. Clean, exhilarating, and uncompromisingly premium.`,
+            basePrompt: `Commercial advertising photograph of an azure glass luxury perfume bottle centered amidst a dramatic high-speed water splash. Crystal clear water crown erupts around the base with micro-droplets frozen in mid-air.
+
+Lighting: High-speed studio flash strobes with dramatic rim backlighting illuminating water transparency and multifaceted glass refractions.
+
+Camera & Optics: Shot on Hasselblad H6D-100c, 120mm macro lens at f/8, 1/8000s shutter speed, ISO 64. Pin-sharp focus on the embossed metallic label and suspended water beads.
+
+Parameters: --ar 3:4 --v 6.0 --style raw --q 2`,
+            charCount: 620,
+            previewAccent: 'from-cyan-500/20 via-blue-500/10 to-transparent',
+            tools: [toolsDB.midjourney, toolsDB.flux],
+            guidance: ALL_GUIDANCE_CATALOG.tpl_img_aquatic || []
+          },
+          {
+            id: 'tpl_img_couture',
+            name: 'Editorial Luxury Leather Tote',
+            title: 'Editorial Luxury Leather Tote',
+            subtitle: 'Architectural studio lighting with warm leather grain',
+            category: 'Social & Editorial',
+            description: 'A refined editorial studio photograph of a bespoke full-grain caramel leather designer tote bag resting on a raw travertine stone slab, illuminated by warm raking window sunlight.',
+            produces: 'High-end editorial fashion photography with tactile leather micro-texture fidelity and natural shadow gradation.',
+            mainCategory: 'Image',
+            media: {
+              thumbnail: '/images/templates/bag2.jpg',
+              primaryImage: '/images/templates/bag2.jpg',
+              gallery: ['/images/templates/bag2.jpg']
+            },
+            tags: ['Fashion', 'Leather Goods', 'Editorial', 'Luxury', 'Accessories'],
+            difficulty: 'Easy',
+            models: ['Midjourney v6', 'FLUX.1 Pro'],
+            uiPrompt: `[UI & OPTICS PROMPT]
+Camera & Optics: Phase One IQ4 150MP with Schneider Kreuznach 80mm LS f/2.8 lens stopped down to f/7.1 for exquisite surface micro-detail, ISO 50, tripod-mounted.
+Lighting Architecture: Directional raking sunlight (3600K) through a tall industrial loft window camera right, creating long soft diagonal shadows; large white foam-core reflector camera left for 3:1 shadow fill.
+Color Palette: Rich cognac leather (#9A3412), warm travertine cream (#F5F5F0), and neutral limestone grey.
+Parameters: --ar 3:4 --v 6.0 --style raw`,
+            contextPrompt: `[CONTEXT & SUBJECT PROMPT]
+Subject & Setting: Handcrafted full-grain calfskin leather tote bag in warm cognac brown with hand-stitched saddle seams and polished brass hardware, displayed upright on a monolithic honed travertine plinth.
+Commercial Purpose: Luxury fashion lookbook, editorial e-commerce hero asset, and seasonal print campaign for high-end artisanal leather houses.
+Audience & Tone: Discerning luxury buyers, bespoke accessories connoisseurs, and architectural fashion collectors valuing generational craftsmanship.`,
+            basePrompt: `High-end editorial studio still of a luxury handcrafted full-grain caramel leather tote bag standing upright on a raw travertine stone block. Soft raking morning sunlight entering from camera right, revealing genuine leather grain texture, precise tonal saddle stitching, and polished brass hardware clasps.
+
+Environment: Minimalist architectural gallery setting with subtle plaster wall texture in soft defocus.
+
+Camera & Optics: Phase One IQ4 150MP, 80mm lens at f/7.1, ISO 50. True-to-life color fidelity and subtle natural contact shadows.
+
+Parameters: --ar 3:4 --v 6.0 --style raw`,
+            charCount: 590,
+            previewAccent: 'from-amber-600/20 via-orange-500/10 to-transparent',
+            tools: [toolsDB.midjourney, toolsDB.flux],
+            guidance: ALL_GUIDANCE_CATALOG.tpl_img_couture || []
+          },
+          {
+            id: 'tpl_img_museum',
+            name: 'Haute Couture Architectural Silhouette',
+            title: 'Haute Couture Architectural Silhouette',
+            subtitle: 'High-fashion editorial drapery against brutalist limestone',
+            category: 'Social & Editorial',
+            description: 'An avant-garde high-fashion editorial portrait showcasing sculptural silk organza couture drapery set against monumental brutalist limestone architecture.',
+            produces: 'Museum-grade avant-garde fashion editorial photography with sculptural composition and dramatic tonal chiaroscuro.',
+            mainCategory: 'Image',
+            media: {
+              thumbnail: '/images/templates/dress3.jpg',
+              primaryImage: '/images/templates/dress3.jpg',
+              gallery: ['/images/templates/dress3.jpg']
+            },
+            tags: ['Haute Couture', 'Editorial', 'Architecture', 'High Fashion', 'Vogue'],
+            difficulty: 'Hard',
+            models: ['Midjourney v6', 'Adobe Firefly'],
+            uiPrompt: `[UI & OPTICS PROMPT]
+Camera & Optics: Leica S3 medium format with Summarit-S 70mm f/2.5 ASPH at f/4.0 for sharp garment geometry with gentle spatial rolloff, ISO 100, 1/500s shutter speed.
+Lighting Architecture: Natural high-noon Mediterranean direct sun softened by a 20-foot overhead silk scrim, sculpting dramatic chiaroscuro drapery shadows along the garment folds without blowing out fabric highlights.
+Color Palette: Alabaster silk (#F8FAFC), warm Portuguese limestone (#E2E8F0), and subtle charcoal shadows.
+Parameters: --ar 3:4 --v 6.0 --style raw --q 2`,
+            contextPrompt: `[CONTEXT & SUBJECT PROMPT]
+Subject & Setting: Avant-garde haute couture evening gown featuring billowing architectural pleats and pleated silk organza wings, modeled in a poised statuesque posture at the sunlit colonnade of a contemporary brutalist art pavilion.
+Commercial Purpose: Cover-worthy editorial spread for international fashion publications (Vogue, Harper's Bazaar, Dazed) and Paris Fashion Week digital lookbooks.
+Audience & Tone: Haute couture collectors, fashion designers, and visual art directors looking for dramatic silhouettes, emotional grandeur, and spatial harmony.`,
+            basePrompt: `Avant-garde haute couture fashion editorial photograph of a sculptural silk evening gown featuring billowing architectural pleating. The model stands poised within a monumental brutalist limestone colonnade with dramatic angular shadows.
+
+Lighting: Strong directional sunbeams cutting between concrete pillars, creating high-contrast graphic shadow lines across the flowing alabaster fabric.
+
+Camera & Optics: Shot on Leica S3, Summarit-S 70mm lens at f/4.0, ISO 100. Editorial Vogue aesthetic, rich tonal gradation, tack-sharp textile weave.
+
+Parameters: --ar 3:4 --v 6.0 --style raw --q 2`,
+            charCount: 610,
+            previewAccent: 'from-purple-500/20 via-rose-500/10 to-transparent',
+            tools: [toolsDB.midjourney, toolsDB.firefly],
+            guidance: ALL_GUIDANCE_CATALOG.tpl_img_museum || []
           }
         ]
       }
@@ -497,12 +624,14 @@ Parameters: --ar 1:1 --v 6.0 --q 2`,
             media: {
               thumbnail: '/images/templates/tpl_video_1.jpg',
               poster: '/images/templates/tpl_video_1.jpg',
-              videoUrl: '#',
+              videoUrl: '/videos/product_bottle_spin.mp4',
               gallery: ['/images/templates/tpl_video_1.jpg']
             },
             tags: ['Video', 'Orbit', 'Demo'],
             difficulty: 'Medium',
             models: ['Runway Gen-2'],
+            uiPrompt: "[UI & MOTION PROMPT]\nCamera Movement & Trajectory: Static level eye-line camera with subtle continuous optical zoom (+1.1x magnification) locked onto the golden cap. Horizontal circular pedestal orbital rotation at constant 90 deg/sec angular velocity with zero wobble.\nTiming & Frame Rate: 4.0 seconds duration, seamless loop point at frame 96 (24fps cadence).\nVisual Style: High-end luxury television advertisement, sharp metallic reflections, anamorphic glint flares on bottle facets, polished black marble turntable surface.\nAspect Ratio: 16:9 widescreen (1920x1080).",
+            contextPrompt: "[CONTEXT & SUBJECT PROMPT]\nSubject: Premium geometric perfume flacon with embossed metallic branding and multifaceted crystal glass body.\nCommercial Intent: Seamless product video loop for high-converting e-commerce PDP hero sections, digital billboards, and luxury retail displays.\nAudience & Tone: Discerning luxury fragrance buyers seeking elegance, sensory sophistication, and exquisite industrial design.\nEnding Criteria: Completes exact 360-degree rotation, aligning seamlessly back to frame 1 for an imperceptible infinite loop.",
             basePrompt: `Cinematic 360-degree slow pan around a modern geometric perfume bottle resting on a black marble pedestal. The camera moves smoothly in a continuous orbit.
 
 Lighting: Dramatic studio lighting with a soft rim light tracking the bottle's edges.
@@ -526,7 +655,7 @@ Parameters: --camera orbit_left`,
               {
                 step: 2,
                 title: 'Upload High-Res Product Reference Still',
-                description: 'Click the "Image" tab above the prompt box and upload a clean studio still of your product on a pedestal (generated from template tpl_1).',
+                description: 'Click the "Image" tab above the prompt box and upload a clean studio still of your product centered on a pedestal or sweep.',
                 image: '/images/guidance/tpl_video_1/step-2.svg',
                 tip: 'Providing an initial reference image locks your exact branding, labels, and geometry.',
                 text: 'Upload a clean studio photograph of your product to lock geometry.'
@@ -578,12 +707,14 @@ Parameters: --camera orbit_left`,
             media: {
               thumbnail: '/images/templates/tpl_video_2.jpg',
               poster: '/images/templates/tpl_video_2.jpg',
-              videoUrl: '#',
+              videoUrl: '/videos/macro_fluid_splash.webm',
               gallery: ['/images/templates/tpl_video_2.jpg']
             },
             tags: ['Video', 'Macro', 'Slow Motion'],
             difficulty: 'Hard',
             models: ['Pika Labs'],
+            uiPrompt: "[UI & MOTION PROMPT]\nCamera & Time Dilation: Micro slow-motion dolly forward (-camera zoom in 1.2), tack-sharp focus locked on water droplets. 3.5 seconds duration, ultra-slow 1000fps time-dilation aesthetic rendered at 24fps playback.\nVisual Physics: Pristine crystalline liquid physics, suspended micro-droplets with surface tension, backlit golden morning sunbeams refracting through droplets.\nAspect Ratio: 16:9 widescreen (1920x1080).",
+            contextPrompt: "[CONTEXT & SUBJECT PROMPT]\nSubject: Crystal-clear hydrating cosmetics skincare vial resting on a submerged smooth river stone in a shallow pure water basin.\nCommercial Narrative: Illustrates deep hydration, purity, and organic bio-actives for a breakthrough skincare product launch.\nAudience & Tone: Clean beauty enthusiasts, dermatological skincare consumers, and wellness shoppers looking for refreshing, pristine efficacy.\nEnding State: Droplets settle into calm surface ripples, leaving cosmetics flacon pristine with no water spots on label.",
             basePrompt: `Extreme macro slow motion video of crystal clear water splashing over a smooth river stone. Tiny droplets suspended in mid-air.
 
 Lighting: Bright commercial studio lighting, backlit to highlight the fluid transparency.
@@ -651,12 +782,14 @@ Parameters: -motion 3`,
             media: {
               thumbnail: '/images/templates/tpl_video_3.jpg',
               poster: '/images/templates/tpl_video_3.jpg',
-              videoUrl: '#',
+              videoUrl: '/videos/cinematic_reveal.mp4',
               gallery: ['/images/templates/tpl_video_3.jpg']
             },
             tags: ['Video', 'Reveal', 'Lighting'],
             difficulty: 'Easy',
             models: ['Runway Gen-2'],
+            uiPrompt: "[UI & MOTION PROMPT]\nCamera Movement & Optics: Slow vertical tilt-up (Tilt Up +2.0) combined with smooth optical rack focus shifting from misty foreground foliage to illuminated gold-embossed brand label.\nVisual Style: Moody cinematic film stock, anamorphic streak flare, soft morning crepuscular light beams cutting through greenhouse mist.\nTiming & Cadence: 5.0 seconds duration, dramatic build-up cadence at 24fps.\nAspect Ratio: 9:16 vertical full-screen smartphone format (1080x1920).",
+            contextPrompt: "[CONTEXT & SUBJECT PROMPT]\nSubject & Setting: Artisanal organic botanical skincare elixir with amber liquid inside a frosted dropper bottle, situated in a misty, lush greenhouse surrounded by monstera foliage.\nCampaign Goal: Vertical mobile video hook for TikTok, Instagram Reels, and YouTube Shorts to build anticipation ahead of a seasonal product drop.\nAudience & Tone: Eco-luxury consumers and wellness enthusiasts captivated by botanical ingredients, sensory tranquility, and artisanal craftsmanship.",
             basePrompt: `A sleek sports car sitting in complete darkness. A single overhead light tube flickers on, slowly revealing the glossy metallic paint. The camera slowly pushes in.
 
 Lighting: Transition from pitch black to dramatic high-contrast overhead strip lighting.
@@ -711,6 +844,82 @@ Parameters: --camera zoom_in`,
                 text: 'Inspect contrast levels and download finished cinematic reveal MP4.'
               }
             ]
+          },
+          {
+            id: 'tpl_video_reel',
+            name: 'Dynamic Social Launch Reel',
+            title: 'Dynamic Social Launch Reel',
+            subtitle: 'Vertical 4:5 / 9:16 mobile-first product video clip',
+            category: 'Social Media Clips',
+            description: 'A fast-paced, high-energy vertical product launch reel with rhythmic camera zooms, kinetic graphic overlays, and neon ambient rim glow tailored for TikTok and Instagram Reels.',
+            produces: 'High-conversion 5-second vertical video reel with kinetic momentum and viral social media retention.',
+            mainCategory: 'Video',
+            media: {
+              thumbnail: '/images/templates/tpl_social_launch.svg',
+              poster: '/images/templates/tpl_social_launch.svg',
+              videoUrl: '/videos/social_reel_motion.mp4',
+              gallery: ['/images/templates/tpl_social_launch.svg']
+            },
+            tags: ['Reels', 'TikTok', 'Vertical Video', 'Launch', 'Motion', 'Social'],
+            difficulty: 'Medium',
+            models: ['Runway Gen-2', 'Pika Labs'],
+            uiPrompt: `[UI & MOTION PROMPT]
+Camera Movement & Optics: Rapid snap-zoom in (+2.5x) followed by continuous dynamic Dutch angle tilt (+15 degrees). High-octane kinetic cadence synced to a 128 BPM electronic trap rhythm.
+Visual Dynamics: Neon magenta (#D946EF) and electric cyan (#06B6D4) laser rim outlines tracing the product silhouette against dark carbon fiber studio walls; subtle motion blur streaks on quick whip-pans.
+Aspect Ratio: 9:16 vertical mobile format (1080x1920) or 4:5 vertical feed format.
+Duration: 5.0 seconds at 30fps.`,
+            contextPrompt: `[CONTEXT & SUBJECT PROMPT]
+Subject: Next-generation wireless noise-canceling headphones with forged carbon earcups and pulsating LED status ring, floating weightlessly before rapidly snapping toward the camera.
+Commercial Intent: Viral organic TikTok and Instagram Reels drop video engineered for 3-second hook rate (>70%) and immediate click-through to product checkout.
+Audience & Tone: Gen Z and Millennial tech enthusiasts, street fashion fans, and audiophiles seeking high energy, bold cyber aesthetics, and instant hype.`,
+            basePrompt: `High-energy vertical product launch video reel for a futuristic tech accessory. Camera performs an explosive snap zoom into the product, accompanied by rhythmic neon rim pulses and kinetic rotational momentum.
+
+Lighting: Dark cyberpunk studio with pulsating electric violet and cyan neon edge lights tracing metallic bevels.
+Camera & Motion: Fast whip-pan transitions, dynamic Dutch angle, 9:16 vertical mobile aspect ratio, 30fps cinematic fluidity.
+
+Parameters: --camera zoom_in_fast --motion 4`,
+            charCount: 480,
+            previewAccent: 'from-fuchsia-500/20 via-indigo-500/10 to-transparent',
+            tools: [toolsDB.runway, toolsDB.pika],
+            guidance: ALL_GUIDANCE_CATALOG.tpl_video_reel || []
+          },
+          {
+            id: 'tpl_video_jellyfish',
+            name: 'Deep Sea Bioluminescence Loop',
+            title: 'Deep Sea Bioluminescence Loop',
+            subtitle: 'Slow-motion macro fluid & ethereal marine life motion',
+            category: 'Product Demo Videos',
+            description: 'A hypnotic, meditative slow-motion generative motion loop of translucent bioluminescent deep-sea jellyfish pulsing gently through midnight abyss waters with chromatic filament trails.',
+            produces: 'Seamless 4-second ambient video loop with ethereal micro-physics and tranquil organic rhythm.',
+            mainCategory: 'Video',
+            media: {
+              thumbnail: '/images/templates/tpl_video_4_poster.svg',
+              poster: '/images/templates/tpl_video_4_poster.svg',
+              videoUrl: '/videos/sample_jellyfish.mp4',
+              gallery: ['/images/templates/tpl_video_4_poster.svg']
+            },
+            tags: ['Video', 'Bioluminescence', 'Ambient', 'Slow Motion', 'Loop'],
+            difficulty: 'Hard',
+            models: ['Runway Gen-2'],
+            uiPrompt: `[UI & MOTION PROMPT]
+Camera Movement: Slow stabilized vertical tracking shot rising alongside pulsating tentacles with subtle rotational drift (yaw +0.8).
+Physics & Timing: Ethereal fluid dynamics with rhythmic hydrostatic bell contraction every 2.0 seconds; trailing glowing micro-filaments reacting smoothly to water viscosity.
+Atmosphere & Lighting: Deep midnight abyss (#030712) with internal bioluminescent cyan (#2DD4BF) and ultraviolet (#818CF8) organ glow casting delicate caustic ripples through suspended marine snow particles.
+Aspect Ratio: 16:9 widescreen (1920x1080).`,
+            contextPrompt: `[CONTEXT & SUBJECT PROMPT]
+Subject: Translucent pelagic jellyfish with delicate crystalline umbrella and flowing luminescent oral arms pulsing serenely in deep ocean pelagic waters.
+Commercial Purpose: Mesmerizing ambient video background for wellness brand websites, digital art installations, luxury spa video walls, and calming sleep app visuals.
+Audience & Tone: Meditative viewers, ocean lovers, and premium brand visual directors looking for tranquility, organic beauty, and hypnotic natural rhythms.`,
+            basePrompt: `Cinematic slow-motion ambient loop of a translucent deep-sea jellyfish pulsing serenely through dark ocean waters. Ethereal bioluminescent blue and cyan glow radiating from within its bell, illuminating delicate trailing tentacles and floating ambient marine snow.
+
+Lighting: Volumetric internal glow with soft light refractions through crystalline organic tissues.
+Camera: Slow upward tracking camera, shallow depth of field, 24fps fluid motion fidelity.
+
+Parameters: --camera track_up --motion 2`,
+            charCount: 460,
+            previewAccent: 'from-teal-500/20 via-cyan-500/10 to-transparent',
+            tools: [toolsDB.runway],
+            guidance: ALL_GUIDANCE_CATALOG.tpl_video_jellyfish || []
           }
         ]
       }
@@ -742,6 +951,8 @@ Parameters: --camera zoom_in`,
             tags: ['Slides', 'Pitch', 'Startup'],
             difficulty: 'Easy',
             models: ['Gamma'],
+            uiPrompt: "[UI & PRESENTATION PROMPT]\nLayout & Architecture: 10-slide responsive presentation deck built on Gamma App. Card-based layout with clean metric callout chips and split-screen diagrams.\nVisual Style: Modern institutional dark theme, deep sapphire blue (#1D4ED8) accents on slate (#0F172A), typography in Inter & Plus Jakarta Sans, high-contrast numerical highlights ($1.2M ARR, 142% NRR).\nAspect Ratio: 16:9 widescreen presentation mode.",
+            contextPrompt: "[CONTEXT & NARRATIVE PROMPT]\nTopic & Company: Seed Capital Investment Pitch Deck for 'Vektor AI' — an enterprise agentic creative workflow automation platform.\nAudience: Early-stage venture capital partners and angel syndicates investing in enterprise AI infrastructure.\nKey Narrative & Ask: Secure a $3.5M Seed round by presenting market timing ($42B TAM by 2028), multi-modal routing architecture, 85% gross margins, and founder credentials from DeepMind and Stripe.\nContent Structure: 1. Title/Value Prop, 2. Problem Sprawl, 3. Unified Solution, 4. Architecture, 5. Market TAM, 6. Unit Economics, 7. Traction Proof, 8. Moat, 9. Founding Team, 10. The Ask ($3.5M).",
             basePrompt: `Create a 10-slide seed pitch deck for a B2B SaaS company that automates HR workflows.
 The tone should be professional, data-driven, and minimalist.
 Include these sections: Title, Problem, Solution, Market Size, Business Model, Go-To-Market, Traction, Team, Financial Projections, and The Ask.
@@ -811,6 +1022,8 @@ Theme: Dark mode with neon blue accents.`,
             tags: ['Slides', 'Report', 'Marketing'],
             difficulty: 'Easy',
             models: ['Gamma'],
+            uiPrompt: "[UI & PRESENTATION PROMPT]\nVisual System: Clean executive white or deep navy, vibrant violet (#7C3AED) and cyan (#06B6D4) data visualization charts, clean tables, Plus Jakarta Sans typography.\nSlide Components: KPI dashboard cards (CAC $42, LTV:CAC 4.8x), multi-channel attribution bar charts, funnel drop-off diagrams, and budget reallocation matrix tables.\nAspect Ratio: 16:9 widescreen.",
+            contextPrompt: "[CONTEXT & NARRATIVE PROMPT]\nTopic & Scope: Q3/Q4 Omni-Channel Growth Marketing Strategy & Performance Review Presentation for executive leadership.\nAudience: C-suite executives, VP of Marketing, and cross-functional department heads.\nGoal & Strategy: Present customer acquisition efficiency (CAC down 24%), channel performance attribution across Meta/Google/LinkedIn, and secure an H2 budget reallocation of $850k towards high-yield generative video creatives.",
             basePrompt: `Generate a monthly marketing performance report presentation.
 Include slides for: Executive Summary, Traffic Growth, Conversion Rates, Campaign Highlights, and Next Month Goals.
 Use a clean, corporate theme with ample whitespace and large metric callouts.`,
@@ -879,6 +1092,8 @@ Use a clean, corporate theme with ample whitespace and large metric callouts.`,
             tags: ['Slides', 'Portfolio', 'Agency'],
             difficulty: 'Medium',
             models: ['Gamma'],
+            uiPrompt: "[UI & PRESENTATION PROMPT]\nVisual System & Theme: Sleek editorial dark mode, emerald green (#10B981) performance accents on matte obsidian (#0B0F17), typography in Space Grotesk and Inter.\nCard Structure: 8-card slide deck with high-contrast before/after KPI comparison cards, biometrics login mockup frames, and an executive quote card block.\nAspect Ratio: 16:9 widescreen presentation format.",
+            contextPrompt: "[CONTEXT & NARRATIVE PROMPT]\nTopic & Engagement: Digital Transformation & Performance Overhaul Agency Case Study for 'Solaris Global' fintech platform.\nTarget Audience: Enterprise CMOs, VP of Product, and procurement directors evaluating premium digital design agencies.\nNarrative & Business Proof: How an agency redesign reduced mobile onboarding friction from 62% drop-off to a +280% completion surge, generating $1.4B in transaction volume and closing $250k enterprise client retainers.",
             basePrompt: `Create a case study presentation for a creative agency.
 Focus heavily on large image placeholders and minimal text.
 Include: Client Overview, The Challenge, Our Approach, The Work (3 slides), and Results.
@@ -931,6 +1146,45 @@ Theme: Brutalist, high contrast, black and white.`,
                 text: 'Generate responsive web showcase link ready to send to prospective clients.'
               }
             ]
+          },
+          {
+            id: 'tpl_slide_edu',
+            name: 'Executive Masterclass Deck',
+            title: 'Executive Masterclass Deck',
+            subtitle: 'Modern modular slides for workshops and educational keynotes',
+            category: 'Report Summaries',
+            description: 'A clean, structured 12-slide masterclass and executive workshop presentation template with modular frameworks, mental model diagrams, and interactive exercise cards.',
+            produces: 'Comprehensive 12-slide educational keynote presentation deck with clear pedagogical structure.',
+            mainCategory: 'Slides',
+            media: {
+              thumbnail: '/images/templates/tpl_slide_edu_1_1.svg',
+              slides: [
+                '/images/templates/tpl_slide_edu_1_1.svg',
+                '/images/templates/tpl_slide_edu_1_2.svg',
+                '/images/templates/tpl_slide_edu_1_3.svg',
+                '/images/templates/tpl_slide_edu_1_4.svg'
+              ],
+              gallery: ['/images/templates/tpl_slide_edu_1_1.svg']
+            },
+            tags: ['Slides', 'Masterclass', 'Workshop', 'Education', 'Keynote', 'Gamma'],
+            difficulty: 'Easy',
+            models: ['Gamma'],
+            uiPrompt: `[UI & PRESENTATION PROMPT]
+Visual System: Clean editorial light or deep indigo theme, vibrant violet (#6366F1) and amber (#F59E0B) focus highlights, Plus Jakarta Sans typography with high typographic hierarchy.
+Card Layouts: 12-card responsive educational presentation deck in Gamma App. Includes agenda cards, 2x2 mental model matrix diagrams, stepped 4-phase framework flows, and break-out workshop exercise prompt cards with timer chips.
+Aspect Ratio: 16:9 widescreen presentation mode.`,
+            contextPrompt: `[CONTEXT & NARRATIVE PROMPT]
+Topic & Program: "Agentic AI Systems in Enterprise: Architecture, Governance & Workflow Automation" — an executive 1-day masterclass for Fortune 500 product leaders and CTOs.
+Audience: Technical executives, VP of Engineering, Chief Digital Officers, and enterprise product directors.
+Pedagogical Strategy: Break down complex autonomous agent loops (Perception, Planning, Execution, Verification) into actionable architectural diagrams, ROI case studies, and hands-on governance sandbox exercises.`,
+            basePrompt: `Create a 12-slide executive masterclass presentation for a workshop on "Agentic AI Systems in Enterprise".
+The tone should be authoritative, pedagogical, and highly structured with visual frameworks.
+Include: Title Slide, Workshop Agenda, The Paradigm Shift, 4-Phase Agentic Loop, Architecture Blueprint, Real-World Case Studies, ROI & Efficiency Benchmarks, Risk & Governance Matrix, Interactive Team Exercise, Pitfalls to Avoid, Implementation Roadmap, and Resource Kit.
+Theme: Clean high-contrast navy and violet with crisp metric callout chips.`,
+            charCount: 450,
+            previewAccent: 'from-indigo-500/20 via-purple-500/10 to-transparent',
+            tools: [toolsDB.gamma],
+            guidance: ALL_GUIDANCE_CATALOG.tpl_slide_edu || []
           }
         ]
       }
@@ -1265,7 +1519,9 @@ Primary CTA: "Request Security Architecture Demo →"`,
             mainCategory: 'Websites',
             media: {
               thumbnail: '/images/templates/tpl_robotics_1.jpg',
+              poster: '/images/templates/tpl_robotics_1.jpg',
               desktopPreview: '/images/templates/tpl_robotics_1.jpg',
+              motionPreviewUrl: '/videos/web_3d_robotics.mp4',
               gallery: ['/images/templates/tpl_robotics_1.jpg']
             },
             tags: ['Robotics', 'Studio', 'Web', 'Mecha', 'Hardware'],
@@ -1423,7 +1679,9 @@ Primary CTA: "Reserve Founder's Edition →"`,
             mainCategory: 'Websites',
             media: {
               thumbnail: '/images/templates/tpl_3d_1.jpg',
+              poster: '/images/templates/tpl_3d_1.jpg',
               desktopPreview: '/images/templates/tpl_3d_1.jpg',
+              motionPreviewUrl: '/videos/web_3d_spatial.mp4',
               gallery: ['/images/templates/tpl_3d_1.jpg']
             },
             tags: ['3D', 'Holographic', 'Creative', 'Web', 'Generative'],
@@ -1580,12 +1838,146 @@ Primary CTA: "Pre-Order for Today's Pickup →"`,
                 text: 'Supply context prompt to populate sourdough menu and bake times.'
               }
             ]
+          },
+          {
+            id: 'tpl_3d_timepiece',
+            name: 'Haute Horology 3D Showcase',
+            title: 'Haute Horology 3D Showcase',
+            subtitle: 'Interactive WebGL mechanical watch viewer with kinetic gearwork',
+            category: '3D Websites',
+            description: 'A state-of-the-art interactive 3D WebGL website showcase for an ultra-luxury skeleton tourbillon timepiece featuring real-time exploded component view, camera orbit, and Swiss watchmaking heritage.',
+            produces: 'Production-grade Three.js / React Three Fiber interactive 3D web experience with exploded CAD assembly inspection.',
+            mainCategory: 'Websites',
+            media: {
+              thumbnail: '/images/templates/tpl_3d_timepiece_poster.svg',
+              poster: '/images/templates/tpl_3d_timepiece_poster.svg',
+              desktopPreview: '/images/templates/tpl_3d_timepiece_poster.svg',
+              mobilePreview: '/images/templates/tpl_3d_timepiece_mobile.svg',
+              motionPreviewUrl: '/videos/web_3d_timepiece.mp4',
+              gallery: ['/images/templates/tpl_3d_timepiece_poster.svg']
+            },
+            tags: ['3D', 'WebGL', 'Luxury', 'Horology', 'Three.js', 'Interactive'],
+            difficulty: 'Hard',
+            models: ['v0 by Vercel', 'Framer AI'],
+            uiPrompt: `Create an ultra-luxury 3D interactive timepiece web application using Next.js, React Three Fiber (Three.js), and Tailwind CSS.
+
+Layout & 3D Canvas Architecture:
+- Fullscreen WebGL viewport with smooth mouse-orbit controls, spring damping, and focal lock on the balance wheel.
+- Exploded View Toggle: Smooth cinematic camera animation transitioning between assembled case and 7-layer exploded component view (sapphire crystal, bezel, dial ring, tourbillon cage, balance spring, mainplate, exhibition caseback).
+- Minimalist HUD Overlay: Clean technical coordinates, current Swiss time in Geneva (GMT+1), jewel count (38 Jewels), power reserve meter (72 Hours), and frequency indicator (28,800 vph).
+- Audio Integration: Subtle mechanical tick-sound toggle button using Web Audio API.
+
+Styling, Theme & Tokens:
+- Dark luxury theme: Background #050508, metallic satin gold (#D4AF37), polished grade-5 titanium (#64748B), and deep slate (#0F172A).
+- Typography: Swiss geometric sans-serif (Suisse Int'l or Archivo) with tabular figures (tabular-nums) for watch specs.
+- Accessibility & Fallbacks: Graceful high-resolution WebP/SVG fallback for non-WebGL devices with full ARIA inspection controls.`,
+            contextPrompt: `Website Identity & Purpose:
+This site is the bespoke digital launch boutique for 'Vaucher & Co.', an independent Geneva manufacture producing limited-run skeleton tourbillon timepieces for high-net-worth collectors.
+
+Target Audience & User Persona:
+- Ultra-high-net-worth watch collectors, connoisseurs of haute horology, and luxury auction participants.
+- Mechanical engineers and industrial designers fascinated by micro-mechanical tolerance and hand-beveled anglage finishing.
+
+Primary Business Goals:
+- Build brand mystique and educate collectors on the 480 hours of hand finishing invested into each movement.
+- Secure direct private consultation bookings and bespoke allocation requests ($85,000+ MSRP).
+
+Key Sections & Flow:
+1. Interactive Tourbillon Viewer: Real-time 3D exploded view with component click hotspots.
+2. Manufacture Heritage: Hand-finishing atelier tour in Le Brassus, Switzerland.
+3. Technical Specifications Matrix: Monolithic titanium case, silicon hairspring, twin barrels.
+4. Bespoke Atelier Configurator: Strap leather selection and personalized case engraving preview.
+5. Private Allocation Request: White-glove concierge booking form.`,
+            basePrompt: `[UI & IMPLEMENTATION PROMPT]
+Ultra-luxury 3D interactive Swiss mechanical timepiece website using Next.js, React Three Fiber, and Tailwind CSS.
+Features: Interactive 3D WebGL tourbillon watch canvas with exploded view toggle, orbital camera controls, Geneva time clock HUD, and 38-jewel movement telemetry. Palette: #050508 obsidian with satin gold (#D4AF37) and titanium accents.
+
+[BUSINESS CONTEXT PROMPT]
+Brand: 'Vaucher & Co.' — Independent Geneva haute horology manufacture.
+Audience: High-net-worth collectors and connoisseurs.
+Goal: Exploded movement inspection and private allocation requests ($85,000+ timepiece).
+Primary CTA: "Request Private Atelier Allocation →"`,
+            charCount: 2750,
+            previewAccent: 'from-amber-500/20 via-yellow-500/10 to-transparent',
+            tools: [toolsDB.v0, toolsDB.framer],
+            guidance: ALL_GUIDANCE_CATALOG.tpl_3d_timepiece || []
+          },
+          {
+            id: 'tpl_3d_pavilion',
+            name: 'Spatial Architecture & Pavilion 3D',
+            title: 'Spatial Architecture & Pavilion 3D',
+            subtitle: 'Brutalist concrete architecture portfolio with interactive sun path',
+            category: '3D Websites',
+            description: 'An architectural studio showcase website featuring an interactive 3D spatial pavilion model with simulated sun-path shadows, material shaders (cast concrete, glass, water), and spatial walkthroughs.',
+            produces: 'Interactive 3D architectural design website with real-time solar study lighting and spatial portfolio cards.',
+            mainCategory: 'Websites',
+            media: {
+              thumbnail: '/images/templates/tpl_3d_pavilion_poster.svg',
+              poster: '/images/templates/tpl_3d_pavilion_poster.svg',
+              desktopPreview: '/images/templates/tpl_3d_pavilion_poster.svg',
+              mobilePreview: '/images/templates/tpl_3d_pavilion_mobile.svg',
+              motionPreviewUrl: '/videos/web_3d_pavilion.mp4',
+              gallery: ['/images/templates/tpl_3d_pavilion_poster.svg']
+            },
+            tags: ['Architecture', '3D', 'Spatial', 'Brutalist', 'Interactive', 'Portfolio'],
+            difficulty: 'Medium',
+            models: ['v0 by Vercel', 'Framer AI'],
+            uiPrompt: `Build a modern architectural studio website with interactive 3D spatial model viewer and real-time solar sun-path simulation using React, Three.js, and Tailwind CSS.
+
+Layout & Architecture:
+- Split-screen spatial layout: Left side contains architectural project statement, floorplan toggle, and solar time-of-day slider (6:00 AM dawn to 8:00 PM dusk); Right side houses the real-time 3D pavilion model canvas with physically based concrete and reflecting pool shaders.
+- Floorplan Blueprint Overlay: Clean vector CAD wireframe toggle displaying spatial dimensions in meters.
+- Project Gallery Grid: Below the hero, a 3-column asymmetric grid of completed public pavilions, art galleries, and residential retreats.
+
+Styling, Theme & Palette:
+- Architectural minimalism: Warm bone white background (#F4F4F0) with deep graphite type (#18181B) and warm rust-red accents (#991B1B).
+- Typography: Architectural monospaced typography (Space Mono or Roboto Mono) for coordinates and dimensions, paired with elegant geometric sans (Neue Haas Grotesk).`,
+            contextPrompt: `Website Identity & Purpose:
+This site represents 'Atelier Kōso', an award-winning Tokyo & Zurich architectural practice specializing in minimalist cast concrete cultural pavilions, meditation centers, and civic amphitheaters.
+
+Target Audience & User Persona:
+- Cultural Foundation Boards, Museum Curators, and Municipal Arts Councils commissioning public cultural architecture.
+- Private patrons seeking bespoke architectural residences integrated seamlessly into natural landscapes.
+
+Primary Business Goals:
+- Demonstrate spatial mastery of light, shadow, and materiality through an interactive solar sun-study simulation.
+- Attract prestigious institutional design competitions and high-budget residential commissions.
+
+Key Sections & Flow:
+1. Hero Spatial Viewer: "Form Follows Light — Spatial Architecture for Contemplation."
+2. Real-Time Solar Study: Interactive slider showing shifting daylight cast shadows through concrete skylights.
+3. Monograph & Projects: Selected works featuring Kyoto Water Pavilion and Zurich Stone Sanctuary.
+4. Materiality & Craft: Board-formed concrete, hand-chiseled granite, and acoustic cedar woodwork.
+5. Commission Inquiries: Direct partner consultation request form.`,
+            basePrompt: `[UI & IMPLEMENTATION PROMPT]
+Architectural studio spatial website with interactive 3D pavilion viewer and solar sun-path lighting slider in React, Three.js, and Tailwind CSS. Warm bone palette (#F4F4F0), graphite typography, blueprint wireframe overlay, and 3-column monograph project grid.
+
+[BUSINESS CONTEXT PROMPT]
+Practice: 'Atelier Kōso' — Minimalist cast concrete and cultural architecture studio (Tokyo & Zurich).
+Audience: Museum curators, cultural foundation boards, and private patrons.
+Goal: Demonstrating mastery of natural lighting and winning architectural commissions.
+Primary CTA: "Commission an Architectural Project →"`,
+            charCount: 2690,
+            previewAccent: 'from-slate-500/20 via-stone-500/10 to-transparent',
+            tools: [toolsDB.v0, toolsDB.framer],
+            guidance: ALL_GUIDANCE_CATALOG.tpl_3d_pavilion || []
           }
         ]
       }
     ]
   }
 ];
+
+// Enrich mockCatalog templates with specific, verified guidance steps
+mockCatalog.forEach((cat) => {
+  cat.subcategories.forEach((sub) => {
+    sub.templates.forEach((t) => {
+      if (ALL_GUIDANCE_CATALOG[t.id]) {
+        t.guidance = ALL_GUIDANCE_CATALOG[t.id];
+      }
+    });
+  });
+});
 
 export const CATEGORIES = [
   'Image',
@@ -1624,19 +2016,19 @@ export const categoryTree: CategoryNode[] = [
         id: 'product-photography',
         name: 'Product Photography',
         description: 'Clean isolated product visuals and studio tabletop arrangements.',
-        templateIds: ['tpl_1', 'tpl_4'],
+        templateIds: ['tpl_1', 'tpl_4', 'tpl_img_couture'],
       },
       {
         id: 'lifestyle-context',
         name: 'Lifestyle & Context',
         description: 'Contextual staging in real-world living and architectural spaces.',
-        templateIds: ['tpl_2'],
+        templateIds: ['tpl_2', 'tpl_img_museum'],
       },
       {
         id: 'advertising-campaigns',
         name: 'Advertising & Campaigns',
         description: 'High-impact cinematic hero banners and promotional marketing imagery.',
-        templateIds: ['tpl_3'],
+        templateIds: ['tpl_3', 'tpl_img_aquatic'],
       },
     ],
   },
@@ -1649,13 +2041,13 @@ export const categoryTree: CategoryNode[] = [
         id: 'product-demo-videos',
         name: 'Product Demo Videos',
         description: 'Smooth camera movements and transitions for product showcases.',
-        templateIds: ['tpl_video_1', 'tpl_video_2'],
+        templateIds: ['tpl_video_1', 'tpl_video_2', 'tpl_video_jellyfish'],
       },
       {
         id: 'social-media-clips',
         name: 'Social Media Clips',
         description: 'Short-form energetic videos for Instagram and TikTok.',
-        templateIds: ['tpl_video_3'],
+        templateIds: ['tpl_video_3', 'tpl_video_reel'],
       },
     ],
   },
@@ -1674,7 +2066,7 @@ export const categoryTree: CategoryNode[] = [
         id: 'report-summaries',
         name: 'Report Summaries',
         description: 'A template for presenting monthly marketing KPIs.',
-        templateIds: ['tpl_slide_2'],
+        templateIds: ['tpl_slide_2', 'tpl_slide_edu'],
       },
     ],
   },
@@ -1687,13 +2079,19 @@ export const categoryTree: CategoryNode[] = [
         id: 'landing-pages',
         name: 'Landing Pages',
         description: 'High-converting marketing pages and hero sections.',
-        templateIds: ['tpl_web_1', 'tpl_web_3'],
+        templateIds: ['tpl_web_1', 'tpl_web_3', 'tpl_future_machine', 'tpl_quantum_human', 'tpl_web_bakery'],
       },
       {
         id: 'portfolio-sites',
         name: 'Portfolio Sites',
         description: 'Modern bento-grid personal portfolio sites.',
         templateIds: ['tpl_web_2'],
+      },
+      {
+        id: '3d-websites',
+        name: '3D & Spatial Websites',
+        description: 'Interactive WebGL, Three.js, and spatial web canvases.',
+        templateIds: ['tpl_mind_ai', 'tpl_3d_timepiece', 'tpl_3d_pavilion'],
       },
     ],
   }
@@ -1762,3 +2160,13 @@ export function findTemplate(templateId: string): {
   }
   return null;
 }
+
+export function findCategory(categoryId: string): Category | undefined {
+  return mockCatalog.find((c) => c.id === categoryId);
+}
+
+export function findSubcategory(categoryOrId: Category | string, subcategoryId: string): Subcategory | undefined {
+  const cat = typeof categoryOrId === 'string' ? findCategory(categoryOrId) : categoryOrId;
+  return cat?.subcategories.find((s) => s.id === subcategoryId);
+}
+

@@ -112,9 +112,12 @@ Deliver the prompt.
 **This is the endpoint that walks the one public-to-private reference in the whole model** (`07 §8.1`): it reads `template.current_version_id` from the public database, then resolves that id against `template_version` in the private database. If the reference is stale — pointing at a version that no longer exists — that is the cross-database consistency risk `07 §22` item 10 names, not a case this contract can validate away.
 
 ## API-004 · `POST /prompts/{id}/customize`
-Revise a prompt from a described change.
+Revise a prompt from a described change via external LLM transformation.
 **Auth:** subscriber, with allowance, owning the prompt · **Database:** Private only, throughout
 **Traceability:** FR-015, FR-017, FR-018, FR-050 / FEAT-013, 015, 026, 043
+
+> **Implementation Note — Direct In-App Context Customization:**
+> On the template detail page, subscribers customize their **Context Prompt** deterministically on the client side by combining their thoughts with the template context blueprint. This in-browser combination **does not call API-004 and does not deduct credits**. API-004 and its credit ledger/safeguards remain dedicated to external generative model transformations.
 
 **Request**
 ```json

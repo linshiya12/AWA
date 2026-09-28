@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080" width="100%" height="100%">
+  <defs>
+    <linearGradient id="grad_soc" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4F46E5"/>
+      <stop offset="50%" stop-color="#0F172A"/>
+      <stop offset="100%" stop-color="#020617"/>
+    </linearGradient>
+    <linearGradient id="glow_grad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#38BDF8"/>
+      <stop offset="100%" stop-color="#EC4899"/>
+    </linearGradient>
+  </defs>
+  <rect width="1080" height="1080" fill="url(#grad_soc)"/>
+  <circle cx="850" cy="250" r="320" fill="#38BDF8" opacity="0.25"/>
+  <circle cx="200" cy="850" r="300" fill="#EC4899" opacity="0.2"/>
+
+  <!-- Card Frame -->
+  <rect x="80" y="80" width="920" height="920" rx="40" fill="#0F172A" opacity="0.75" stroke="#334155" stroke-width="2"/>
+
+  <rect x="140" y="140" width="180" height="44" rx="22" fill="#1E293B" stroke="#38BDF8" stroke-width="1.5"/>
+  <text x="230" y="168" fill="#38BDF8" font-family="system-ui, sans-serif" font-size="15" font-weight="bold" text-anchor="middle" letter-spacing="1">NEW LAUNCH</text>
+
+  <text x="140" y="320" fill="#F8FAFC" font-family="system-ui, sans-serif" font-size="64" font-weight="900" line-height="1.1">THE FUTURE OF CREATIVE AI</text>
+  <text x="140" y="420" fill="url(#glow_grad)" font-family="system-ui, sans-serif" font-size="38" font-weight="800">Precision Prompts for Visionaries</text>
+
+  <text x="140" y="520" fill="#94A3B8" font-family="system-ui, sans-serif" font-size="22">Transform ideas into production-ready commercial assets in seconds with AWA curated templates.</text>
+
+  <!-- Feature pills -->
+  <g transform="translate(140, 620)">
+    <rect width="360" height="60" rx="30" fill="#1E293B" stroke="#475569"/>
+    <text x="180" y="37" fill="#F8FAFC" font-family="system-ui, sans-serif" font-size="18" font-weight="bold" text-anchor="middle">✓ Commercial License Safe</text>
+  </g>
+  <g transform="translate(540, 620)">
+    <rect width="360" height="60" rx="30" fill="#1E293B" stroke="#475569"/>
+    <text x="180" y="37" fill="#F8FAFC" font-family="system-ui, sans-serif" font-size="18" font-weight="bold" text-anchor="middle">✓ Studio Lighting Vectors</text>
+  </g>
+
+  <!-- CTA Box -->
+  <g transform="translate(140, 750)">
+    <rect width="800" height="130" rx="28" fill="url(#glow_grad)"/>
+    <text x="400" y="75" fill="#020617" font-family="system-ui, sans-serif" font-size="28" font-weight="900" text-anchor="middle">EXPLORE PROMPTS AT AWA.DEV →</text>
+  </g>
+</svg>

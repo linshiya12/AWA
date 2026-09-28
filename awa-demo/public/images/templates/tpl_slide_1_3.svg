@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="100%" height="100%">
+  <rect width="1920" height="1080" fill="#080E1E"/>
+  <text x="120" y="130" fill="#38BDF8" font-family="system-ui, sans-serif" font-size="18" font-weight="bold" letter-spacing="2">03 · TRACTION &amp; METRICS</text>
+  <text x="120" y="210" fill="#F8FAFC" font-family="system-ui, sans-serif" font-size="56" font-weight="900">Proven Organic Pull &amp; Strong Cohorts</text>
+
+  <g transform="translate(120, 290)">
+    <rect width="1020" height="540" rx="24" fill="#111C36" stroke="#223259" stroke-width="2"/>
+    <text x="50" y="70" fill="#F8FAFC" font-family="system-ui, sans-serif" font-size="24" font-weight="bold">ARR Growth Trajectory ($M)</text>
+    <rect x="100" y="430" width="140" height="140" rx="8" fill="#1E293B"/>
+    <text x="170" y="415" fill="#94A3B8" font-family="system-ui, sans-serif" font-size="18" text-anchor="middle">$0.3M</text>
+    <text x="170" y="605" fill="#64748B" font-family="system-ui, sans-serif" font-size="16" text-anchor="middle">Q1</text>
+
+    <rect x="320" y="360" width="140" height="210" rx="8" fill="#1E293B"/>
+    <text x="390" y="345" fill="#94A3B8" font-family="system-ui, sans-serif" font-size="18" text-anchor="middle">$0.7M</text>
+    <text x="390" y="605" fill="#64748B" font-family="system-ui, sans-serif" font-size="16" text-anchor="middle">Q2</text>
+
+    <rect x="540" y="270" width="140" height="300" rx="8" fill="#1E2E56"/>
+    <text x="610" y="255" fill="#94A3B8" font-family="system-ui, sans-serif" font-size="18" text-anchor="middle">$1.2M</text>
+    <text x="610" y="605" fill="#64748B" font-family="system-ui, sans-serif" font-size="16" text-anchor="middle">Q3</text>
+
+    <rect x="760" y="170" width="140" height="400" rx="8" fill="#38BDF8"/>
+    <text x="830" y="155" fill="#38BDF8" font-family="system-ui, sans-serif" font-size="22" font-weight="bold" text-anchor="middle">$1.8M</text>
+    <text x="830" y="605" fill="#F8FAFC" font-family="system-ui, sans-serif" font-size="16" font-weight="bold" text-anchor="middle">Q4 (Current)</text>
+  </g>
+
+  <g transform="translate(1180, 290)">
+    <rect width="620" height="250" rx="24" fill="#111C36" stroke="#223259" stroke-width="2"/>
+    <text x="50" y="70" fill="#94A3B8" font-family="system-ui, sans-serif" font-size="18" font-weight="bold">NET REVENUE RETENTION</text>
+    <text x="50" y="150" fill="#34D399" font-family="system-ui, sans-serif" font-size="64" font-weight="900">142%</text>
+    <text x="50" y="195" fill="#94A3B8" font-family="system-ui, sans-serif" font-size="16">Enterprise expansion without dedicated sales rep</text>
+  </g>
+  <g transform="translate(1180, 580)">
+    <rect width="620" height="250" rx="24" fill="#111C36" stroke="#223259" stroke-width="2"/>
+    <text x="50" y="70" fill="#94A3B8" font-family="system-ui, sans-serif" font-size="18" font-weight="bold">GROSS MARGIN</text>
+    <text x="50" y="150" fill="#38BDF8" font-family="system-ui, sans-serif" font-size="64" font-weight="900">84%</text>
+    <text x="50" y="195" fill="#94A3B8" font-family="system-ui, sans-serif" font-size="16">Optimized model orchestration &amp; caching</text>
+  </g>
+  <text x="1800" y="980" fill="#475569" font-family="system-ui, sans-serif" font-size="18" font-weight="bold">03 / 04</text>
+</svg>

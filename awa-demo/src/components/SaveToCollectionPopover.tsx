@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAppContext } from '@/lib/AppContext';
 import {
   Popover,
@@ -36,9 +36,14 @@ export function SaveToCollectionPopover({
   const [isOpen, setIsOpen] = useState(false);
   const [newCollectionName, setNewCollectionName] = useState('');
   const [showCreateInput, setShowCreateInput] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
-  const isSaved = isTemplateSaved(templateId);
-  const savedIn = getTemplateCollections(templateId);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const isSaved = mounted ? isTemplateSaved(templateId) : false;
+  const savedIn = mounted ? getTemplateCollections(templateId) : [];
 
   const handleToggleCollection = (
     e: React.MouseEvent,
@@ -72,6 +77,7 @@ export function SaveToCollectionPopover({
             type="button"
             variant="outline"
             size="sm"
+            suppressHydrationWarning
             className={`rounded-xl text-xs font-semibold flex items-center gap-2 transition-all ${
               isSaved
                 ? 'bg-amber-50 dark:bg-amber-950/30 border-amber-300 dark:border-amber-700/50 text-amber-800 dark:text-amber-300 shadow-2xs'
@@ -80,15 +86,17 @@ export function SaveToCollectionPopover({
             title={isSaved ? `Saved in ${savedIn.length} collection(s)` : 'Save to collection'}
           >
             <Bookmark
+              suppressHydrationWarning
               className={`w-4 h-4 ${
                 isSaved ? 'text-amber-500 fill-amber-500' : 'text-zinc-500 dark:text-zinc-400'
               }`}
             />
-            <span>{isSaved ? `Saved (${savedIn.length})` : 'Save to Collection'}</span>
+            <span suppressHydrationWarning>{isSaved ? `Saved (${savedIn.length})` : 'Save to Collection'}</span>
           </Button>
         ) : (
           <button
             type="button"
+            suppressHydrationWarning
             className={`w-8 h-8 rounded-full flex items-center justify-center border transition-all cursor-pointer ${
               isSaved
                 ? 'bg-amber-50 dark:bg-amber-950/40 border-amber-300 dark:border-amber-700/50 text-amber-500 dark:text-amber-400 shadow-xs'
@@ -98,6 +106,7 @@ export function SaveToCollectionPopover({
             aria-label="Save to collection"
           >
             <Bookmark
+              suppressHydrationWarning
               className={`w-4 h-4 ${
                 isSaved ? 'text-amber-500 fill-amber-500' : 'text-zinc-600 dark:text-zinc-400'
               }`}

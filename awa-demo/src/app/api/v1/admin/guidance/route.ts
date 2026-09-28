@@ -3,17 +3,26 @@ import { requireAdminApi } from '@/lib/server/auth';
 import { publicDb } from '@/lib/server/db/publicStore';
 import { privateDb } from '@/lib/server/db/privateStore';
 
-// GET /api/v1/admin/guidance — Get guidance for scope (API-025, FEAT-036)
+// GET /api/v1/admin/guidance — Get guidance for scope or by ID (API-025, FEAT-036)
 export async function GET(request: NextRequest) {
   const auth = requireAdminApi(request);
   if ('errorResponse' in auth) return auth.errorResponse;
 
   const { searchParams } = new URL(request.url);
+  const guidanceId = searchParams.get('guidance_id');
   const scopeType = searchParams.get('scope_type') as 'category' | 'template' | null;
   const scopeId = searchParams.get('scope_id');
 
+  if (guidanceId) {
+    const guidance = publicDb.getGuidanceById(guidanceId);
+    if (!guidance) {
+      return NextResponse.json({ error: 'Guidance not found' }, { status: 404 });
+    }
+    return NextResponse.json({ guidance });
+  }
+
   if (!scopeType || !scopeId) {
-    return NextResponse.json({ error: 'scope_type and scope_id are required' }, { status: 400 });
+    return NextResponse.json({ error: 'scope_type and scope_id or guidance_id are required' }, { status: 400 });
   }
 
   const guidance = publicDb.getGuidanceForScope(scopeType, scopeId);

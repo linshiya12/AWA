@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { AppProvider } from "@/lib/AppContext";
 import Header from "@/components/Header";
+import { cookies } from "next/headers";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -19,11 +20,14 @@ export const metadata: Metadata = {
   description: "Curated prompt templates engineered for real commercial production across Images, Video, Slides, and Websites.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const cookieStore = await cookies();
+  const subscribedCookie = cookieStore.get("awa_subscribed")?.value;
+  const initialSubscribed = subscribedCookie !== undefined ? subscribedCookie === "true" : true;
   return (
     <html
       lang="en"
@@ -46,8 +50,8 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="min-h-full flex flex-col bg-gradient-to-b from-[#eff6ff] to-[#dbeafe] dark:bg-none dark:bg-[#0a0e1a] bg-fixed text-zinc-900 dark:text-zinc-100 transition-colors duration-200">
-        <AppProvider>
+      <body className="min-h-full flex flex-col bg-[#f8fafc] dark:bg-[#0a0e1a] text-slate-900 dark:text-slate-100 transition-colors duration-200 font-sans antialiased">
+        <AppProvider initialSubscribed={initialSubscribed}>
           <Header />
           <div className="flex-1">
             {children}

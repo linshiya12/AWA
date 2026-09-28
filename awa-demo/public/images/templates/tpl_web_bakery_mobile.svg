@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 840" width="100%" height="100%">
+    <rect width="420" height="840" rx="48" fill="#0B0F19" stroke="#1E293B" stroke-width="6"/>
+    <!-- Dynamic Island -->
+    <rect x="150" y="18" width="120" height="28" rx="14" fill="#000000"/>
+    
+    <!-- Header -->
+    <text x="32" y="90" fill="#F8FAFC" font-family="system-ui, sans-serif" font-size="20" font-weight="bold">Crumb &amp; Crust</text>
+    <text x="32" y="115" fill="#64748B" font-family="system-ui, sans-serif" font-size="12">Artisan Sourdough &amp; Espresso</text>
+
+    <!-- Content Slot -->
+    <g transform="translate(24, 140)">
+      <rect width="372" height="170" rx="16" fill="#24140D" stroke="#4A2818"/>
+   <text x="20" y="38" fill="#F59E0B" font-family="serif" font-size="13" font-weight="bold">MORNING PULL · 8:00 AM</text>
+   <text x="20" y="75" fill="#FDF8F0" font-family="serif" font-size="22" font-weight="bold">Wild Sourdough Country Loaf</text>
+   <text x="20" y="105" fill="#D97706" font-family="system-ui, sans-serif" font-size="18" font-weight="bold">$12.00</text>
+   <rect x="20" y="120" width="130" height="32" rx="16" fill="#F59E0B"/>
+   <text x="85" y="141" fill="#24140D" font-family="system-ui, sans-serif" font-size="12" font-weight="bold" text-anchor="middle">Pre-Order Now</text>
+
+   <rect y="190" width="372" height="160" rx="16" fill="#24140D" stroke="#4A2818"/>
+   <text x="20" y="230" fill="#FDF8F0" font-family="serif" font-size="18" font-weight="bold">Cardamom Morning Bun</text>
+   <text x="20" y="260" fill="#94A3B8" font-family="system-ui, sans-serif" font-size="12">Laminated slow-cultured French butter dough with crushed green cardamom.</text>
+   <text x="20" y="295" fill="#D97706" font-family="system-ui, sans-serif" font-size="16" font-weight="bold">$6.50 · 6 left today</text>
+    </g>
+
+    <!-- Bottom Indicator Bar -->
+    <rect x="140" y="818" width="140" height="5" rx="2.5" fill="#475569"/>
+  </svg>

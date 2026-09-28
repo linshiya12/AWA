@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720">
+  <defs>
+    <linearGradient id="tp_bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a0a0c"/>
+      <stop offset="50%" stop-color="#121115"/>
+      <stop offset="100%" stop-color="#070709"/>
+    </linearGradient>
+    <radialGradient id="tp_gold" cx="50%" cy="45%" r="45%">
+      <stop offset="0%" stop-color="#d4af37" stop-opacity="0.2"/>
+      <stop offset="60%" stop-color="#927220" stop-opacity="0.05"/>
+      <stop offset="100%" stop-color="transparent" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  
+  <rect width="1280" height="720" fill="url(#tp_bg)"/>
+  <circle cx="640" cy="360" r="340" fill="url(#tp_gold)"/>
+  
+  <!-- Minimalist Luxury Nav -->
+  <rect x="40" y="30" width="1200" height="52" rx="16" fill="#121115" stroke="#26232d" stroke-width="1.5" fill-opacity="0.85"/>
+  <text x="70" y="62" fill="#e5d5ac" font-family="serif" font-size="17" font-weight="bold" letter-spacing="4">AURÉLIS GENÈVE</text>
+  <text x="540" y="61" fill="#a39b89" font-family="sans-serif" font-size="11" letter-spacing="2">CALIBRE 1894 • TOURBILLON 3D</text>
+  <text x="1040" y="61" fill="#d4af37" font-family="sans-serif" font-size="11" font-weight="bold" letter-spacing="1">CONFIGURE BESPOKE →</text>
+  
+  <!-- 3D Horology Watch Viewport -->
+  <g transform="translate(640, 360)">
+    <path d="M -50 -320 L 50 -320 L 60 -190 L -60 -190 Z" fill="#18161c" stroke="#3d372e" stroke-width="1"/>
+    <path d="M -60 190 L 60 190 L 50 320 L -50 320 Z" fill="#18161c" stroke="#3d372e" stroke-width="1"/>
+    
+    <circle cx="0" cy="0" r="185" fill="#1c1a21" stroke="#d4af37" stroke-width="3"/>
+    <circle cx="0" cy="0" r="172" fill="#131217" stroke="#8a7029" stroke-width="1.5" stroke-dasharray="2 8"/>
+    <ellipse cx="-50" cy="-50" rx="120" ry="80" fill="#ffffff" fill-opacity="0.04" transform="rotate(-35 -50 -50)"/>
+    
+    <line x1="0" y1="-160" x2="0" y2="-140" stroke="#d4af37" stroke-width="3"/>
+    <line x1="0" y1="160" x2="0" y2="140" stroke="#d4af37" stroke-width="3"/>
+    <line x1="-160" y1="0" x2="-140" y2="0" stroke="#d4af37" stroke-width="3"/>
+    <line x1="160" y1="0" x2="140" y2="0" stroke="#d4af37" stroke-width="3"/>
+    
+    <circle cx="0" cy="70" r="45" fill="#0d0c10" stroke="#d4af37" stroke-width="1.5"/>
+    <polygon points="0,40 18,75 -18,75" fill="none" stroke="#e5d5ac" stroke-width="1.5"/>
+    <circle cx="0" cy="70" r="12" fill="#a855f7"/>
+    
+    <line x1="0" y1="0" x2="-55" y2="-65" stroke="#e5d5ac" stroke-width="4" stroke-linecap="round"/>
+    <line x1="0" y1="0" x2="70" y2="-30" stroke="#d4af37" stroke-width="2.5" stroke-linecap="round"/>
+    <circle cx="0" cy="0" r="8" fill="#d4af37"/>
+  </g>
+  
+  <!-- Right Material Configurator Dock -->
+  <rect x="1010" y="160" width="210" height="320" rx="16" fill="#121115" stroke="#2e2a22" stroke-width="1.5" fill-opacity="0.9"/>
+  <text x="1030" y="195" fill="#e5d5ac" font-family="sans-serif" font-size="12" font-weight="bold">CASE FINISH</text>
+  
+  <rect x="1030" y="215" width="170" height="36" rx="8" fill="#1d1b22" stroke="#d4af37" stroke-width="1"/>
+  <circle cx="1050" cy="233" r="7" fill="#d4af37"/>
+  <text x="1068" y="237" fill="#f8fafc" font-family="sans-serif" font-size="11">Rose Gold 18k</text>
+  
+  <rect x="1030" y="260" width="170" height="36" rx="8" fill="#16151a" stroke="#333" stroke-width="1"/>
+  <circle cx="1050" cy="278" r="7" fill="#94a3b8"/>
+  <text x="1068" y="282" fill="#94a3b8" font-family="sans-serif" font-size="11">Brushed Titanium</text>
+  
+  <rect x="1030" y="305" width="170" height="36" rx="8" fill="#16151a" stroke="#333" stroke-width="1"/>
+  <circle cx="1050" cy="323" r="7" fill="#1e293b"/>
+  <text x="1068" y="327" fill="#94a3b8" font-family="sans-serif" font-size="11">Ceramic Obsidian</text>
+</svg>

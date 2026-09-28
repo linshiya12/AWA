@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 export type CustomizationErrorType =
   | 'capacity_paused'
@@ -89,13 +89,50 @@ interface AppContextType {
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
-export const AppProvider = ({ children }: { children: ReactNode }) => {
-  // Start in locked/unsubscribed state per 14-DEMO-LIVE script
-  const [isSubscribed, setIsSubscribed] = useState(false);
+export const AppProvider = ({
+  children,
+  initialSubscribed = true,
+}: {
+  children: ReactNode;
+  initialSubscribed?: boolean;
+}) => {
+  // Default to subscribed for immediate testability, or respect initialSubscribed during SSR
+  const [isSubscribed, setIsSubscribed] = useState(initialSubscribed);
+
+  // Sync isSubscribed and collections from localStorage on client mount
+  React.useEffect(() => {
+    try {
+      const savedSub = localStorage.getItem('awa_subscribed');
+      if (savedSub !== null) {
+        setIsSubscribed(savedSub === 'true');
+      }
+      const savedCol = localStorage.getItem('awa_collections');
+      if (savedCol) {
+        setCollections(JSON.parse(savedCol));
+      }
+    } catch {}
+  }, []);
+
+  // Keep awa_subscribed cookie synchronized with state for server routes
+  React.useEffect(() => {
+    try {
+      document.cookie = `awa_subscribed=${isSubscribed}; path=/; SameSite=Lax; max-age=2592000`;
+    } catch {}
+  }, [isSubscribed]);
+
   // Script 2:35 & 11-UI-UX P3: "This uses 1 credit. You have 8."
   const [credits, setCredits] = useState(8);
   const [errorState, setErrorState] = useState<CustomizationErrorType>(null);
-  const [collections, setCollections] = useState<Collection[]>([]);
+
+  const [collections, setCollections] = useState<Collection[]>([
+    {
+      id: 'col_demo_1',
+      name: 'Client E-commerce Shoot',
+      createdAt: 1711200000000,
+      templateIds: ['tpl_1'],
+    },
+  ]);
+
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeSort, setActiveSort] = useState<'latest' | 'popular' | 'top_rated'>('latest');
@@ -104,30 +141,6 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
   const closeSidebar = () => setIsSidebarOpen(false);
   const openSidebar = () => setIsSidebarOpen(true);
-
-  // Load collections from localStorage on client mount
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem('awa_collections');
-      if (saved) {
-        setCollections(JSON.parse(saved));
-      } else {
-        // Initial sample collection so collections view has immediate context
-        const initial: Collection[] = [
-          {
-            id: 'col_demo_1',
-            name: 'Client E-commerce Shoot',
-            createdAt: Date.now() - 3600000,
-            templateIds: ['tpl_1'],
-          }
-        ];
-        setCollections(initial);
-        localStorage.setItem('awa_collections', JSON.stringify(initial));
-      }
-    } catch {
-      // LocalStorage unavailable
-    }
-  }, []);
 
   const saveCollectionsToStorage = (updated: Collection[]) => {
     setCollections(updated);
@@ -190,15 +203,27 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     setIsSubscribed(true);
     setCredits(8);
     setErrorState(null);
+    try {
+      localStorage.setItem('awa_subscribed', 'true');
+    } catch {}
   };
 
   const unsubscribe = () => {
     setIsSubscribed(false);
     setErrorState(null);
+    try {
+      localStorage.setItem('awa_subscribed', 'false');
+    } catch {}
   };
 
   const toggleSubscribed = () => {
-    setIsSubscribed(prev => !prev);
+    setIsSubscribed(prev => {
+      const next = !prev;
+      try {
+        localStorage.setItem('awa_subscribed', String(next));
+      } catch {}
+      return next;
+    });
     setErrorState(null);
   };
 

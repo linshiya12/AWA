@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="100%" height="100%">
+  <rect width="1920" height="1080" fill="#080E1E"/>
+  <text x="120" y="130" fill="#38BDF8" font-family="system-ui, sans-serif" font-size="18" font-weight="bold" letter-spacing="2">02 · THE BOTTLENECK</text>
+  <text x="120" y="210" fill="#F8FAFC" font-family="system-ui, sans-serif" font-size="56" font-weight="900">Creative Production is Siloed and Costly</text>
+
+  <g transform="translate(120, 290)">
+    <rect width="520" height="520" rx="24" fill="#111C36" stroke="#223259" stroke-width="2"/>
+    <rect x="40" y="40" width="56" height="56" rx="16" fill="#EF4444" opacity="0.2"/>
+    <text x="68" y="76" fill="#EF4444" font-family="system-ui, sans-serif" font-size="28" font-weight="bold" text-anchor="middle">!</text>
+    <text x="40" y="150" fill="#F8FAFC" font-family="system-ui, sans-serif" font-size="28" font-weight="800">Tool Fragmentation</text>
+    <text x="40" y="205" fill="#94A3B8" font-family="system-ui, sans-serif" font-size="18">Teams juggle Midjourney, Runway, Framer, and Gamma with zero persistent state.</text>
+    <text x="40" y="420" fill="#EF4444" font-family="system-ui, sans-serif" font-size="42" font-weight="900">-42%</text>
+    <text x="40" y="460" fill="#64748B" font-family="system-ui, sans-serif" font-size="16">Creative Velocity Lost</text>
+  </g>
+  <g transform="translate(680, 290)">
+    <rect width="520" height="520" rx="24" fill="#111C36" stroke="#223259" stroke-width="2"/>
+    <rect x="40" y="40" width="56" height="56" rx="16" fill="#F59E0B" opacity="0.2"/>
+    <text x="68" y="76" fill="#F59E0B" font-family="system-ui, sans-serif" font-size="28" font-weight="bold" text-anchor="middle">$</text>
+    <text x="40" y="150" fill="#F8FAFC" font-family="system-ui, sans-serif" font-size="28" font-weight="800">Wasted Compute</text>
+    <text x="40" y="205" fill="#94A3B8" font-family="system-ui, sans-serif" font-size="18">Uncalibrated prompt inputs burn GPU tokens without hitting brand standards.</text>
+    <text x="40" y="420" fill="#F59E0B" font-family="system-ui, sans-serif" font-size="42" font-weight="900">$14.2B</text>
+    <text x="40" y="460" fill="#64748B" font-family="system-ui, sans-serif" font-size="16">Annual Enterprise GPU Loss</text>
+  </g>
+  <g transform="translate(1240, 290)">
+    <rect width="520" height="520" rx="24" fill="#111C36" stroke="#223259" stroke-width="2"/>
+    <rect x="40" y="40" width="56" height="56" rx="16" fill="#38BDF8" opacity="0.2"/>
+    <text x="68" y="76" fill="#38BDF8" font-family="system-ui, sans-serif" font-size="28" font-weight="bold" text-anchor="middle">✓</text>
+    <text x="40" y="150" fill="#F8FAFC" font-family="system-ui, sans-serif" font-size="28" font-weight="800">Brand Drift</text>
+    <text x="40" y="205" fill="#94A3B8" font-family="system-ui, sans-serif" font-size="18">Ad-hoc generations deviate from corporate design rules and legal compliance.</text>
+    <text x="40" y="420" fill="#38BDF8" font-family="system-ui, sans-serif" font-size="42" font-weight="900">89%</text>
+    <text x="40" y="460" fill="#64748B" font-family="system-ui, sans-serif" font-size="16">Audit Guideline Breaches</text>
+  </g>
+  <text x="1800" y="980" fill="#475569" font-family="system-ui, sans-serif" font-size="18" font-weight="bold">02 / 04</text>
+</svg>

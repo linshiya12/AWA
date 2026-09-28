@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="100%" height="100%">
+  <rect width="1920" height="1080" fill="#06121E"/>
+  <text x="120" y="130" fill="#38BDF8" font-family="system-ui, sans-serif" font-size="18" font-weight="bold" letter-spacing="2">BUSINESS IMPACT</text>
+  <text x="120" y="210" fill="#F8FAFC" font-family="system-ui, sans-serif" font-size="56" font-weight="900">Transformational Returns for Solaris Global</text>
+  <g transform="translate(120, 300)">
+    <rect width="1680" height="500" rx="24" fill="#0C2138" stroke="#1E3A5F" stroke-width="2"/>
+    <g transform="translate(60, 60)">
+      <text x="0" y="40" fill="#34D399" font-family="system-ui, sans-serif" font-size="60" font-weight="900">+312%</text>
+      <text x="0" y="80" fill="#F8FAFC" font-family="system-ui, sans-serif" font-size="20" font-weight="bold">Mobile Conversion Rate</text>
+      <text x="0" y="110" fill="#94A3B8" font-family="system-ui, sans-serif" font-size="16">Conversion rose from 1.2% to 4.9% across iOS &amp; Android checkouts.</text>
+    </g>
+    <g transform="translate(60, 240)">
+      <text x="0" y="40" fill="#38BDF8" font-family="system-ui, sans-serif" font-size="60" font-weight="900">$22.4M</text>
+      <text x="0" y="80" fill="#F8FAFC" font-family="system-ui, sans-serif" font-size="20" font-weight="bold">Incremental GMV</text>
+      <text x="0" y="110" fill="#94A3B8" font-family="system-ui, sans-serif" font-size="16">Net new processed volume achieved within first 90 days post-launch.</text>
+    </g>
+    <g transform="translate(900, 60)">
+      <text x="0" y="40" fill="#F59E0B" font-family="system-ui, sans-serif" font-size="60" font-weight="900">0.8s</text>
+      <text x="0" y="80" fill="#F8FAFC" font-family="system-ui, sans-serif" font-size="20" font-weight="bold">Average Mobile FCP</text>
+      <text x="0" y="110" fill="#94A3B8" font-family="system-ui, sans-serif" font-size="16">Google Core Web Vitals score increased from 34 to 98/100.</text>
+    </g>
+    <g transform="translate(900, 240)">
+      <text x="0" y="40" fill="#818CF8" font-family="system-ui, sans-serif" font-size="60" font-weight="900">99.99%</text>
+      <text x="0" y="80" fill="#F8FAFC" font-family="system-ui, sans-serif" font-size="20" font-weight="bold">Uptime Reliability</text>
+      <text x="0" y="110" fill="#94A3B8" font-family="system-ui, sans-serif" font-size="16">Flawless Black Friday performance under 18x baseline traffic spikes.</text>
+    </g>
+  </g>
+  <text x="1800" y="980" fill="#475569" font-family="system-ui, sans-serif" font-size="18" font-weight="bold">04 / 04</text>
+</svg>

@@ -16,6 +16,8 @@ import {
   AuditLogEntry,
   SubscriptionWithDetails,
   SubscriptionReportMetrics,
+  UserCollection,
+  UserCollectionWithDetails,
 } from '../types';
 import { publicDb } from './publicStore';
 import { allTemplates } from '@/lib/mockData';
@@ -42,6 +44,7 @@ class PrivateDatabaseStore {
   private feedbackList: Feedback[] = [];
   private unmetNeeds: UnmetNeed[] = [];
   private auditLogs: AuditLogEntry[] = [];
+  private userCollections: UserCollection[] = [];
 
   constructor() {
     // Initialize default payment config (Razorpay, test mode, write-only credentials)
@@ -561,7 +564,112 @@ class PrivateDatabaseStore {
         state: 'succeeded',
         occurred_at: new Date(now - 3 * 86400000).toISOString(), // Credit pack — NOT subscription revenue!
       },
+      {
+        transaction_id: 'tx-failed-renewal-881',
+        user_id: 'usr-david-unpaid',
+        purchase_type: 'plan',
+        purchase_id: 'plan-yearly',
+        provider_reference: 'pay_rzp_fail_8812',
+        amount: 199,
+        currency: 'INR',
+        state: 'failed', // Real failed payment for needs-attention tracking
+        occurred_at: new Date(now - 1 * 86400000).toISOString(),
+      },
     ];
+
+    // 8. User Saved Collections (Member Personal Collections)
+    this.userCollections = [
+      {
+        collection_id: 'col-user-1',
+        user_id: 'usr-alex-sub',
+        name: 'Q4 Product Showcase',
+        description: 'Clean studio hero shots and marine splash assets for our upcoming bottle packaging launch.',
+        template_ids: ['tpl_1', 'tpl_img_aquatic', 'tpl_3'],
+        created_at: new Date(now - 8 * 86400000).toISOString(),
+        updated_at: new Date(now - 2 * 86400000).toISOString(),
+      },
+      {
+        collection_id: 'col-user-2',
+        user_id: 'usr-alex-sub',
+        name: 'Social Launch Reel Assets',
+        description: 'Short form dynamic video templates for TikTok & Instagram Reels.',
+        template_ids: ['tpl_video_reel', 'tpl_video_1'],
+        created_at: new Date(now - 4 * 86400000).toISOString(),
+        updated_at: new Date(now - 1 * 86400000).toISOString(),
+      },
+      {
+        collection_id: 'col-user-3',
+        user_id: 'usr-sara-solo',
+        name: 'SaaS Redesign & Hero Options',
+        description: 'Dark mode landing pages with telemetry and interactive 3D components.',
+        template_ids: ['tpl_web_1', 'tpl_web_2', 'tpl_3d_timepiece', 'tpl_web_3'],
+        created_at: new Date(now - 14 * 86400000).toISOString(),
+        updated_at: new Date(now - 6 * 86400000).toISOString(),
+      },
+      {
+        collection_id: 'col-user-4',
+        user_id: 'usr-jordan-life',
+        name: 'Executive Keynotes 2026',
+        description: 'Boardroom reports and investor pitch deck slides with clean data cards.',
+        template_ids: ['tpl_slide_1', 'tpl_slide_edu', 'tpl_slide_3'],
+        created_at: new Date(now - 20 * 86400000).toISOString(),
+        updated_at: new Date(now - 5 * 86400000).toISOString(),
+      },
+      {
+        collection_id: 'col-user-5',
+        user_id: 'usr-elena-exp',
+        name: 'Fashion Lookbook Editorial',
+        description: 'Sculptural drapery, leather goods, and high-fashion Scandinavian interior staging.',
+        template_ids: ['tpl_img_couture', 'tpl_img_museum', 'tpl_2'],
+        created_at: new Date(now - 12 * 86400000).toISOString(),
+        updated_at: new Date(now - 3 * 86400000).toISOString(),
+      },
+      {
+        collection_id: 'col-user-6',
+        user_id: 'usr-marcus-past',
+        name: 'Ambient Motion Backgrounds',
+        description: 'Deep sea bioluminescence and macro fluid splash loops for web banners.',
+        template_ids: ['tpl_video_jellyfish', 'tpl_video_2'],
+        created_at: new Date(now - 18 * 86400000).toISOString(),
+        updated_at: new Date(now - 10 * 86400000).toISOString(),
+      },
+    ];
+  }
+
+  // -----------------------------------------------------------------------
+  // PAYMENT TRANSACTIONS
+  // -----------------------------------------------------------------------
+  getTransactions(filter?: {
+    state?: string;
+    purchase_type?: string;
+    userId?: string;
+    fromDate?: string;
+    toDate?: string;
+    limit?: number;
+  }): PaymentTransaction[] {
+    let result = [...this.transactions];
+    if (filter?.state) {
+      result = result.filter((tx) => tx.state === filter.state);
+    }
+    if (filter?.purchase_type) {
+      result = result.filter((tx) => tx.purchase_type === filter.purchase_type);
+    }
+    if (filter?.userId) {
+      result = result.filter((tx) => tx.user_id === filter.userId);
+    }
+    if (filter?.fromDate) {
+      const from = new Date(filter.fromDate);
+      result = result.filter((tx) => new Date(tx.occurred_at) >= from);
+    }
+    if (filter?.toDate) {
+      const to = new Date(filter.toDate);
+      result = result.filter((tx) => new Date(tx.occurred_at) <= to);
+    }
+    result.sort((a, b) => new Date(b.occurred_at).getTime() - new Date(a.occurred_at).getTime());
+    if (filter?.limit) {
+      result = result.slice(0, filter.limit);
+    }
+    return result;
   }
 
   // -----------------------------------------------------------------------
@@ -1455,6 +1563,194 @@ class PrivateDatabaseStore {
       revenue_note: 'Calculated strictly from verified succeeded plan transactions. Pending, failed, and credit pack payments are excluded.',
       plan_breakdown: planBreakdown,
     };
+  }
+
+  // -----------------------------------------------------------------------
+  // USER COLLECTIONS (ADMIN SUPPORT & REPORTING - READ-ONLY)
+  // -----------------------------------------------------------------------
+  getUserCollections(options?: {
+    search?: string;
+    userId?: string;
+    dateFrom?: string;
+    dateTo?: string;
+    page?: number;
+    limit?: number;
+  }): {
+    collections: UserCollectionWithDetails[];
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+    counts: { total: number; totalUsers: number; avgTemplates: number };
+  } {
+    let list = [...this.userCollections];
+
+    if (options?.userId) {
+      list = list.filter((c) => c.user_id === options.userId);
+    }
+
+    if (options?.search?.trim()) {
+      const q = options.search.trim().toLowerCase();
+      list = list.filter((c) => {
+        const user = this.getUserById(c.user_id);
+        const nameMatch = c.name.toLowerCase().includes(q);
+        const descMatch = c.description?.toLowerCase().includes(q) || false;
+        const userMatch =
+          user?.email.toLowerCase().includes(q) ||
+          user?.display_name?.toLowerCase().includes(q) ||
+          c.user_id.toLowerCase().includes(q);
+        return nameMatch || descMatch || userMatch;
+      });
+    }
+
+    if (options?.dateFrom) {
+      const fromTime = new Date(options.dateFrom).getTime();
+      list = list.filter((c) => new Date(c.created_at).getTime() >= fromTime);
+    }
+
+    if (options?.dateTo) {
+      const toTime = new Date(options.dateTo).getTime();
+      list = list.filter((c) => new Date(c.created_at).getTime() <= toTime);
+    }
+
+    // Sort by created_at descending
+    list.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+
+    const total = list.length;
+    const page = Math.max(1, options?.page || 1);
+    const limit = Math.max(1, Math.min(100, options?.limit || 20));
+    const totalPages = Math.max(1, Math.ceil(total / limit));
+    const paginated = list.slice((page - 1) * limit, page * limit);
+
+    const totalUsers = new Set(this.userCollections.map((c) => c.user_id)).size;
+    const totalTemplatesSum = this.userCollections.reduce((acc, c) => acc + c.template_ids.length, 0);
+    const avgTemplates =
+      this.userCollections.length > 0 ? +(totalTemplatesSum / this.userCollections.length).toFixed(1) : 0;
+
+    const detailedCollections: UserCollectionWithDetails[] = paginated.map((c) => {
+      const user = this.getUserById(c.user_id);
+      const templates = c.template_ids
+        .map((tId) => {
+          const t = publicDb.getTemplateById(tId);
+          if (!t) return null;
+          return {
+            template_id: t.template_id,
+            name: t.name,
+            description: t.description,
+            preview_image: t.preview_image,
+            mainCategory: allTemplates.find((at) => at.id === t.template_id)?.mainCategory || 'Image',
+            difficulty: t.difficulty,
+          };
+        })
+        .filter(Boolean) as Array<{
+          template_id: string;
+          name: string;
+          description: string;
+          preview_image?: string;
+          mainCategory?: string;
+          difficulty?: string;
+        }>;
+
+      return {
+        ...c,
+        user: {
+          user_id: c.user_id,
+          email: user?.email || 'unknown@user.com',
+          display_name: user?.display_name || null,
+        },
+        templates,
+      };
+    });
+
+    return {
+      collections: detailedCollections,
+      total,
+      page,
+      limit,
+      totalPages,
+      counts: {
+        total: this.userCollections.length,
+        totalUsers,
+        avgTemplates,
+      },
+    };
+  }
+
+  getUserCollectionById(collectionId: string): UserCollectionWithDetails | null {
+    const col = this.userCollections.find((c) => c.collection_id === collectionId);
+    if (!col) return null;
+
+    const user = this.getUserById(col.user_id);
+    const templates = col.template_ids
+      .map((tId) => {
+        const t = publicDb.getTemplateById(tId);
+        if (!t) return null;
+        return {
+          template_id: t.template_id,
+          name: t.name,
+          description: t.description,
+          preview_image: t.preview_image,
+          mainCategory: allTemplates.find((at) => at.id === t.template_id)?.mainCategory || 'Image',
+          difficulty: t.difficulty,
+        };
+      })
+      .filter(Boolean) as Array<{
+        template_id: string;
+        name: string;
+        description: string;
+        preview_image?: string;
+        mainCategory?: string;
+        difficulty?: string;
+      }>;
+
+    return {
+      ...col,
+      user: {
+        user_id: col.user_id,
+        email: user?.email || 'unknown@user.com',
+        display_name: user?.display_name || null,
+      },
+      templates,
+    };
+  }
+
+  // Member-initiated actions (User collection mutations)
+  createUserCollection(userId: string, name: string, templateIds: string[] = []): UserCollection {
+    const newCollection: UserCollection = {
+      collection_id: `col-user-${Date.now()}`,
+      user_id: userId,
+      name: name.trim() || 'Untitled Collection',
+      description: null,
+      template_ids: Array.from(new Set(templateIds)),
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
+    this.userCollections.push(newCollection);
+    return newCollection;
+  }
+
+  addTemplateToUserCollection(userId: string, collectionId: string, templateId: string): boolean {
+    const col = this.userCollections.find((c) => c.collection_id === collectionId && c.user_id === userId);
+    if (!col) return false;
+    if (!col.template_ids.includes(templateId)) {
+      col.template_ids.push(templateId);
+      col.updated_at = new Date().toISOString();
+    }
+    return true;
+  }
+
+  removeTemplateFromUserCollection(userId: string, collectionId: string, templateId: string): boolean {
+    const col = this.userCollections.find((c) => c.collection_id === collectionId && c.user_id === userId);
+    if (!col) return false;
+    col.template_ids = col.template_ids.filter((id) => id !== templateId);
+    col.updated_at = new Date().toISOString();
+    return true;
+  }
+
+  deleteUserCollection(userId: string, collectionId: string): boolean {
+    const initial = this.userCollections.length;
+    this.userCollections = this.userCollections.filter((c) => !(c.collection_id === collectionId && c.user_id === userId));
+    return this.userCollections.length < initial;
   }
 }
 

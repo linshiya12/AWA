@@ -9,17 +9,17 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          'bg-black dark:bg-white text-white dark:text-black hover:bg-zinc-800 dark:hover:bg-zinc-200 shadow-xs',
+          'bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white shadow-xs',
         secondary:
-          'bg-zinc-100 dark:bg-blue-900/30 text-zinc-900 dark:text-zinc-100 hover:bg-zinc-200 dark:hover:bg-blue-800/40 border border-zinc-200/80 dark:border-blue-800/40',
+          'bg-slate-100 dark:bg-blue-900/30 text-slate-800 dark:text-zinc-100 hover:bg-slate-200 dark:hover:bg-blue-800/40 border border-slate-200 dark:border-blue-800/40',
         outline:
-          'border border-zinc-200/80 dark:border-blue-900/50 bg-white/80 dark:bg-[#0c162e]/80 text-zinc-900 dark:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-blue-900/40 shadow-2xs',
+          'border border-slate-200 dark:border-blue-900/50 bg-white/80 dark:bg-[#0c162e]/80 text-slate-800 dark:text-zinc-100 hover:bg-slate-100 dark:hover:bg-blue-900/40 shadow-2xs',
         ghost:
-          'hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:text-black dark:hover:text-white',
+          'hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-700 dark:text-zinc-300 hover:text-black dark:hover:text-white',
         link: 'text-blue-600 dark:text-blue-400 underline-offset-4 hover:underline p-0 h-auto font-medium',
-        nude: 'bg-gradient-to-r from-[#e8c9a8] via-[#d59c77] to-[#c17f59] text-white hover:opacity-95 shadow-sm',
+        nude: 'bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white shadow-xs',
         'nude-locked':
-          'bg-gradient-to-r from-[#d8bfab] via-[#c9a68e] to-[#b38b71] text-white/90 shadow-sm opacity-90',
+          'bg-slate-200 dark:bg-blue-950/60 text-slate-500 dark:text-blue-300 shadow-xs',
         destructive:
           'bg-rose-600 text-white hover:bg-rose-700 dark:bg-rose-700 dark:hover:bg-rose-800 shadow-xs',
       },

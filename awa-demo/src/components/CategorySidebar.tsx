@@ -32,7 +32,7 @@ export function CategorySidebar({
 
   // Set of expanded node IDs
   const [expandedIds, setExpandedIds] = useState<Set<string>>(
-    () => new Set(['image-generation', 'product-photography'])
+    () => new Set(['image', 'product-photography', 'video', 'slides', 'websites'])
   );
 
   // Auto-expand ancestors when activeCategoryId changes
@@ -250,7 +250,7 @@ export function CategorySidebar({
                 <button
                   type="button"
                   onClick={onClearModelFilters}
-                  className="text-xs text-[#c17f59] dark:text-[#e8c9a8] hover:underline font-semibold transition-colors cursor-pointer"
+                  className="text-xs text-blue-600 dark:text-blue-400 hover:underline font-semibold transition-colors cursor-pointer"
                 >
                   Clear filters
                 </button>

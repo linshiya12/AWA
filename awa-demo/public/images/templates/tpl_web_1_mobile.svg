@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 840" width="100%" height="100%">
+    <rect width="420" height="840" rx="48" fill="#0B0F19" stroke="#1E293B" stroke-width="6"/>
+    <!-- Dynamic Island -->
+    <rect x="150" y="18" width="120" height="28" rx="14" fill="#000000"/>
+    
+    <!-- Header -->
+    <text x="32" y="90" fill="#F8FAFC" font-family="system-ui, sans-serif" font-size="20" font-weight="bold">Pulse AI Platform</text>
+    <text x="32" y="115" fill="#64748B" font-family="system-ui, sans-serif" font-size="12">Mobile Cloud View</text>
+
+    <!-- Content Slot -->
+    <g transform="translate(24, 140)">
+      <rect width="372" height="180" rx="16" fill="#111C36" stroke="#253A66"/>
+   <text x="24" y="45" fill="#38BDF8" font-family="system-ui, sans-serif" font-size="14" font-weight="bold">AUTOMATE PROMPTS</text>
+   <text x="24" y="80" fill="#F8FAFC" font-family="system-ui, sans-serif" font-size="22" font-weight="900">Ship AI 10x Faster</text>
+   <text x="24" y="110" fill="#94A3B8" font-family="system-ui, sans-serif" font-size="12">Production prompt engineering without code.</text>
+   <rect x="24" y="130" width="140" height="34" rx="17" fill="#38BDF8"/>
+   <text x="94" y="152" fill="#080E1E" font-family="system-ui, sans-serif" font-size="12" font-weight="bold" text-anchor="middle">Start Free →</text>
+
+   <rect y="200" width="372" height="130" rx="16" fill="#111C36" stroke="#253A66"/>
+   <text x="24" y="240" fill="#F8FAFC" font-family="system-ui, sans-serif" font-size="16" font-weight="bold">Live Telemetry</text>
+   <text x="24" y="275" fill="#34D399" font-family="system-ui, sans-serif" font-size="32" font-weight="900">99.98%</text>
+   <text x="24" y="305" fill="#94A3B8" font-family="system-ui, sans-serif" font-size="12">Global edge availability across 42 regions</text>
+
+   <rect y="350" width="372" height="120" rx="16" fill="#111C36" stroke="#253A66"/>
+   <text x="24" y="390" fill="#F8FAFC" font-family="system-ui, sans-serif" font-size="16" font-weight="bold">1-Click Integrations</text>
+   <text x="24" y="430" fill="#818CF8" font-family="system-ui, sans-serif" font-size="14" font-weight="bold">Midjourney · Runway · FLUX</text>
+    </g>
+
+    <!-- Bottom Indicator Bar -->
+    <rect x="140" y="818" width="140" height="5" rx="2.5" fill="#475569"/>
+  </svg>

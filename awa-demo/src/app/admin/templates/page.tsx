@@ -14,14 +14,37 @@ import {
   Edit3,
   CheckCircle2,
   AlertCircle,
+  AlertTriangle,
   Sparkles,
   ExternalLink,
   RefreshCw,
   FolderTree,
+  X,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { Card } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
+import { Checkbox } from '@/components/ui/checkbox';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+} from '@/components/ui/table';
 import {
   Dialog,
   DialogContent,
@@ -55,6 +78,7 @@ export default function AdminTemplatesPage() {
   const [templates, setTemplates] = useState<Template[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   // Filters
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
@@ -75,11 +99,13 @@ export default function AdminTemplatesPage() {
 
   const fetchData = async () => {
     setLoading(true);
+    setError(null);
     try {
       const [tRes, cRes] = await Promise.all([
         fetch('/api/v1/admin/templates'),
         fetch('/api/v1/admin/categories'),
       ]);
+      if (!tRes.ok || !cRes.ok) throw new Error('Failed to load templates catalog');
       const tData = await tRes.json();
       const cData = await cRes.json();
       setTemplates(tData.templates || []);
@@ -87,8 +113,9 @@ export default function AdminTemplatesPage() {
       if (cData.categories?.length > 0 && !newTemplate.category_id) {
         setNewTemplate((prev) => ({ ...prev, category_id: cData.categories[0].category_id }));
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+      setError(err.message || 'Error communicating with catalog server');
     } finally {
       setLoading(false);
     }
@@ -145,18 +172,24 @@ export default function AdminTemplatesPage() {
     return c ? c.name : catId;
   };
 
+  const clearFilters = () => {
+    setCategoryFilter('all');
+    setStatusFilter('all');
+    setSearchQuery('');
+  };
+
   return (
     <div className="space-y-6">
       {/* Page Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-white flex items-center gap-2.5">
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-2.5">
             <span>Template Catalog Management</span>
-            <Badge variant="outline" className="text-xs bg-blue-500/10 text-blue-400 border-blue-500/30">
+            <Badge variant="outline" className="text-xs bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/30">
               Screen A3
             </Badge>
           </h1>
-          <p className="text-sm text-slate-400 mt-1">
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
             Author and publish ready-to-run prompt templates across categories. Prompts are guarded in the private database.
           </p>
         </div>
@@ -165,7 +198,7 @@ export default function AdminTemplatesPage() {
             variant="outline"
             size="sm"
             onClick={fetchData}
-            className="border-slate-700 bg-slate-800/60 hover:bg-slate-800 text-xs"
+            className="text-xs"
           >
             <RefreshCw className="w-3.5 h-3.5 mr-1.5" />
             Refresh
@@ -173,7 +206,7 @@ export default function AdminTemplatesPage() {
           <Button
             size="sm"
             onClick={() => setIsCreateOpen(true)}
-            className="bg-blue-600 hover:bg-blue-500 text-white text-xs"
+            className="bg-blue-600 hover:bg-blue-700 text-white text-xs"
           >
             <Plus className="w-3.5 h-3.5 mr-1.5" />
             Author New Template
@@ -182,296 +215,392 @@ export default function AdminTemplatesPage() {
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="rounded-2xl border border-slate-800 bg-[#0a0f1d] p-4 flex flex-col md:flex-row items-center justify-between gap-3 text-xs">
-        <div className="flex items-center gap-3 w-full md:w-auto">
-          <div className="relative w-full md:w-72">
+      <Card className="p-4 flex flex-col md:flex-row items-center justify-between gap-3 text-xs border-slate-200/80 dark:border-blue-900/40 bg-white dark:bg-[#0c162e]/80 shadow-sm">
+        <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto flex-1">
+          <div className="relative w-full sm:w-72">
             <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
             <Input
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search by title, job, or tag..."
-              className="pl-8 bg-slate-900 border-slate-700 text-xs h-9 text-slate-200"
+              className="pl-8 text-xs h-9"
             />
+            {searchQuery && (
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={() => setSearchQuery('')}
+                className="h-6 w-6 absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                aria-label="Clear search query"
+              >
+                <X className="w-3 h-3" />
+              </Button>
+            )}
           </div>
 
-          <div className="flex items-center gap-2">
-            <select
-              value={categoryFilter}
-              onChange={(e) => setCategoryFilter(e.target.value)}
-              className="rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-slate-300 text-xs h-9"
-            >
-              <option value="all">All Categories</option>
-              {categories.map((c) => (
-                <option key={c.category_id} value={c.category_id}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
+          <div className="flex items-center gap-2 w-full sm:w-auto">
+            <div className="w-44">
+              <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                <SelectTrigger className="h-9 text-xs">
+                  <SelectValue placeholder="All Categories" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Categories</SelectItem>
+                  {categories.map((c) => (
+                    <SelectItem key={c.category_id} value={c.category_id}>
+                      {c.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-slate-300 text-xs h-9"
-            >
-              <option value="all">All Statuses</option>
-              <option value="published">Published</option>
-              <option value="draft">Draft</option>
-              <option value="hidden">Hidden</option>
-            </select>
+            <div className="w-36">
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger className="h-9 text-xs">
+                  <SelectValue placeholder="All Statuses" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Statuses</SelectItem>
+                  <SelectItem value="published">Published</SelectItem>
+                  <SelectItem value="draft">Draft</SelectItem>
+                  <SelectItem value="hidden">Hidden</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {(categoryFilter !== 'all' || statusFilter !== 'all' || searchQuery) && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={clearFilters}
+                className="h-9 px-2.5 text-xs text-slate-500 hover:text-slate-900 dark:hover:text-white"
+              >
+                Reset
+              </Button>
+            )}
           </div>
         </div>
 
-        <div className="text-slate-400 shrink-0">
-          Showing <strong>{filteredTemplates.length}</strong> of {templates.length} templates
+        <div className="text-slate-500 dark:text-slate-400 shrink-0 text-xs">
+          Showing <strong className="text-slate-900 dark:text-slate-100">{filteredTemplates.length}</strong> of {templates.length} templates
         </div>
-      </div>
+      </Card>
 
-      {/* Templates Table / Grid */}
-      <div className="rounded-2xl border border-slate-800 bg-[#080d1a] overflow-hidden shadow-xl">
-        <div className="overflow-x-auto">
-          <table className="w-full text-xs text-left">
-            <thead className="border-b border-slate-800 bg-slate-900/60 text-slate-400 uppercase tracking-wider text-[10px]">
-              <tr>
-                <th className="py-3 px-4 font-semibold">Preview & Template</th>
-                <th className="py-3 px-4 font-semibold">Category</th>
-                <th className="py-3 px-4 font-semibold text-center">Status</th>
-                <th className="py-3 px-4 font-semibold text-center">Prompt Version</th>
-                <th className="py-3 px-4 font-semibold text-center">Sample Tier</th>
-                <th className="py-3 px-4 font-semibold text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-800/60">
-              {loading ? (
-                <tr>
-                  <td colSpan={6} className="py-12 text-center text-slate-400">
-                    <RefreshCw className="w-4 h-4 animate-spin inline-block mr-2 text-blue-500" />
-                    Loading catalog templates...
-                  </td>
-                </tr>
-              ) : filteredTemplates.length === 0 ? (
-                <tr>
-                  <td colSpan={6} className="py-12 text-center text-slate-400">
-                    No templates match active search and filters.
-                  </td>
-                </tr>
-              ) : (
-                filteredTemplates.map((tpl) => (
-                  <tr key={tpl.template_id} className="hover:bg-slate-800/20 transition-colors">
-                    {/* Preview & Name */}
-                    <td className="py-3.5 px-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-16 h-10 rounded-lg overflow-hidden border border-slate-800 bg-slate-900 shrink-0 relative">
-                          {tpl.preview_image ? (
-                            <Image
-                              src={tpl.preview_image}
-                              alt={tpl.name}
-                              fill
-                              sizes="64px"
-                              className="object-cover"
-                            />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center text-slate-600">
-                              <FileCode className="w-4 h-4" />
-                            </div>
-                          )}
-                        </div>
-                        <div className="min-w-0">
-                          <Link
-                            href={`/admin/templates/${tpl.template_id}`}
-                            className="font-semibold text-slate-200 hover:text-blue-400 transition-colors text-sm line-clamp-1"
-                          >
-                            {tpl.name}
-                          </Link>
-                          <p className="text-slate-400 text-[11px] line-clamp-1 max-w-md">
-                            {tpl.description}
-                          </p>
-                        </div>
+      {/* Error State */}
+      {error && (
+        <Alert variant="destructive">
+          <AlertTriangle className="w-4 h-4" />
+          <AlertTitle>Catalog Loading Error</AlertTitle>
+          <AlertDescription className="flex items-center justify-between">
+            <span>{error}</span>
+            <Button size="sm" variant="outline" onClick={fetchData} className="ml-4">
+              <RefreshCw className="w-3.5 h-3.5 mr-1" /> Retry
+            </Button>
+          </AlertDescription>
+        </Alert>
+      )}
+
+      {/* Templates Table */}
+      <Card className="overflow-hidden border-slate-200/80 dark:border-blue-900/40 bg-white dark:bg-[#0c162e]/80 shadow-md">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="font-semibold">Preview & Template</TableHead>
+              <TableHead className="font-semibold">Category</TableHead>
+              <TableHead className="font-semibold text-center">Status</TableHead>
+              <TableHead className="font-semibold text-center">Prompt Version</TableHead>
+              <TableHead className="font-semibold text-center">Sample Tier</TableHead>
+              <TableHead className="font-semibold text-right">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {loading ? (
+              // Loading State (Section 9: Skeletons matching row structure)
+              Array.from({ length: 5 }).map((_, idx) => (
+                <TableRow key={idx}>
+                  <TableCell>
+                    <div className="flex items-center gap-3">
+                      <Skeleton className="w-16 h-10 rounded-lg shrink-0" />
+                      <div className="space-y-1.5 flex-1">
+                        <Skeleton className="h-4 w-48" />
+                        <Skeleton className="h-3 w-64" />
                       </div>
-                    </td>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-5 w-24 rounded-full" />
+                  </TableCell>
+                  <TableCell className="text-center">
+                    <Skeleton className="h-5 w-16 mx-auto rounded-full" />
+                  </TableCell>
+                  <TableCell className="text-center">
+                    <Skeleton className="h-4 w-12 mx-auto" />
+                  </TableCell>
+                  <TableCell className="text-center">
+                    <Skeleton className="h-5 w-20 mx-auto rounded-full" />
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex justify-end gap-1.5">
+                      <Skeleton className="h-8 w-16 rounded-lg" />
+                      <Skeleton className="h-8 w-16 rounded-lg" />
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : filteredTemplates.length === 0 ? (
+              // Empty State (Section 9 & 10: Friendly illustration/message with CTA)
+              <TableRow>
+                <TableCell colSpan={6} className="py-16 text-center">
+                  <div className="flex flex-col items-center justify-center max-w-sm mx-auto space-y-3">
+                    <div className="w-12 h-12 rounded-2xl bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center">
+                      <FileCode className="w-6 h-6" />
+                    </div>
+                    <div className="space-y-1">
+                      <h4 className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+                        {searchQuery || categoryFilter !== 'all' || statusFilter !== 'all'
+                          ? 'No matching templates found'
+                          : 'No templates created yet'}
+                      </h4>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">
+                        {searchQuery || categoryFilter !== 'all' || statusFilter !== 'all'
+                          ? 'Try clearing the search query or changing active category and status filters.'
+                          : 'Begin building the creation catalog by authoring your first template.'}
+                      </p>
+                    </div>
+                    {searchQuery || categoryFilter !== 'all' || statusFilter !== 'all' ? (
+                      <Button variant="outline" size="sm" onClick={clearFilters} className="text-xs">
+                        Clear Search & Filters
+                      </Button>
+                    ) : (
+                      <Button size="sm" onClick={() => setIsCreateOpen(true)} className="bg-blue-600 hover:bg-blue-700 text-white text-xs">
+                        <Plus className="w-3.5 h-3.5 mr-1.5" /> Author First Template
+                      </Button>
+                    )}
+                  </div>
+                </TableCell>
+              </TableRow>
+            ) : (
+              // Populated State
+              filteredTemplates.map((tpl) => (
+                <TableRow key={tpl.template_id} className="transition-colors">
+                  {/* Preview & Name */}
+                  <TableCell>
+                    <div className="flex items-center gap-3">
+                      <div className="w-16 h-10 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-900 shrink-0 relative">
+                        {tpl.preview_image ? (
+                          <Image
+                            src={tpl.preview_image}
+                            alt={tpl.name}
+                            fill
+                            sizes="64px"
+                            className="object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-slate-400">
+                            <FileCode className="w-4 h-4" />
+                          </div>
+                        )}
+                      </div>
+                      <div className="min-w-0">
+                        <Link
+                          href={`/admin/templates/${tpl.template_id}`}
+                          className="font-semibold text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 transition-colors text-sm line-clamp-1"
+                        >
+                          {tpl.name}
+                        </Link>
+                        <p className="text-slate-500 dark:text-slate-400 text-[11px] line-clamp-1 max-w-md">
+                          {tpl.description}
+                        </p>
+                      </div>
+                    </div>
+                  </TableCell>
 
-                    {/* Category */}
-                    <td className="py-3.5 px-4 text-slate-300">
-                      <span className="px-2 py-0.5 rounded bg-slate-800/80 text-[11px] font-medium border border-slate-700/60">
-                        {getCategoryName(tpl.category_id)}
+                  {/* Category */}
+                  <TableCell>
+                    <Badge variant="secondary" className="text-[11px] font-medium">
+                      {getCategoryName(tpl.category_id)}
+                    </Badge>
+                  </TableCell>
+
+                  {/* Status */}
+                  <TableCell className="text-center">
+                    <Badge
+                      variant={
+                        tpl.status === 'published'
+                          ? 'emerald'
+                          : tpl.status === 'draft'
+                          ? 'amber'
+                          : 'secondary'
+                      }
+                      className="text-[10px] uppercase font-semibold"
+                    >
+                      {tpl.status}
+                    </Badge>
+                  </TableCell>
+
+                  {/* Version */}
+                  <TableCell className="text-center font-mono">
+                    {tpl.current_version_id ? (
+                      <span className="text-blue-600 dark:text-blue-400 font-semibold text-xs">Active</span>
+                    ) : (
+                      <span className="text-amber-600 dark:text-amber-400 flex items-center justify-center gap-1 text-[11px] font-medium">
+                        <AlertCircle className="w-3 h-3" /> No Prompt
                       </span>
-                    </td>
+                    )}
+                  </TableCell>
 
-                    {/* Status */}
-                    <td className="py-3.5 px-4 text-center">
-                      <Badge
-                        variant={
-                          tpl.status === 'published'
-                            ? 'default'
-                            : tpl.status === 'draft'
-                            ? 'secondary'
-                            : 'outline'
-                        }
-                        className={`text-[10px] uppercase font-semibold ${
-                          tpl.status === 'published'
-                            ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'
-                            : tpl.status === 'draft'
-                            ? 'bg-amber-500/10 text-amber-400 border border-amber-500/30'
-                            : 'bg-slate-800 text-slate-400'
-                        }`}
-                      >
-                        {tpl.status}
+                  {/* Free Sample tag */}
+                  <TableCell className="text-center">
+                    {tpl.is_sample ? (
+                      <Badge variant="outline" className="text-[10px] font-semibold bg-indigo-500/10 text-indigo-700 dark:text-indigo-400 border-indigo-500/20">
+                        Free Sample
                       </Badge>
-                    </td>
+                    ) : (
+                      <span className="text-slate-500 dark:text-slate-400 text-[11px]">Subscriber Only</span>
+                    )}
+                  </TableCell>
 
-                    {/* Version */}
-                    <td className="py-3.5 px-4 text-center font-mono">
-                      {tpl.current_version_id ? (
-                        <span className="text-blue-400 font-medium">Active</span>
-                      ) : (
-                        <span className="text-amber-400 flex items-center justify-center gap-1 text-[11px]">
-                          <AlertCircle className="w-3 h-3" /> No Prompt
-                        </span>
-                      )}
-                    </td>
-
-                    {/* Free Sample tag (05-MVP.md §3.3) */}
-                    <td className="py-3.5 px-4 text-center">
-                      {tpl.is_sample ? (
-                        <span className="px-2 py-0.5 rounded bg-indigo-500/10 text-indigo-400 font-semibold text-[10px] border border-indigo-500/20">
-                          Free Sample
-                        </span>
-                      ) : (
-                        <span className="text-slate-400 text-[11px]">Subscriber Only</span>
-                      )}
-                    </td>
-
-                    {/* Actions */}
-                    <td className="py-3.5 px-4 text-right">
-                      <div className="flex items-center justify-end gap-1.5">
-                        <Link href={`/admin/templates/${tpl.template_id}/versions`}>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-8 px-2 text-slate-300 hover:text-white text-xs"
-                            title="Version History & Diffs"
-                          >
-                            <History className="w-3.5 h-3.5 mr-1 text-slate-400" />
-                            History
-                          </Button>
-                        </Link>
-                        <Link href={`/admin/templates/${tpl.template_id}`}>
-                          <Button
-                            size="sm"
-                            className="h-8 px-3 bg-blue-600/20 text-blue-300 hover:bg-blue-600/30 border border-blue-500/30 text-xs"
-                          >
-                            <Edit3 className="w-3.5 h-3.5 mr-1" />
-                            Edit
-                          </Button>
-                        </Link>
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
+                  {/* Actions */}
+                  <TableCell className="text-right">
+                    <div className="flex items-center justify-end gap-1.5">
+                      <Link href={`/admin/templates/${tpl.template_id}/versions`}>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 px-2 text-xs"
+                          title="Version History & Diffs"
+                        >
+                          <History className="w-3.5 h-3.5 mr-1 text-slate-400" />
+                          History
+                        </Button>
+                      </Link>
+                      <Link href={`/admin/templates/${tpl.template_id}`}>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="h-8 px-3 text-xs bg-blue-50/50 dark:bg-blue-600/10 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-500/30 hover:bg-blue-100 dark:hover:bg-blue-600/20"
+                        >
+                          <Edit3 className="w-3.5 h-3.5 mr-1" />
+                          Edit
+                        </Button>
+                      </Link>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </Card>
 
       {/* CREATE TEMPLATE DIALOG */}
       <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
-        <DialogContent className="border-slate-800 bg-[#0d1222] text-slate-100 max-w-lg">
+        <DialogContent className="max-w-lg">
           <DialogHeader>
             <DialogTitle>Author New Creation Template</DialogTitle>
-            <DialogDescription className="text-slate-400 text-xs">
+            <DialogDescription className="text-xs">
               Creates the template entry. You will author and preview the prompt in the tabbed editor next.
             </DialogDescription>
           </DialogHeader>
 
           <form onSubmit={handleCreateSubmit} className="space-y-4 text-xs mt-2">
-            <div>
-              <label className="block text-slate-300 font-medium mb-1">Template Name *</label>
+            <div className="space-y-1.5">
+              <Label htmlFor="tpl_name">Template Name *</Label>
               <Input
+                id="tpl_name"
                 value={newTemplate.name}
                 onChange={(e) => setNewTemplate({ ...newTemplate, name: e.target.value })}
                 placeholder="e.g. Minimalist Ceramic Cup on White"
                 required
-                className="bg-slate-900 border-slate-700 text-slate-100"
               />
             </div>
 
-            <div>
-              <label className="block text-slate-300 font-medium mb-1">
+            <div className="space-y-1.5">
+              <Label htmlFor="tpl_desc">
                 Description (What it produces — FEAT-008) *
-              </label>
-              <textarea
+              </Label>
+              <Textarea
+                id="tpl_desc"
                 value={newTemplate.description}
                 onChange={(e) => setNewTemplate({ ...newTemplate, description: e.target.value })}
                 placeholder="The user chooses from this alone behind the paywall before subscribing..."
                 required
                 rows={2}
-                className="w-full rounded-md border border-slate-700 bg-slate-900 px-3 py-2 text-slate-100 text-xs"
+                className="text-xs"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="block text-slate-300 font-medium mb-1">Category Node</label>
-                <select
+              <div className="space-y-1.5">
+                <Label>Category Node</Label>
+                <Select
                   value={newTemplate.category_id}
-                  onChange={(e) => setNewTemplate({ ...newTemplate, category_id: e.target.value })}
-                  className="w-full rounded-md border border-slate-700 bg-slate-900 px-3 py-2 text-slate-100 text-xs"
+                  onValueChange={(val) => setNewTemplate({ ...newTemplate, category_id: val })}
                 >
-                  {categories.map((c) => (
-                    <option key={c.category_id} value={c.category_id}>
-                      {c.name} ({c.path})
-                    </option>
-                  ))}
-                </select>
+                  <SelectTrigger className="h-9 text-xs">
+                    <SelectValue placeholder="Select Category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categories.map((c) => (
+                      <SelectItem key={c.category_id} value={c.category_id}>
+                        {c.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
-              <div>
-                <label className="block text-slate-300 font-medium mb-1">Skill Difficulty</label>
-                <select
+              <div className="space-y-1.5">
+                <Label>Skill Difficulty</Label>
+                <Select
                   value={newTemplate.difficulty}
-                  onChange={(e) => setNewTemplate({ ...newTemplate, difficulty: e.target.value })}
-                  className="w-full rounded-md border border-slate-700 bg-slate-900 px-3 py-2 text-slate-100 text-xs"
+                  onValueChange={(val) => setNewTemplate({ ...newTemplate, difficulty: val })}
                 >
-                  <option value="beginner">Beginner</option>
-                  <option value="intermediate">Intermediate</option>
-                  <option value="advanced">Advanced</option>
-                </select>
+                  <SelectTrigger className="h-9 text-xs">
+                    <SelectValue placeholder="Select Difficulty" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="beginner">Beginner</SelectItem>
+                    <SelectItem value="intermediate">Intermediate</SelectItem>
+                    <SelectItem value="advanced">Advanced</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
 
-            <div>
-              <label className="block text-slate-300 font-medium mb-1">Tags (Comma-separated)</label>
+            <div className="space-y-1.5">
+              <Label htmlFor="tpl_tags">Tags (Comma-separated)</Label>
               <Input
+                id="tpl_tags"
                 value={newTemplate.tags}
                 onChange={(e) => setNewTemplate({ ...newTemplate, tags: e.target.value })}
                 placeholder="studio, product, white background"
-                className="bg-slate-900 border-slate-700 text-slate-100 text-xs"
               />
             </div>
 
             <div className="flex items-center gap-2 pt-1">
-              <input
-                type="checkbox"
+              <Checkbox
                 id="is_sample"
                 checked={newTemplate.is_sample}
-                onChange={(e) => setNewTemplate({ ...newTemplate, is_sample: e.target.checked })}
-                className="rounded border-slate-700 bg-slate-900 text-blue-600"
+                onCheckedChange={(checked) => setNewTemplate({ ...newTemplate, is_sample: !!checked })}
               />
-              <label htmlFor="is_sample" className="text-slate-300 font-medium">
+              <Label htmlFor="is_sample" className="text-slate-700 dark:text-slate-300 font-medium cursor-pointer">
                 Designate as Free Sample (Prompt readable without subscription — 05-MVP §3.3)
-              </label>
+              </Label>
             </div>
 
-            <DialogFooter className="pt-3 border-t border-slate-800">
+            <DialogFooter className="pt-3 border-t border-slate-200 dark:border-slate-800">
               <Button
                 type="button"
                 variant="ghost"
                 onClick={() => setIsCreateOpen(false)}
-                className="text-xs text-slate-400"
+                className="text-xs"
               >
                 Cancel
               </Button>
-              <Button type="submit" className="bg-blue-600 hover:bg-blue-500 text-white text-xs">
+              <Button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white text-xs">
                 Create & Author Prompt →
               </Button>
             </DialogFooter>

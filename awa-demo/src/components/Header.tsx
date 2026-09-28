@@ -80,13 +80,13 @@ export default function Header() {
   const isTemplatesActive = pathname === '/templates' || pathname.startsWith('/template');
   const isSavedActive = pathname.startsWith('/collections');
 
-  if (pathname === '/') {
+  if (pathname === '/' || pathname.startsWith('/admin')) {
     return null;
   }
 
   return (
     <>
-      <header className="sticky top-0 z-40 w-full border-b border-zinc-200/80 dark:border-blue-900/40 bg-white/95 dark:bg-[#0a0e1a]/95 backdrop-blur-md">
+      <header className="sticky top-0 z-40 w-full border-b border-slate-200/90 dark:border-blue-900/40 bg-white/95 dark:bg-[#0a0e1a]/95 backdrop-blur-md transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
           
           {/* LEFT: Logo & Section Nav Labels (Templates / Saved) */}
@@ -97,10 +97,10 @@ export default function Header() {
               variant="outline"
               size="icon"
               onClick={toggleSidebar}
-              className={`h-9 w-9 rounded-lg transition-all ${
+              className={`h-9 w-9 rounded-xl transition-all cursor-pointer ${
                 isSidebarOpen
-                  ? 'bg-zinc-900 border-zinc-900 text-white dark:bg-white dark:border-white dark:text-black'
-                  : 'bg-zinc-100 dark:bg-blue-950/40 hover:bg-zinc-200 dark:hover:bg-blue-900/50 border-zinc-200/80 dark:border-blue-800/40 text-zinc-700 dark:text-zinc-300'
+                  ? 'bg-blue-600 border-blue-600 text-white dark:bg-blue-600 dark:border-blue-600 dark:text-white'
+                  : 'bg-slate-100 dark:bg-blue-950/40 hover:bg-slate-200 dark:hover:bg-blue-900/50 border-slate-200/90 dark:border-blue-800/40 text-slate-700 dark:text-slate-300'
               }`}
               title={isSidebarOpen ? 'Close category sidebar' : 'Open category sidebar'}
               aria-label="Category Navigation"
@@ -109,13 +109,13 @@ export default function Header() {
             </Button>
 
             {/* Reference-matching Logo Mark */}
-            <Link href="/templates" className="flex items-center gap-2 group">
-              <div className="w-8 h-8 rounded-lg bg-black dark:bg-white text-white dark:text-black flex items-center justify-center shadow-xs group-hover:bg-zinc-800 dark:group-hover:bg-zinc-200 transition-colors">
+            <Link href="/templates" className="flex items-center gap-2.5 group">
+              <div className="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center shadow-xs group-hover:bg-blue-700 transition-colors">
                 <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M4 18h3.2l2.4-7.2L12 15l2.4-4.2L16.8 18H20L13.8 6h-3.6L4 18z" />
                 </svg>
               </div>
-              <span className="font-extrabold text-xl tracking-tight text-black dark:text-white font-['var(--font-heading)']">
+              <span className="font-bold text-xl tracking-tight text-slate-900 dark:text-white font-['var(--font-heading)']">
                 AWA
               </span>
             </Link>
@@ -125,8 +125,8 @@ export default function Header() {
                 href="/templates"
                 className={`font-medium transition-colors ${
                   isTemplatesActive
-                    ? 'text-black dark:text-white font-semibold'
-                    : 'text-zinc-500 hover:text-black dark:hover:text-white'
+                    ? 'text-blue-600 dark:text-blue-400 font-semibold'
+                    : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
                 }`}
               >
                 Templates
@@ -135,13 +135,13 @@ export default function Header() {
                 href="/collections"
                 className={`font-medium transition-colors flex items-center gap-1.5 ${
                   isSavedActive
-                    ? 'text-black dark:text-white font-semibold'
-                    : 'text-zinc-500 hover:text-black dark:hover:text-white'
+                    ? 'text-blue-600 dark:text-blue-400 font-semibold'
+                    : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
                 }`}
               >
                 <span>Saved</span>
                 {collections.length > 0 && (
-                  <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-zinc-200 dark:bg-blue-900/50 backdrop-blur-md text-zinc-700 dark:text-zinc-300 font-semibold leading-none">
+                  <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 font-semibold leading-none">
                     {collections.length}
                   </span>
                 )}
@@ -152,21 +152,21 @@ export default function Header() {
           {/* CENTER: Centered, Large Pill-Shaped Search Bar */}
           <div className="flex-1 max-w-md mx-2 sm:mx-6 relative">
             <div className="relative w-full">
-              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-400">
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
                 <Search className="w-4 h-4" />
               </div>
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search on Web..."
-                className="w-full h-10 pl-10 pr-9 rounded-full bg-[#f0f0f2] dark:bg-blue-950/40 backdrop-blur-md hover:bg-[#ebebee] dark:hover:bg-blue-900/30 focus:bg-white dark:focus:bg-blue-950/70 text-zinc-900 dark:text-zinc-100 placeholder-zinc-500 dark:placeholder-zinc-400 text-sm border border-transparent focus:border-zinc-300 dark:focus:border-blue-700/60 focus:outline-none transition-all shadow-2xs"
+                placeholder="Search templates, models, tools..."
+                className="w-full h-10 pl-10 pr-9 rounded-full bg-slate-100/90 dark:bg-blue-950/40 hover:bg-slate-200/70 dark:hover:bg-blue-900/30 focus:bg-white dark:focus:bg-blue-950/70 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-400 text-sm border border-slate-200/90 dark:border-blue-900/50 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none transition-all shadow-2xs"
               />
               {searchQuery && (
                 <button
                   type="button"
                   onClick={() => setSearchQuery('')}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 cursor-pointer"
                   aria-label="Clear search"
                 >
                   <X className="w-3.5 h-3.5" />
@@ -175,20 +175,20 @@ export default function Header() {
             </div>
           </div>
 
-          {/* RIGHT: Bookmark, Theme Toggle, Language, Notifications, Subscribe Button, Avatar */}
+          {/* RIGHT: Bookmark, Theme Toggle, Language, Subscribe Button, Avatar */}
           <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
             {/* Bookmark Icon (opens Collections) */}
             <Link
               href="/collections"
-              className={`p-2 rounded-full hover:bg-zinc-100 dark:hover:bg-blue-900/30 transition-colors relative ${
-                isSavedActive ? 'text-black dark:text-white' : 'text-zinc-600 dark:text-zinc-400'
+              className={`p-2 rounded-xl border border-slate-200/80 dark:border-blue-900/50 bg-slate-50 dark:bg-blue-950/30 hover:bg-slate-100 dark:hover:bg-blue-900/50 transition-colors relative cursor-pointer ${
+                isSavedActive ? 'text-blue-600 dark:text-blue-400 border-blue-300 dark:border-blue-700' : 'text-slate-600 dark:text-slate-400'
               }`}
               title="Saved Collections"
               aria-label="Saved Collections"
             >
-              <Bookmark className="w-4 h-4 sm:w-5 sm:h-5" />
+              <Bookmark className="w-4 h-4" />
               {collections.length > 0 && (
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-amber-500 ring-2 ring-white dark:ring-zinc-900"></span>
+                <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-amber-500 ring-2 ring-white dark:ring-zinc-900"></span>
               )}
             </Link>
 
@@ -196,34 +196,34 @@ export default function Header() {
             <button
               type="button"
               onClick={handleToggleTheme}
-              className="p-2 rounded-full hover:bg-zinc-100 dark:hover:bg-blue-900/30 text-zinc-600 dark:text-zinc-300 transition-colors"
+              className="p-2 rounded-xl border border-slate-200/80 dark:border-blue-900/50 bg-slate-50 dark:bg-blue-950/30 hover:bg-slate-100 dark:hover:bg-blue-900/50 text-slate-600 dark:text-slate-300 transition-colors cursor-pointer"
               title={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
               aria-label={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
             >
               {isDarkMode ? (
-                <Sun className="w-4 h-4 sm:w-5 sm:h-5 text-amber-400" />
+                <Sun className="w-4 h-4 text-amber-400" />
               ) : (
-                <Moon className="w-4 h-4 sm:w-5 sm:h-5 text-zinc-600" />
+                <Moon className="w-4 h-4 text-slate-600" />
               )}
             </button>
 
             {/* Language Selection */}
             <div className="hidden sm:flex items-center">
               <select
-                className="bg-transparent text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 font-medium focus:outline-none cursor-pointer hover:text-zinc-900 dark:hover:text-zinc-200 transition-colors"
+                className="px-2 py-1.5 rounded-lg border border-slate-200/80 dark:border-blue-900/50 bg-slate-50 dark:bg-blue-950/30 text-xs font-semibold text-slate-700 dark:text-slate-300 focus:outline-none cursor-pointer hover:bg-slate-100 dark:hover:bg-blue-900/50 transition-colors"
                 title="Change Language"
                 aria-label="Change Language"
                 defaultValue="en"
               >
-                <option value="en" className="bg-white dark:bg-[#0c1427] text-zinc-900 dark:text-zinc-100">EN</option>
-                <option value="es" className="bg-white dark:bg-[#0c1427] text-zinc-900 dark:text-zinc-100">ES</option>
-                <option value="fr" className="bg-white dark:bg-[#0c1427] text-zinc-900 dark:text-zinc-100">FR</option>
-                <option value="de" className="bg-white dark:bg-[#0c1427] text-zinc-900 dark:text-zinc-100">DE</option>
+                <option value="en" className="bg-white dark:bg-[#0c1427] text-slate-900 dark:text-slate-100">EN</option>
+                <option value="es" className="bg-white dark:bg-[#0c1427] text-slate-900 dark:text-slate-100">ES</option>
+                <option value="fr" className="bg-white dark:bg-[#0c1427] text-slate-900 dark:text-slate-100">FR</option>
+                <option value="de" className="bg-white dark:bg-[#0c1427] text-slate-900 dark:text-slate-100">DE</option>
               </select>
             </div>
 
-            {/* Solid BLACK/WHITE pill-shaped "Subscribe" button */}
-            <Button
+            {/* Unified Design System "Subscribe" Button */}
+            <button
               type="button"
               onClick={() => {
                 if (isSubscribed) {
@@ -232,18 +232,22 @@ export default function Header() {
                   subscribe();
                 }
               }}
-              className="rounded-full bg-black dark:bg-white hover:bg-zinc-800 dark:hover:bg-zinc-200 text-white dark:text-black text-xs font-semibold px-3.5 sm:px-4 h-8 sm:h-9 shadow-xs shrink-0 flex items-center gap-1.5"
+              className={`h-9 px-3.5 sm:px-4 rounded-xl text-xs font-semibold flex items-center gap-1.5 shrink-0 transition-all cursor-pointer ${
+                isSubscribed
+                  ? 'bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 shadow-2xs'
+                  : 'bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white shadow-xs'
+              }`}
               title={isSubscribed ? 'Account Subscribed (Click to switch to guest)' : 'Subscribe for full catalog access'}
             >
               {isSubscribed ? (
                 <>
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-                  <span>Subscribed ({credits})</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                  <span>Creator Pass ({credits})</span>
                 </>
               ) : (
                 <span>Subscribe</span>
               )}
-            </Button>
+            </button>
 
             {/* Demo Tools & Stage Controller Dropdown using Shadcn DropdownMenu */}
             <DropdownMenu>
