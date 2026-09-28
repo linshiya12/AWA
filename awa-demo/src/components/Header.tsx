@@ -35,6 +35,7 @@ import {
   RotateCcw,
   Check,
   Globe,
+  LifeBuoy,
 } from 'lucide-react';
 
 export default function Header() {
@@ -83,6 +84,7 @@ export default function Header() {
 
   const isTemplatesActive = pathname === '/templates' || pathname.startsWith('/template');
   const isSavedActive = pathname.startsWith('/collections');
+  const isSupportActive = pathname.startsWith('/support');
 
   if (pathname === '/' || pathname.startsWith('/admin')) {
     return null;
@@ -93,7 +95,7 @@ export default function Header() {
       <header className="sticky top-0 z-40 w-full border-b border-slate-200/90 dark:border-blue-900/40 bg-white/95 dark:bg-[#0a0e1a]/95 backdrop-blur-md transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
           
-          {/* LEFT: Logo & Section Nav Labels (Templates / Saved) */}
+          {/* LEFT: Logo & Section Nav Labels (Templates / Saved / Support) */}
           <div className="flex items-center gap-3 sm:gap-6 shrink-0">
             {/* Category Drawer Menu Button */}
             <Button
@@ -149,6 +151,16 @@ export default function Header() {
                     {collections.length}
                   </span>
                 )}
+              </Link>
+              <Link
+                href="/support"
+                className={`font-medium transition-colors flex items-center gap-1.5 ${
+                  isSupportActive
+                    ? 'text-blue-600 dark:text-blue-400 font-semibold'
+                    : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
+                }`}
+              >
+                <span>Support</span>
               </Link>
             </nav>
           </div>
@@ -358,6 +370,16 @@ export default function Header() {
                 </DropdownMenuItem>
 
                 <DropdownMenuSeparator />
+
+                <DropdownMenuItem asChild>
+                  <Link href="/support" className="flex items-center justify-between cursor-pointer text-xs font-medium text-slate-700 dark:text-slate-300">
+                    <span className="flex items-center gap-2">
+                      <LifeBuoy className="w-3.5 h-3.5 text-blue-500" />
+                      <span>Contact Support</span>
+                    </span>
+                    <ArrowRight className="w-3.5 h-3.5 text-slate-400" />
+                  </Link>
+                </DropdownMenuItem>
 
                 <DropdownMenuItem asChild>
                   <Link href="/admin" className="flex items-center justify-between cursor-pointer text-xs font-semibold text-blue-600 dark:text-blue-400">

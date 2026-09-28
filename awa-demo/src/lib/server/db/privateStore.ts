@@ -20,6 +20,13 @@ import {
   UserCollectionWithDetails,
   TemplatePromptTranslation,
   LanguageTranslationProgress,
+  SupportTicket,
+  SupportTicketMessage,
+  SupportTicketStatus,
+  SupportTicketCategory,
+  SupportTicketSummaryCounts,
+  SupportTicketAttachment,
+  SupportTicketStatusHistoryItem,
 } from '../types';
 import { publicDb } from './publicStore';
 import { allTemplates } from '@/lib/mockData';
@@ -49,6 +56,7 @@ class PrivateDatabaseStore {
   private userCollections: UserCollection[] = [];
   private promptTranslations: TemplatePromptTranslation[] = [];
   private languageProgress: Map<string, LanguageTranslationProgress> = new Map();
+  private supportTickets: SupportTicket[] = [];
 
   constructor() {
     // Initialize default payment config (Razorpay, test mode, write-only credentials)
@@ -636,6 +644,253 @@ class PrivateDatabaseStore {
         template_ids: ['tpl_video_jellyfish', 'tpl_video_2'],
         created_at: new Date(now - 18 * 86400000).toISOString(),
         updated_at: new Date(now - 10 * 86400000).toISOString(),
+      },
+    ];
+
+    // 8. Seed Support Tickets (Private Support Database)
+    this.seedSupportTickets();
+  }
+
+  seedSupportTickets() {
+    const now = Date.now();
+    this.supportTickets = [
+      {
+        ticket_id: 'tkt-1001',
+        ticket_number: 1001,
+        user_id: 'usr-alex-sub',
+        user_email: 'alex@creative.io',
+        user_name: 'Alex Morgan',
+        subject: "Prompt rewrite didn't preserve the metallic rim detail",
+        category: 'prompt_customization',
+        status: 'open',
+        related_template_id: 'tpl_1',
+        related_attempt_id: 'att-alex-01',
+        assigned_to_user_id: null,
+        assigned_to_name: null,
+        is_read_by_admin: false,
+        is_read_by_user: true,
+        created_at: new Date(now - 3 * 3600000).toISOString(),
+        updated_at: new Date(now - 3 * 3600000).toISOString(),
+        status_history: [
+          {
+            history_id: 'sh-101',
+            status: 'open',
+            changed_by_user_id: 'usr-alex-sub',
+            changed_by_name: 'Alex Morgan',
+            changed_at: new Date(now - 3 * 3600000).toISOString(),
+            note: 'Ticket created by user',
+          },
+        ],
+        messages: [
+          {
+            message_id: 'msg-1001',
+            ticket_id: 'tkt-1001',
+            sender_id: 'usr-alex-sub',
+            sender_role: 'user',
+            sender_name: 'Alex Morgan',
+            content:
+              'Hi team! I tried customizing the "Plain product on white" template to add brushed gold metallic rims to the tumbler. However, the generated prompt rewrote the lighting completely and dropped the rim texture. Could you advise how to phrase the customization so Midjourney keeps the lighting setup intact?',
+            is_internal_note: false,
+            attachments: [
+              {
+                attachment_id: 'att-scr-1',
+                file_name: 'customization-error.png',
+                file_type: 'image/png',
+                url: '/images/guidance/tpl_1/step-1.svg',
+                size_bytes: 42100,
+              },
+            ],
+            created_at: new Date(now - 3 * 3600000).toISOString(),
+          },
+        ],
+      },
+      {
+        ticket_id: 'tkt-1002',
+        ticket_number: 1002,
+        user_id: 'usr-sara-solo',
+        user_email: 'sara@marketing.co',
+        user_name: 'Sara Chen',
+        subject: 'Customization timeout deducted 1 credit from my balance',
+        category: 'credits',
+        status: 'in_progress',
+        related_template_id: 'tpl_img_aquatic',
+        related_attempt_id: null,
+        assigned_to_user_id: 'usr-admin-1',
+        assigned_to_name: 'Lead Curator (Admin)',
+        is_read_by_admin: true,
+        is_read_by_user: true,
+        created_at: new Date(now - 14 * 3600000).toISOString(),
+        updated_at: new Date(now - 2 * 3600000).toISOString(),
+        status_history: [
+          {
+            history_id: 'sh-102a',
+            status: 'open',
+            changed_by_user_id: 'usr-sara-solo',
+            changed_by_name: 'Sara Chen',
+            changed_at: new Date(now - 14 * 3600000).toISOString(),
+          },
+          {
+            history_id: 'sh-102b',
+            status: 'in_progress',
+            changed_by_user_id: 'usr-admin-1',
+            changed_by_name: 'Lead Curator (Admin)',
+            changed_at: new Date(now - 8 * 3600000).toISOString(),
+            note: 'Investigating allowance ledger and timeout event',
+          },
+        ],
+        messages: [
+          {
+            message_id: 'msg-1002a',
+            ticket_id: 'tkt-1002',
+            sender_id: 'usr-sara-solo',
+            sender_role: 'user',
+            sender_name: 'Sara Chen',
+            content:
+              'Hello! Yesterday around 4 PM I clicked customize on the Dynamic Cosmetic Splash template. The spinner ran for 30 seconds and then gave a 504 Gateway Timeout. My credit balance decreased from 10 to 9, but no customized prompt was saved.',
+            is_internal_note: false,
+            created_at: new Date(now - 14 * 3600000).toISOString(),
+          },
+          {
+            message_id: 'msg-1002b',
+            ticket_id: 'tkt-1002',
+            sender_id: 'usr-admin-1',
+            sender_role: 'administrator',
+            sender_name: 'Lead Curator (Admin)',
+            content:
+              'Internal note: Verified server logs. Worker process timed out on LLM gateway during peak hour. Credited +1 back to user ledger under ald-support-1002. Ready to notify user.',
+            is_internal_note: true, // Internal note — strictly hidden from user!
+            created_at: new Date(now - 6 * 3600000).toISOString(),
+          },
+          {
+            message_id: 'msg-1002c',
+            ticket_id: 'tkt-1002',
+            sender_id: 'usr-admin-1',
+            sender_role: 'administrator',
+            sender_name: 'Lead Curator (Admin)',
+            content:
+              'Hi Sara, thank you for reaching out and alerting us. We checked the gateway logs and confirmed the timeout occurred before prompt generation completed. We have credited 1 customization allowance back to your account. Could you please refresh your dashboard and verify your balance?',
+            is_internal_note: false,
+            created_at: new Date(now - 2 * 3600000).toISOString(),
+          },
+        ],
+      },
+      {
+        ticket_id: 'tkt-1003',
+        ticket_number: 1003,
+        user_id: 'usr-jordan-life',
+        user_email: 'jordan@studio.design',
+        user_name: 'Jordan Lee',
+        subject: 'Runway Gen-3 camera parameters for product rotation',
+        category: 'template_or_guidance',
+        status: 'waiting_for_user',
+        related_template_id: 'tpl_video_1',
+        related_attempt_id: null,
+        assigned_to_user_id: 'usr-admin-1',
+        assigned_to_name: 'Lead Curator (Admin)',
+        is_read_by_admin: true,
+        is_read_by_user: true,
+        created_at: new Date(now - 28 * 3600000).toISOString(),
+        updated_at: new Date(now - 10 * 3600000).toISOString(),
+        status_history: [
+          {
+            history_id: 'sh-103a',
+            status: 'open',
+            changed_by_user_id: 'usr-jordan-life',
+            changed_by_name: 'Jordan Lee',
+            changed_at: new Date(now - 28 * 3600000).toISOString(),
+          },
+          {
+            history_id: 'sh-103b',
+            status: 'waiting_for_user',
+            changed_by_user_id: 'usr-admin-1',
+            changed_by_name: 'Lead Curator (Admin)',
+            changed_at: new Date(now - 10 * 3600000).toISOString(),
+          },
+        ],
+        messages: [
+          {
+            message_id: 'msg-1003a',
+            ticket_id: 'tkt-1003',
+            sender_id: 'usr-jordan-life',
+            sender_role: 'user',
+            sender_name: 'Jordan Lee',
+            content:
+              'In the guidance steps for template "Product in studio rotation", Step 3 specifies a 360 orbit camera. When importing the prompt into Runway Gen-3 Alpha, the camera speed is too quick. Is there an exact motion brush value recommended?',
+            is_internal_note: false,
+            created_at: new Date(now - 28 * 3600000).toISOString(),
+          },
+          {
+            message_id: 'msg-1003b',
+            ticket_id: 'tkt-1003',
+            sender_id: 'usr-admin-1',
+            sender_role: 'administrator',
+            sender_name: 'Lead Curator (Admin)',
+            content:
+              'Hi Jordan! For Gen-3 Alpha, set Horizontal Pan to +1.5 and Motion to 3 (instead of the default 5). Also ensure "Smooth Loop" is checked in Advanced Settings. Let us know if that produces the expected slow commercial rotation.',
+            is_internal_note: false,
+            created_at: new Date(now - 10 * 3600000).toISOString(),
+          },
+        ],
+      },
+      {
+        ticket_id: 'tkt-1004',
+        ticket_number: 1004,
+        user_id: 'usr-david-unpaid',
+        user_email: 'david@startups.io',
+        user_name: 'David Kim',
+        subject: 'Tax invoice receipt with GST number',
+        category: 'subscription_or_payment',
+        status: 'resolved',
+        related_template_id: null,
+        related_attempt_id: null,
+        assigned_to_user_id: 'usr-admin-1',
+        assigned_to_name: 'Lead Curator (Admin)',
+        is_read_by_admin: true,
+        is_read_by_user: true,
+        created_at: new Date(now - 50 * 3600000).toISOString(),
+        updated_at: new Date(now - 20 * 3600000).toISOString(),
+        resolved_at: new Date(now - 20 * 3600000).toISOString(),
+        status_history: [
+          {
+            history_id: 'sh-104a',
+            status: 'open',
+            changed_by_user_id: 'usr-david-unpaid',
+            changed_by_name: 'David Kim',
+            changed_at: new Date(now - 50 * 3600000).toISOString(),
+          },
+          {
+            history_id: 'sh-104b',
+            status: 'resolved',
+            changed_by_user_id: 'usr-admin-1',
+            changed_by_name: 'Lead Curator (Admin)',
+            changed_at: new Date(now - 20 * 3600000).toISOString(),
+            note: 'Invoice with GSTIN generated and delivered',
+          },
+        ],
+        messages: [
+          {
+            message_id: 'msg-1004a',
+            ticket_id: 'tkt-1004',
+            sender_id: 'usr-david-unpaid',
+            sender_role: 'user',
+            sender_name: 'David Kim',
+            content:
+              'Could I please get a formal B2B invoice with our company GSTIN included for our corporate tax filing?',
+            is_internal_note: false,
+            created_at: new Date(now - 50 * 3600000).toISOString(),
+          },
+          {
+            message_id: 'msg-1004b',
+            ticket_id: 'tkt-1004',
+            sender_id: 'usr-admin-1',
+            sender_role: 'administrator',
+            sender_name: 'Lead Curator (Admin)',
+            content:
+              'Hello David! We have re-issued your receipt with your organization details and GSTIN. You can view and download it directly from your billing statement.',
+            is_internal_note: false,
+            created_at: new Date(now - 20 * 3600000).toISOString(),
+          },
+        ],
       },
     ];
   }
@@ -2049,6 +2304,511 @@ class PrivateDatabaseStore {
     }
     return { spent: this.spendPeriod.spent, limit: this.spendPeriod.limit };
   }
+
+  // =========================================================================
+  // USER SUPPORT TICKET METHODS (PRIVATE DATABASE)
+  // Enforces 13-SECURITY.md: User isolation & internal notes privacy
+  // =========================================================================
+
+  ensureSupportTickets(): SupportTicket[] {
+    if (!this.supportTickets || !Array.isArray(this.supportTickets) || this.supportTickets.length === 0) {
+      this.seedSupportTickets();
+    }
+    return this.supportTickets;
+  }
+
+  /**
+   * Returns all tickets belonging to a specific user.
+   * STRICT SECURITY: Completely strips internal notes!
+   */
+  getSupportTicketsForUser(userId: string): SupportTicket[] {
+    const tickets = this.ensureSupportTickets();
+    const userTickets = tickets.filter((t) => t.user_id === userId);
+    return userTickets
+      .map((t) => ({
+        ...t,
+        messages: t.messages
+          .filter((m) => !m.is_internal_note)
+          .map((m) => ({ ...m })),
+        status_history: [...t.status_history],
+      }))
+      .sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime());
+  }
+
+  /**
+   * Returns a single ticket thread for a user.
+   * Validates user ownership. Marks ticket as read by user.
+   * STRICT SECURITY: Completely strips internal notes!
+   */
+  getSupportTicketForUserById(ticketId: string, userId: string): SupportTicket | null {
+    const tickets = this.ensureSupportTickets();
+    const ticket = tickets.find((t) => t.ticket_id === ticketId);
+    if (!ticket) return null;
+    if (ticket.user_id !== userId) {
+      return null;
+    }
+
+    ticket.is_read_by_user = true;
+
+    return {
+      ...ticket,
+      messages: ticket.messages
+        .filter((m) => !m.is_internal_note)
+        .map((m) => ({ ...m })),
+      status_history: [...ticket.status_history],
+    };
+  }
+
+  /**
+   * Creates a new support ticket submitted by a signed-in user.
+   */
+  createSupportTicket(data: {
+    userId: string;
+    subject: string;
+    category: SupportTicketCategory;
+    description: string;
+    screenshotUrl?: string;
+    relatedTemplateId?: string;
+    relatedAttemptId?: string;
+  }): SupportTicket {
+    const user = this.getUserById(data.userId);
+    if (!user) throw new Error('User not found or unauthenticated');
+
+    if (!data.subject || data.subject.trim().length === 0) {
+      throw new Error('Subject is required');
+    }
+    if (!data.description || data.description.trim().length === 0) {
+      throw new Error('Description is required');
+    }
+
+    const tickets = this.ensureSupportTickets();
+    const ticketNumber = 1000 + tickets.length + 1;
+    const ticketId = `tkt-${ticketNumber}`;
+    const nowIso = new Date().toISOString();
+
+    const initialMessage: SupportTicketMessage = {
+      message_id: `msg-${Date.now()}-1`,
+      ticket_id: ticketId,
+      sender_id: user.user_id,
+      sender_role: 'user',
+      sender_name: user.display_name || user.email,
+      content: data.description.trim(),
+      is_internal_note: false,
+      attachments: data.screenshotUrl
+        ? [
+            {
+              attachment_id: `att-${Date.now()}`,
+              file_name: 'screenshot.png',
+              file_type: 'image/png',
+              url: data.screenshotUrl,
+            },
+          ]
+        : undefined,
+      created_at: nowIso,
+    };
+
+    const newTicket: SupportTicket = {
+      ticket_id: ticketId,
+      ticket_number: ticketNumber,
+      user_id: user.user_id,
+      user_email: user.email,
+      user_name: user.display_name || user.email,
+      subject: data.subject.trim(),
+      category: data.category || 'other',
+      status: 'open',
+      related_template_id: data.relatedTemplateId || null,
+      related_attempt_id: data.relatedAttemptId || null,
+      assigned_to_user_id: null,
+      assigned_to_name: null,
+      is_read_by_admin: false,
+      is_read_by_user: true,
+      created_at: nowIso,
+      updated_at: nowIso,
+      status_history: [
+        {
+          history_id: `sh-${Date.now()}`,
+          status: 'open',
+          changed_by_user_id: user.user_id,
+          changed_by_name: user.display_name || user.email,
+          changed_at: nowIso,
+          note: 'Ticket submitted by user',
+        },
+      ],
+      messages: [initialMessage],
+    };
+
+    tickets.unshift(newTicket);
+    return newTicket;
+  }
+
+  /**
+   * Adds a user reply to an existing open ticket.
+   */
+  addUserReplyToTicket(
+    ticketId: string,
+    userId: string,
+    content: string,
+    screenshotUrl?: string
+  ): SupportTicketMessage {
+    const tickets = this.ensureSupportTickets();
+    const ticket = tickets.find((t) => t.ticket_id === ticketId);
+    if (!ticket) throw new Error('Ticket not found');
+    if (ticket.user_id !== userId) throw new Error('Unauthorized');
+
+    if (!content || content.trim().length === 0) {
+      throw new Error('Message content cannot be empty');
+    }
+
+    const nowIso = new Date().toISOString();
+    const user = this.getUserById(userId);
+
+    const message: SupportTicketMessage = {
+      message_id: `msg-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+      ticket_id: ticketId,
+      sender_id: userId,
+      sender_role: 'user',
+      sender_name: user?.display_name || user?.email || ticket.user_name,
+      content: content.trim(),
+      is_internal_note: false,
+      attachments: screenshotUrl
+        ? [
+            {
+              attachment_id: `att-${Date.now()}`,
+              file_name: 'attachment.png',
+              file_type: 'image/png',
+              url: screenshotUrl,
+            },
+          ]
+        : undefined,
+      created_at: nowIso,
+    };
+
+    ticket.messages.push(message);
+    ticket.updated_at = nowIso;
+    ticket.is_read_by_admin = false;
+    ticket.is_read_by_user = true;
+
+    // If ticket was resolved or waiting for user, reopen to open / in_progress
+    if (ticket.status === 'resolved' || ticket.status === 'waiting_for_user') {
+      const prevStatus = ticket.status;
+      ticket.status = ticket.assigned_to_user_id ? 'in_progress' : 'open';
+      ticket.status_history.push({
+        history_id: `sh-${Date.now()}`,
+        status: ticket.status,
+        changed_by_user_id: userId,
+        changed_by_name: user?.display_name || ticket.user_name,
+        changed_at: nowIso,
+        note: `User replied; status reopened from ${prevStatus}`,
+      });
+    }
+
+    return message;
+  }
+
+  /**
+   * Admin view: lists tickets with filters, counts, search, and pagination.
+   */
+  getAdminSupportTickets(filters: {
+    search?: string;
+    status?: string;
+    category?: string;
+    userId?: string;
+    dateRange?: string;
+    page?: number;
+    pageSize?: number;
+  }): {
+    tickets: SupportTicket[];
+    counts: SupportTicketSummaryCounts;
+    totalItems: number;
+    totalPages: number;
+    currentPage: number;
+  } {
+    const tickets = this.ensureSupportTickets();
+    let openCount = 0;
+    let inProgressCount = 0;
+    let waitingForUserCount = 0;
+    let resolvedCount = 0;
+    let unreadCount = 0;
+
+    for (const t of tickets) {
+      if (t.status === 'open') openCount++;
+      else if (t.status === 'in_progress') inProgressCount++;
+      else if (t.status === 'waiting_for_user') waitingForUserCount++;
+      else if (t.status === 'resolved') resolvedCount++;
+
+      if (!t.is_read_by_admin) unreadCount++;
+    }
+
+    const counts: SupportTicketSummaryCounts = {
+      total: tickets.length,
+      open: openCount,
+      in_progress: inProgressCount,
+      waiting_for_user: waitingForUserCount,
+      resolved: resolvedCount,
+      unread: unreadCount,
+    };
+
+    let filtered = [...tickets];
+
+    if (filters.status && filters.status !== 'all') {
+      filtered = filtered.filter((t) => t.status === filters.status);
+    }
+
+    if (filters.category && filters.category !== 'all') {
+      filtered = filtered.filter((t) => t.category === filters.category);
+    }
+
+    if (filters.userId && filters.userId !== 'all') {
+      filtered = filtered.filter((t) => t.user_id === filters.userId);
+    }
+
+    if (filters.search && filters.search.trim()) {
+      const q = filters.search.trim().toLowerCase();
+      filtered = filtered.filter(
+        (t) =>
+          t.subject.toLowerCase().includes(q) ||
+          t.user_name.toLowerCase().includes(q) ||
+          t.user_email.toLowerCase().includes(q) ||
+          t.ticket_id.toLowerCase().includes(q) ||
+          `#${t.ticket_number}`.includes(q)
+      );
+    }
+
+    if (filters.dateRange && filters.dateRange !== 'all') {
+      const now = Date.now();
+      let cutoff = 0;
+      if (filters.dateRange === 'today') cutoff = now - 24 * 3600000;
+      else if (filters.dateRange === '7d') cutoff = now - 7 * 86400000;
+      else if (filters.dateRange === '30d') cutoff = now - 30 * 86400000;
+      else if (filters.dateRange === '90d') cutoff = now - 90 * 86400000;
+
+      if (cutoff > 0) {
+        filtered = filtered.filter((t) => new Date(t.created_at).getTime() >= cutoff);
+      }
+    }
+
+    filtered.sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime());
+
+    const totalItems = filtered.length;
+    const pageSize = filters.pageSize || 10;
+    const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
+    const currentPage = Math.min(Math.max(1, filters.page || 1), totalPages);
+    const startIndex = (currentPage - 1) * pageSize;
+    const paginatedTickets = filtered.slice(startIndex, startIndex + pageSize);
+
+    return {
+      tickets: paginatedTickets,
+      counts,
+      totalItems,
+      totalPages,
+      currentPage,
+    };
+  }
+
+  /**
+   * Admin view: get single ticket detail with all messages and mark read by admin.
+   */
+  getAdminSupportTicketById(ticketId: string): SupportTicket | null {
+    const tickets = this.ensureSupportTickets();
+    const ticket = tickets.find((t) => t.ticket_id === ticketId);
+    if (!ticket) return null;
+    ticket.is_read_by_admin = true;
+    return ticket;
+  }
+
+  /**
+   * Admin action: reply to user OR add internal note.
+   */
+  addAdminReplyToTicket(
+    ticketId: string,
+    adminUserId: string,
+    content: string,
+    isInternalNote: boolean = false
+  ): SupportTicketMessage {
+    const tickets = this.ensureSupportTickets();
+    const ticket = tickets.find((t) => t.ticket_id === ticketId);
+    if (!ticket) throw new Error('Ticket not found');
+
+    const admin = this.getUserById(adminUserId);
+    if (!admin || admin.role !== 'administrator') {
+      throw new Error('Only administrators can post replies or notes here');
+    }
+
+    if (!content || content.trim().length === 0) {
+      throw new Error('Message content cannot be empty');
+    }
+
+    const nowIso = new Date().toISOString();
+    const message: SupportTicketMessage = {
+      message_id: `msg-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+      ticket_id: ticketId,
+      sender_id: adminUserId,
+      sender_role: 'administrator',
+      sender_name: admin.display_name || admin.email,
+      content: content.trim(),
+      is_internal_note: isInternalNote,
+      created_at: nowIso,
+    };
+
+    ticket.messages.push(message);
+    ticket.updated_at = nowIso;
+
+    if (!isInternalNote) {
+      ticket.is_read_by_user = false;
+      if (ticket.status === 'open') {
+        const prevStatus = ticket.status;
+        ticket.status = 'waiting_for_user';
+        ticket.status_history.push({
+          history_id: `sh-${Date.now()}`,
+          status: 'waiting_for_user',
+          changed_by_user_id: adminUserId,
+          changed_by_name: admin.display_name || admin.email,
+          changed_at: nowIso,
+          note: `Status updated from ${prevStatus} upon admin reply`,
+        });
+      }
+    }
+
+    this.recordAuditLog(
+      adminUserId,
+      isInternalNote ? 'add_internal_note' : 'reply_to_ticket',
+      'support_ticket',
+      ticketId,
+      null,
+      { is_internal_note: isInternalNote, message_id: message.message_id }
+    );
+
+    return message;
+  }
+
+  /**
+   * Admin action: update ticket status (open, in_progress, waiting_for_user, resolved).
+   */
+  updateTicketStatus(
+    ticketId: string,
+    newStatus: SupportTicketStatus,
+    adminUserId: string,
+    note?: string
+  ): SupportTicket {
+    const tickets = this.ensureSupportTickets();
+    const ticket = tickets.find((t) => t.ticket_id === ticketId);
+    if (!ticket) throw new Error('Ticket not found');
+
+    const admin = this.getUserById(adminUserId);
+    if (!admin || admin.role !== 'administrator') {
+      throw new Error('Only administrators can update ticket status');
+    }
+
+    const prevStatus = ticket.status;
+    if (prevStatus === newStatus) return ticket;
+
+    const nowIso = new Date().toISOString();
+    ticket.status = newStatus;
+    ticket.updated_at = nowIso;
+    if (newStatus === 'resolved') {
+      ticket.resolved_at = nowIso;
+    } else {
+      ticket.resolved_at = null;
+    }
+
+    ticket.status_history.push({
+      history_id: `sh-${Date.now()}`,
+      status: newStatus,
+      changed_by_user_id: adminUserId,
+      changed_by_name: admin.display_name || admin.email,
+      changed_at: nowIso,
+      note: note || `Status changed from ${prevStatus} to ${newStatus}`,
+    });
+
+    this.recordAuditLog(
+      adminUserId,
+      'update_ticket_status',
+      'support_ticket',
+      ticketId,
+      { status: prevStatus },
+      { status: newStatus, note }
+    );
+
+    return ticket;
+  }
+
+  /**
+   * Admin action: assign ticket to an administrator.
+   */
+  assignTicket(
+    ticketId: string,
+    assignToAdminId: string | null,
+    adminUserId: string
+  ): SupportTicket {
+    const tickets = this.ensureSupportTickets();
+    const ticket = tickets.find((t) => t.ticket_id === ticketId);
+    if (!ticket) throw new Error('Ticket not found');
+
+    let assignedAdminName: string | null = null;
+    if (assignToAdminId) {
+      const targetAdmin = this.getUserById(assignToAdminId);
+      if (!targetAdmin) throw new Error('Target administrator not found');
+      assignedAdminName = targetAdmin.display_name || targetAdmin.email;
+    }
+
+    const prevAssigned = ticket.assigned_to_user_id;
+    ticket.assigned_to_user_id = assignToAdminId;
+    ticket.assigned_to_name = assignedAdminName;
+    ticket.updated_at = new Date().toISOString();
+
+    if (ticket.status === 'open' && assignToAdminId) {
+      ticket.status = 'in_progress';
+      ticket.status_history.push({
+        history_id: `sh-${Date.now()}`,
+        status: 'in_progress',
+        changed_by_user_id: adminUserId,
+        changed_by_name: this.getUserById(adminUserId)?.display_name || 'Admin',
+        changed_at: new Date().toISOString(),
+        note: `Ticket assigned to ${assignedAdminName}; moved to In Progress`,
+      });
+    }
+
+    this.recordAuditLog(
+      adminUserId,
+      'assign_ticket',
+      'support_ticket',
+      ticketId,
+      { assigned_to: prevAssigned },
+      { assigned_to: assignToAdminId }
+    );
+
+    return ticket;
+  }
+
+  /**
+   * Fast counts query for sidebar badge and header widgets.
+   */
+  getSupportSummaryCounts(): SupportTicketSummaryCounts {
+    const tickets = this.ensureSupportTickets();
+    let open = 0;
+    let inProgress = 0;
+    let waiting = 0;
+    let resolved = 0;
+    let unread = 0;
+
+    for (const t of tickets) {
+      if (t.status === 'open') open++;
+      else if (t.status === 'in_progress') inProgress++;
+      else if (t.status === 'waiting_for_user') waiting++;
+      else if (t.status === 'resolved') resolved++;
+
+      if (!t.is_read_by_admin) unread++;
+    }
+
+    return {
+      total: tickets.length,
+      open,
+      in_progress: inProgress,
+      waiting_for_user: waiting,
+      resolved,
+      unread,
+    };
+  }
 }
 
 // Global singleton instance for private store
@@ -2058,6 +2818,9 @@ declare global {
 
 if (globalThis.__awa_private_db__) {
   Object.setPrototypeOf(globalThis.__awa_private_db__, PrivateDatabaseStore.prototype);
+  if (!globalThis.__awa_private_db__.supportTickets || globalThis.__awa_private_db__.supportTickets.length === 0) {
+    globalThis.__awa_private_db__.ensureSupportTickets();
+  }
 }
 
 export const privateDb: PrivateDatabaseStore =

@@ -420,3 +420,81 @@ export interface UserCollectionWithDetails extends UserCollection {
   }>;
 }
 
+// ==========================================
+// USER SUPPORT MODELS (PRIVATE DATABASE)
+// ==========================================
+
+export type SupportTicketCategory =
+  | 'account'
+  | 'subscription_or_payment'
+  | 'credits'
+  | 'prompt_customization'
+  | 'template_or_guidance'
+  | 'other';
+
+export type SupportTicketStatus =
+  | 'open'
+  | 'in_progress'
+  | 'waiting_for_user'
+  | 'resolved';
+
+export interface SupportTicketAttachment {
+  attachment_id: string;
+  file_name: string;
+  file_type: string;
+  url: string;
+  size_bytes?: number;
+}
+
+export interface SupportTicketMessage {
+  message_id: string;
+  ticket_id: string;
+  sender_id: string;
+  sender_role: 'user' | 'administrator';
+  sender_name: string;
+  content: string;
+  is_internal_note: boolean; // NEVER visible to regular users
+  attachments?: SupportTicketAttachment[];
+  created_at: string;
+}
+
+export interface SupportTicketStatusHistoryItem {
+  history_id: string;
+  status: SupportTicketStatus;
+  changed_by_user_id: string;
+  changed_by_name: string;
+  changed_at: string;
+  note?: string | null;
+}
+
+export interface SupportTicket {
+  ticket_id: string;
+  ticket_number: number;
+  user_id: string;
+  user_email: string;
+  user_name: string;
+  subject: string;
+  category: SupportTicketCategory;
+  status: SupportTicketStatus;
+  related_template_id?: string | null;
+  related_attempt_id?: string | null;
+  assigned_to_user_id?: string | null;
+  assigned_to_name?: string | null;
+  is_read_by_admin: boolean;
+  is_read_by_user: boolean;
+  created_at: string;
+  updated_at: string;
+  resolved_at?: string | null;
+  status_history: SupportTicketStatusHistoryItem[];
+  messages: SupportTicketMessage[];
+}
+
+export interface SupportTicketSummaryCounts {
+  total: number;
+  open: number;
+  in_progress: number;
+  waiting_for_user: number;
+  resolved: number;
+  unread: number;
+}
+

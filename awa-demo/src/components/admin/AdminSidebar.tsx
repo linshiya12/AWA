@@ -20,6 +20,7 @@ import {
   X,
   BookmarkCheck,
   BarChart3,
+  LifeBuoy,
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -40,6 +41,7 @@ const NAV_ITEMS = [
   { href: '/admin/collections', label: 'Collections', icon: BookmarkCheck },
   { href: '/admin/tools', label: 'AI Tools & Models', icon: Wrench },
   { href: '/admin/users', label: 'User Accounts', icon: Users },
+  { href: '/admin/support', label: 'User Support', icon: LifeBuoy, badgeKey: 'support' },
   { href: '/admin/subscriptions', label: 'Subscriptions', icon: CalendarCheck, exact: true },
   { href: '/admin/subscriptions/report', label: 'Subscription Report', icon: TrendingUp },
   { href: '/admin/commerce', label: 'Commerce & Cap', icon: CreditCard },
@@ -50,6 +52,24 @@ const NAV_ITEMS = [
 export function AdminSidebar() {
   const pathname = usePathname();
   const { isSidebarOpen, closeSidebar } = useAppContext();
+  const [unreadSupportCount, setUnreadSupportCount] = React.useState<number>(0);
+
+  useEffect(() => {
+    const fetchCounts = async () => {
+      try {
+        const res = await fetch('/api/v1/admin/support/counts');
+        if (res.ok) {
+          const data = await res.json();
+          setUnreadSupportCount(data.counts?.unread || 0);
+        }
+      } catch {
+        // Fallback gracefully
+      }
+    };
+    fetchCounts();
+    const interval = setInterval(fetchCounts, 10000);
+    return () => clearInterval(interval);
+  }, []);
 
   // Close mobile drawer when pressing ESC
   useEffect(() => {
@@ -114,7 +134,14 @@ export function AdminSidebar() {
                     <Icon className={`w-4 h-4 ${isActive ? 'text-blue-600 dark:text-blue-400' : 'text-slate-400 dark:text-slate-500'}`} />
                     <span>{item.label}</span>
                   </div>
-                  {isActive && <ChevronRight className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />}
+                  <div className="flex items-center gap-1.5">
+                    {'badgeKey' in item && item.badgeKey === 'support' && unreadSupportCount > 0 && (
+                      <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30 leading-none">
+                        {unreadSupportCount}
+                      </span>
+                    )}
+                    {isActive && <ChevronRight className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />}
+                  </div>
                 </Link>
               );
             })}
@@ -167,7 +194,14 @@ export function AdminSidebar() {
                   <Icon className={`w-4 h-4 ${isActive ? 'text-blue-600 dark:text-blue-400' : 'text-slate-400 dark:text-slate-500'}`} />
                   <span>{item.label}</span>
                 </div>
-                {isActive && <ChevronRight className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />}
+                <div className="flex items-center gap-1.5">
+                  {'badgeKey' in item && item.badgeKey === 'support' && unreadSupportCount > 0 && (
+                    <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30 leading-none">
+                      {unreadSupportCount}
+                    </span>
+                  )}
+                  {isActive && <ChevronRight className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />}
+                </div>
               </Link>
             );
           })}
