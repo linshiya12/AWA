@@ -19,6 +19,7 @@ import {
   TrendingUp,
   X,
   BookmarkCheck,
+  BarChart3,
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -35,6 +36,7 @@ const NAV_ITEMS = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard, exact: true },
   { href: '/admin/catalog', label: 'Catalog Tree', icon: FolderTree },
   { href: '/admin/templates', label: 'Templates', icon: FileCode },
+  { href: '/admin/engagement', label: 'Template Engagement', icon: BarChart3 },
   { href: '/admin/collections', label: 'Collections', icon: BookmarkCheck },
   { href: '/admin/tools', label: 'AI Tools & Models', icon: Wrench },
   { href: '/admin/users', label: 'User Accounts', icon: Users },
