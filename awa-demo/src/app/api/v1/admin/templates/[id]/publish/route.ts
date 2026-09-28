@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { requireAdminApi } from '@/lib/server/auth';
 import { publicDb } from '@/lib/server/db/publicStore';
 import { privateDb } from '@/lib/server/db/privateStore';
+import { queueTranslationsForEnabledLanguages } from '@/lib/server/ai/backgroundTranslation';
 
 interface RouteContext {
   params: Promise<{ id: string }>;
@@ -27,6 +28,9 @@ export async function POST(request: NextRequest, context: RouteContext) {
   }
 
   const updated = publicDb.updateTemplate(id, { status: 'published' });
+
+  // Newly published templates should also be queued for every enabled language
+  queueTranslationsForEnabledLanguages(id, template.current_version_id, auth.adminUser.user_id).catch(() => {});
 
   privateDb.recordAuditLog(
     auth.adminUser.user_id,

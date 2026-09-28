@@ -85,6 +85,10 @@ interface AppContextType {
   setActiveSort: (s: 'latest' | 'popular' | 'top_rated') => void;
   viewToggle: 'prompts' | 'workflows';
   setViewToggle: (v: 'prompts' | 'workflows') => void;
+  // Language & Localization (FEAT-039)
+  currentLanguage: string;
+  setLanguage: (lang: string) => void;
+  availableLanguages: Array<{ language_id: string; name: string; is_default: boolean }>;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -137,6 +141,40 @@ export const AppProvider = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [activeSort, setActiveSort] = useState<'latest' | 'popular' | 'top_rated'>('latest');
   const [viewToggle, setViewToggle] = useState<'prompts' | 'workflows'>('prompts');
+
+  // Multi-Language State (FEAT-039)
+  const [currentLanguage, setCurrentLanguage] = useState('en');
+  const [availableLanguages, setAvailableLanguages] = useState<Array<{ language_id: string; name: string; is_default: boolean }>>([
+    { language_id: 'en', name: 'English', is_default: true },
+  ]);
+
+  // Load language preference & fetch enabled languages on mount
+  React.useEffect(() => {
+    try {
+      const savedLang = localStorage.getItem('awa_lang');
+      if (savedLang) {
+        setCurrentLanguage(savedLang);
+        document.cookie = `awa_lang=${savedLang}; path=/; SameSite=Lax; max-age=2592000`;
+      }
+    } catch {}
+
+    fetch('/api/v1/languages')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.languages && Array.isArray(data.languages)) {
+          setAvailableLanguages(data.languages);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const setLanguage = (lang: string) => {
+    setCurrentLanguage(lang);
+    try {
+      localStorage.setItem('awa_lang', lang);
+      document.cookie = `awa_lang=${lang}; path=/; SameSite=Lax; max-age=2592000`;
+    } catch {}
+  };
 
   const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
   const closeSidebar = () => setIsSidebarOpen(false);
@@ -376,6 +414,9 @@ export const AppProvider = ({
         setActiveSort,
         viewToggle,
         setViewToggle,
+        currentLanguage,
+        setLanguage,
+        availableLanguages,
       }}
     >
       {children}

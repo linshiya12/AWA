@@ -65,6 +65,13 @@ export async function POST(request: NextRequest, context: RouteContext) {
 
   const userId = user?.user_id || 'usr-anonymous-visitor';
 
+  const requestedLang =
+    request.nextUrl.searchParams.get('lang') ||
+    request.headers.get('x-awa-language') ||
+    request.cookies.get('awa_lang')?.value ||
+    user?.preferred_language_id ||
+    'en';
+
   // 4. Retrieve or synthesize prompt content
   try {
     let delivered;
@@ -78,7 +85,8 @@ export async function POST(request: NextRequest, context: RouteContext) {
         body.parent_delivered_prompt_id || null,
         body.prompt_text,
         body.ui_prompt,
-        body.context_prompt
+        body.context_prompt,
+        requestedLang
       );
     } else if (catalogMatch) {
       // Fallback to rich catalog template data
@@ -93,6 +101,9 @@ export async function POST(request: NextRequest, context: RouteContext) {
         is_customized: body.is_customized || false,
         parent_delivered_prompt_id: body.parent_delivered_prompt_id || null,
         delivered_at: new Date().toISOString(),
+        language_id: 'en',
+        is_fallback: requestedLang !== 'en',
+        fallback_language: requestedLang !== 'en' ? 'en' : undefined,
       };
     } else {
       return NextResponse.json({ error: 'No prompt available for this template' }, { status: 404 });
@@ -141,6 +152,9 @@ export async function POST(request: NextRequest, context: RouteContext) {
       versionId: delivered.base_version_id,
       isSample,
       isCustomized: delivered.is_customized,
+      languageId: delivered.language_id || 'en',
+      isFallback: delivered.is_fallback ?? false,
+      fallbackLanguage: delivered.fallback_language,
     });
   } catch (err: unknown) {
     return NextResponse.json(

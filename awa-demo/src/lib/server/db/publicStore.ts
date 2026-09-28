@@ -884,6 +884,12 @@ class PublicDatabaseStore {
         created_by: 'usr-admin-1',
       },
     ];
+
+    // 10. Languages (07 §4.8) — Exactly one has is_default = true
+    this.languages = [
+      { language_id: 'en', name: 'English', is_default: true, is_enabled: true },
+      { language_id: 'es', name: 'Español', is_default: false, is_enabled: true },
+    ];
   }
 
   // -----------------------------------------------------------------------
@@ -1007,6 +1013,10 @@ class PublicDatabaseStore {
       result = result.filter((t) => t.name.toLowerCase().includes(q) || t.description.toLowerCase().includes(q));
     }
     return result.sort((a, b) => a.position - b.position);
+  }
+
+  getPublishedTemplates(): Template[] {
+    return this.templates.filter((t) => t.status === 'published');
   }
 
   getTemplateById(id: string): Template | undefined {

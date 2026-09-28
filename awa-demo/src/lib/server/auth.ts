@@ -28,9 +28,20 @@ export function resolveUserFromRequest(request: NextRequest): User | null {
     if (user && user.status === 'active') return user;
   }
 
-  // In demo development mode: default to admin@awa.ai if not explicitly set to another role
-  // This allows seamless first-time browsing while strictly honoring non-admin switches
-  if (cookieUserId === 'visitor' || headerUserId === 'visitor') {
+  // Check explicit non-admin role header or cookie (e.g., visitor, member)
+  const roleHeader = request.headers.get('x-awa-role');
+  const roleCookie = request.cookies.get('awa_role')?.value;
+  if (
+    roleHeader === 'visitor' ||
+    roleHeader === 'member' ||
+    roleHeader === 'user' ||
+    roleCookie === 'visitor' ||
+    roleCookie === 'member' ||
+    roleCookie === 'user' ||
+    cookieUserId === 'visitor' ||
+    headerUserId === 'visitor' ||
+    headerUserId === 'usr-anonymous'
+  ) {
     return null;
   }
 

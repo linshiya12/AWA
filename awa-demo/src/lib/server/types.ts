@@ -134,6 +134,44 @@ export interface TemplateVersion {
   created_at: string;
 }
 
+export interface TemplatePromptTranslation {
+  translation_id: string; // e.g. "ptrans-<uuid>"
+  template_id: string;
+  version_id: string; // foreign key to template_version
+  version_number: number;
+  language_id: string; // target language code (e.g. "es", "ja", "de", "ml")
+  ui_prompt_source?: string | null;
+  ui_prompt_translated?: string | null;
+  context_prompt_source?: string | null;
+  context_prompt_translated?: string | null;
+  prompt_text_source: string;
+  prompt_text_translated: string;
+  status: 'pending' | 'translating' | 'completed' | 'failed' | 'needs_update';
+  review_status: 'draft' | 'reviewed' | 'published';
+  publish_status?: 'draft' | 'reviewed' | 'published'; // compatibility alias
+  error_message?: string | null;
+  service_cost?: number | null;
+  created_at: string;
+  updated_at: string;
+  reviewed_at?: string | null;
+  reviewed_by?: string | null;
+  published_at?: string | null; // compatibility alias
+}
+
+export interface LanguageTranslationProgress {
+  language_id: string;
+  total_templates: number;
+  completed: number;
+  pending: number;
+  failed: number;
+  in_progress: number;
+  completed_templates?: number; // compatibility alias
+  pending_templates?: number; // compatibility alias
+  failed_templates?: number; // compatibility alias
+  status: 'pending' | 'in_progress' | 'completed' | 'failed' | 'idle';
+  updated_at: string;
+}
+
 export interface User {
   user_id: string;
   email: string;

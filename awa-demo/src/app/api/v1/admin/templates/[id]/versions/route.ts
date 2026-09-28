@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { requireAdminApi } from '@/lib/server/auth';
 import { publicDb } from '@/lib/server/db/publicStore';
 import { privateDb } from '@/lib/server/db/privateStore';
+import { queueTranslationsForEnabledLanguages } from '@/lib/server/ai/backgroundTranslation';
 
 interface RouteContext {
   params: Promise<{ id: string }>;
@@ -48,7 +49,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
       return NextResponse.json({ error: 'Prompt text is required' }, { status: 400 });
     }
 
-    const publishImmediately = body.publish === true;
+    const publishImmediately = body.publish === true || body.is_published === true;
     const result = privateDb.createPromptVersion(
       id,
       promptText,
@@ -59,10 +60,17 @@ export async function POST(request: NextRequest, context: RouteContext) {
       body.context_prompt || null
     );
 
+    // When a source prompt is revised, mark its existing translations as needing an update
+    // and translate the new version for every enabled language
+    if (publishImmediately) {
+      queueTranslationsForEnabledLanguages(id, result.version.version_id, auth.adminUser.user_id).catch(() => {});
+    }
+
     return NextResponse.json(
       {
         version: result.version,
         published: result.published,
+        backgroundTranslationsQueued: publishImmediately,
         template: publicDb.getTemplateById(id),
       },
       { status: 201 }

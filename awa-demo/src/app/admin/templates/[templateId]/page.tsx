@@ -33,6 +33,9 @@ import {
   X,
   FileText,
   Loader2,
+  AlertTriangle,
+  Globe,
+  RotateCcw,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -260,14 +263,44 @@ export default function TemplateEditorPage({
   // Translations state
   const [languages, setLanguages] = useState<any[]>([]);
   const [translations, setTranslations] = useState<Record<string, { name: string; description: string }>>({});
+  const [templateTranslations, setTemplateTranslations] = useState<Array<{
+    language_id: string;
+    language_name: string;
+    is_enabled: boolean;
+    translation_id: string | null;
+    version_id: string;
+    version_number: number;
+    status: 'pending' | 'translating' | 'completed' | 'failed' | 'needs_update';
+    review_status: 'draft' | 'reviewed' | 'published';
+    ui_prompt_source?: string | null;
+    ui_prompt_translated?: string | null;
+    context_prompt_source?: string | null;
+    context_prompt_translated?: string | null;
+    prompt_text_source: string;
+    prompt_text_translated?: string | null;
+    error_message?: string | null;
+    service_cost?: number | null;
+    updated_at?: string | null;
+    reviewed_at?: string | null;
+    reviewed_by?: string | null;
+  }>>([]);
+  const [selectedTransLang, setSelectedTransLang] = useState<string>('');
+  const [editUiPromptTrans, setEditUiPromptTrans] = useState<string>('');
+  const [editContextPromptTrans, setEditContextPromptTrans] = useState<string>('');
+  const [editPromptTextTrans, setEditPromptTextTrans] = useState<string>('');
+  const [isSavingTrans, setIsSavingTrans] = useState(false);
+  const [isRetryingTrans, setIsRetryingTrans] = useState(false);
+  const [isPublishingTrans, setIsPublishingTrans] = useState(false);
+  const [transActionMsg, setTransActionMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   const fetchTemplate = async () => {
     setLoading(true);
     try {
-      const [tplRes, toolsRes, langRes] = await Promise.all([
+      const [tplRes, toolsRes, langRes, transRes] = await Promise.all([
         fetch(`/api/v1/admin/templates/${templateId}`),
         fetch('/api/v1/admin/tools'),
         fetch('/api/v1/admin/languages'),
+        fetch(`/api/v1/admin/templates/${templateId}/translations`),
       ]);
 
       if (!tplRes.ok) {
@@ -279,10 +312,22 @@ export default function TemplateEditorPage({
       const tplData: TemplateDetails = await tplRes.json();
       const toolsData = await toolsRes.json();
       const langData = await langRes.json();
+      const transData = transRes.ok ? await transRes.json() : { languages: [] };
 
       setData(tplData);
       setAvailableTools(toolsData.tools || []);
       setLanguages(langData.languages || []);
+      const langsList = transData.languages || [];
+      setTemplateTranslations(langsList);
+
+      if (langsList.length > 0) {
+        const initialLang = selectedTransLang || langsList[0].language_id;
+        const currentItem = langsList.find((l: any) => l.language_id === initialLang) || langsList[0];
+        setSelectedTransLang(currentItem.language_id);
+        setEditUiPromptTrans(currentItem.ui_prompt_translated || '');
+        setEditContextPromptTrans(currentItem.context_prompt_translated || '');
+        setEditPromptTextTrans(currentItem.prompt_text_translated || '');
+      }
 
       // Populate forms
       setDetailsForm({
@@ -856,6 +901,123 @@ export default function TemplateEditorPage({
       }
     } catch {
       alert('Error saving attributes');
+    }
+  };
+
+  // Translation handlers
+  const handleSelectTransLanguage = (langId: string) => {
+    setSelectedTransLang(langId);
+    setTransActionMsg(null);
+    const item = templateTranslations.find((t) => t.language_id === langId);
+    if (item) {
+      setEditUiPromptTrans(item.ui_prompt_translated || '');
+      setEditContextPromptTrans(item.context_prompt_translated || '');
+      setEditPromptTextTrans(item.prompt_text_translated || '');
+    }
+  };
+
+  const handleSaveAndReviewTranslation = async () => {
+    if (!selectedTransLang) return;
+    setIsSavingTrans(true);
+    setTransActionMsg(null);
+    try {
+      const res = await fetch(`/api/v1/admin/templates/${templateId}/translations/${selectedTransLang}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ui_prompt_translated: editUiPromptTrans,
+          context_prompt_translated: editContextPromptTrans,
+          prompt_text_translated: editPromptTextTrans,
+          review_status: 'reviewed',
+        }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || 'Failed to update translation');
+      }
+
+      setTransActionMsg({
+        type: 'success',
+        text: `Translation for ${selectedTransLang.toUpperCase()} reviewed and saved successfully.`,
+      });
+      await fetchTemplate();
+    } catch (err: unknown) {
+      setTransActionMsg({
+        type: 'error',
+        text: (err as Error).message || 'Error updating translation',
+      });
+    } finally {
+      setIsSavingTrans(false);
+    }
+  };
+
+  const handlePublishTranslation = async () => {
+    if (!selectedTransLang) return;
+    setIsPublishingTrans(true);
+    setTransActionMsg(null);
+    try {
+      await fetch(`/api/v1/admin/templates/${templateId}/translations/${selectedTransLang}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ui_prompt_translated: editUiPromptTrans,
+          context_prompt_translated: editContextPromptTrans,
+          prompt_text_translated: editPromptTextTrans,
+          review_status: 'reviewed',
+        }),
+      });
+
+      const res = await fetch(`/api/v1/admin/templates/${templateId}/translations/${selectedTransLang}/publish`, {
+        method: 'POST',
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || 'Failed to publish translation');
+      }
+
+      setTransActionMsg({
+        type: 'success',
+        text: `Translation published! Subscribers requesting ${selectedTransLang.toUpperCase()} will now receive these prompts live.`,
+      });
+      await fetchTemplate();
+    } catch (err: unknown) {
+      setTransActionMsg({
+        type: 'error',
+        text: (err as Error).message || 'Error publishing translation',
+      });
+    } finally {
+      setIsPublishingTrans(false);
+    }
+  };
+
+  const handleRetryTranslation = async () => {
+    if (!selectedTransLang) return;
+    setIsRetryingTrans(true);
+    setTransActionMsg(null);
+    try {
+      const res = await fetch(`/api/v1/admin/templates/${templateId}/translations/${selectedTransLang}/retry`, {
+        method: 'POST',
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || 'Failed to retry translation');
+      }
+
+      setTransActionMsg({
+        type: 'success',
+        text: `Translation re-generated successfully for ${selectedTransLang.toUpperCase()}.`,
+      });
+      await fetchTemplate();
+    } catch (err: unknown) {
+      setTransActionMsg({
+        type: 'error',
+        text: (err as Error).message || 'Error retrying translation',
+      });
+    } finally {
+      setIsRetryingTrans(false);
     }
   };
 
@@ -1898,56 +2060,460 @@ export default function TemplateEditorPage({
           </div>
         )}
 
-        {/* TAB 7: TRANSLATIONS (FEAT-039) */}
+        {/* TAB 7: TRANSLATIONS (FEAT-039) — Template -> Translate */}
         {activeTab === 'translations' && (
           <div className="space-y-6">
-            <div>
-              <h3 className="text-sm font-semibold text-white flex items-center gap-2">
-                <Languages className="w-4 h-4 text-blue-400" />
-                Language Content Variations (FEAT-039)
-              </h3>
-              <p className="text-xs text-slate-400 mt-0.5">
-                Per-language overrides for template title and description. Untranslated fields automatically fall back to default English (never blank).
-              </p>
+            {/* Header & Description */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200 dark:border-slate-800">
+              <div>
+                <h3 className="text-base font-semibold text-slate-900 dark:text-white flex items-center gap-2">
+                  <Languages className="w-5 h-5 text-blue-500 dark:text-blue-400" />
+                  <span>Multilingual Prompt Localization (Template → Translate)</span>
+                  <Badge variant="outline" className="text-[10px] bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/30">
+                    FEAT-039
+                  </Badge>
+                </h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-3xl">
+                  Inspect and review translated prompts side-by-side with source prompts. Structure, variables (e.g. &#123;&#123;var&#125;&#125;), tool names, and technical flags (--ar 16:9, --v 6.1) are preserved. Edit and correct any text before publishing.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => fetchTemplate()}
+                  className="text-xs"
+                >
+                  <RefreshCw className="w-3.5 h-3.5 mr-1" /> Refresh Status
+                </Button>
+              </div>
             </div>
 
-            <div className="space-y-4">
-              {languages
-                .filter((l) => !l.is_default)
-                .map((lang) => (
-                  <div key={lang.language_id} className="p-4 rounded-xl border border-slate-800 bg-[#0d1222] space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="font-semibold text-slate-200 text-xs">
-                        {lang.name} ({lang.language_id})
-                      </span>
-                      <span className="text-[10px] text-slate-400 font-mono">
-                        Fallback: English (Default)
-                      </span>
-                    </div>
+            {/* Notification / Feedback Banner */}
+            {transActionMsg && (
+              <Alert
+                className={`text-xs ${
+                  transActionMsg.type === 'success'
+                    ? 'border-emerald-500/40 bg-emerald-50/60 dark:bg-emerald-950/30 text-emerald-900 dark:text-emerald-200'
+                    : 'border-rose-500/40 bg-rose-50/60 dark:bg-rose-950/30 text-rose-900 dark:text-rose-200'
+                }`}
+              >
+                {transActionMsg.type === 'success' ? (
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                ) : (
+                  <AlertTriangle className="w-4 h-4 text-rose-600 dark:text-rose-400" />
+                )}
+                <AlertTitle className="font-semibold text-xs">
+                  {transActionMsg.type === 'success' ? 'Translation Updated' : 'Translation Error'}
+                </AlertTitle>
+                <AlertDescription className="flex items-center justify-between text-xs mt-0.5">
+                  <span>{transActionMsg.text}</span>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => setTransActionMsg(null)}
+                    className="h-5 px-1.5 text-[11px]"
+                  >
+                    Dismiss
+                  </Button>
+                </AlertDescription>
+              </Alert>
+            )}
 
-                    <div>
-                      <label className="block text-[11px] text-slate-400 mb-1">
-                        Translated Name (Fallback: &quot;{template.name}&quot;)
-                      </label>
-                      <Input
-                        placeholder={template.name}
-                        className="bg-slate-900 border-slate-700 text-xs"
-                      />
-                    </div>
+            {/* Target Language Selection Tabs */}
+            {templateTranslations.length === 0 ? (
+              <div className="p-8 text-center rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/40">
+                <Globe className="w-8 h-8 text-slate-400 mx-auto mb-2" />
+                <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-200">No Target Languages Configured</h4>
+                <p className="text-xs text-slate-500 mt-1 max-w-md mx-auto">
+                  Add target languages in Admin → Languages. New languages will automatically start background translation jobs for this template.
+                </p>
+                <Link href="/admin/languages" className="inline-block mt-4">
+                  <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white text-xs">
+                    <Plus className="w-3.5 h-3.5 mr-1" /> Configure Languages
+                  </Button>
+                </Link>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                {/* Horizontal Language Pill Selectors */}
+                <div className="flex flex-wrap items-center gap-2 p-1.5 rounded-2xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+                  {templateTranslations.map((tItem) => {
+                    const isSelected = tItem.language_id === selectedTransLang;
+                    const isPublished = tItem.review_status === 'published';
+                    const isFailed = tItem.status === 'failed';
+                    const isNeedsUpdate = tItem.status === 'needs_update';
+                    const isTranslating = tItem.status === 'translating';
 
-                    <div>
-                      <label className="block text-[11px] text-slate-400 mb-1">
-                        Translated Description
-                      </label>
-                      <Textarea
-                        placeholder={template.description}
-                        rows={2}
-                        className="w-full bg-slate-900 text-slate-100 text-xs"
-                      />
+                    return (
+                      <button
+                        key={tItem.language_id}
+                        type="button"
+                        onClick={() => handleSelectTransLanguage(tItem.language_id)}
+                        className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-medium transition-all cursor-pointer ${
+                          isSelected
+                            ? 'bg-white dark:bg-blue-950/70 text-blue-600 dark:text-blue-300 shadow-xs border border-blue-200 dark:border-blue-700'
+                            : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-200/50 dark:hover:bg-slate-800/50'
+                        }`}
+                      >
+                        <span
+                          className={`w-2 h-2 rounded-full ${
+                            isPublished
+                              ? 'bg-emerald-500 ring-2 ring-emerald-500/20'
+                              : isFailed
+                              ? 'bg-rose-500'
+                              : isNeedsUpdate
+                              ? 'bg-amber-500'
+                              : isTranslating
+                              ? 'bg-sky-400 animate-pulse'
+                              : 'bg-slate-400'
+                          }`}
+                        />
+                        <span className="font-semibold">{tItem.language_name}</span>
+                        <span className="font-mono text-[10px] uppercase opacity-70">({tItem.language_id})</span>
+                        {isPublished && (
+                          <Badge variant="outline" className="text-[9px] px-1 py-0 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30">
+                            Live
+                          </Badge>
+                        )}
+                        {isNeedsUpdate && (
+                          <Badge variant="outline" className="text-[9px] px-1 py-0 bg-amber-500/10 text-amber-600 border-amber-500/30">
+                            Needs Update
+                          </Badge>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Active Language Translation Panel */}
+                {(() => {
+                  const activeItem = templateTranslations.find((t) => t.language_id === selectedTransLang) || templateTranslations[0];
+                  if (!activeItem) return null;
+
+                  const isPublished = activeItem.review_status === 'published';
+                  const isReviewed = activeItem.review_status === 'reviewed';
+                  const isFailed = activeItem.status === 'failed';
+                  const isNeedsUpdate = activeItem.status === 'needs_update';
+                  const isTranslating = activeItem.status === 'translating';
+
+                  const sourceUi = activeItem.ui_prompt_source || uiPrompt || currentVersion?.ui_prompt || '';
+                  const sourceContext = activeItem.context_prompt_source || contextPrompt || currentVersion?.context_prompt || '';
+                  const sourceGeneral = activeItem.prompt_text_source || promptText || currentVersion?.prompt_text || '';
+                  const isDual = Boolean(sourceUi || sourceContext);
+
+                  return (
+                    <div className="space-y-6">
+                      {/* Sub-Header with Metadata & Quick Actions */}
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl bg-slate-50 dark:bg-[#0d1222] border border-slate-200 dark:border-slate-800">
+                        <div className="flex flex-wrap items-center gap-2.5">
+                          <span className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+                            <Globe className="w-4 h-4 text-blue-500" />
+                            {activeItem.language_name} ({activeItem.language_id})
+                          </span>
+
+                          <Badge variant="outline" className="text-[10px] font-mono bg-slate-200/50 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+                            Source Version: v{activeItem.version_number}
+                          </Badge>
+
+                          {/* Generation Status Badge */}
+                          <Badge
+                            variant={
+                              activeItem.status === 'completed'
+                                ? 'emerald'
+                                : activeItem.status === 'failed'
+                                ? 'rose'
+                                : activeItem.status === 'translating'
+                                ? 'outline'
+                                : 'secondary'
+                            }
+                            className={`text-[10px] font-semibold uppercase ${
+                              activeItem.status === 'translating'
+                                ? 'bg-sky-500/10 text-sky-500 border-sky-500/30 animate-pulse'
+                                : ''
+                            }`}
+                          >
+                            {activeItem.status === 'translating' ? (
+                              <span className="flex items-center gap-1">
+                                <Loader2 className="w-3 h-3 animate-spin" /> Translating...
+                              </span>
+                            ) : (
+                              activeItem.status
+                            )}
+                          </Badge>
+
+                          {/* Review & Publish Status Badge */}
+                          <Badge
+                            variant="outline"
+                            className={`text-[10px] uppercase font-semibold ${
+                              isPublished
+                                ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30'
+                                : isReviewed
+                                ? 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/30'
+                                : 'bg-slate-500/10 text-slate-500 border-slate-500/30'
+                            }`}
+                          >
+                            Review: {activeItem.review_status}
+                          </Badge>
+                        </div>
+
+                        {/* Top Action Buttons */}
+                        <div className="flex items-center gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            disabled={isRetryingTrans || isTranslating}
+                            onClick={handleRetryTranslation}
+                            className="h-8 text-xs"
+                            title="Re-run AI translation for this language"
+                          >
+                            {isRetryingTrans || isTranslating ? (
+                              <Loader2 className="w-3.5 h-3.5 animate-spin mr-1.5" />
+                            ) : (
+                              <RotateCcw className="w-3.5 h-3.5 mr-1.5" />
+                            )}
+                            Retry Translation
+                          </Button>
+
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            disabled={isSavingTrans}
+                            onClick={handleSaveAndReviewTranslation}
+                            className="h-8 text-xs bg-white dark:bg-slate-900"
+                          >
+                            {isSavingTrans ? (
+                              <Loader2 className="w-3.5 h-3.5 animate-spin mr-1.5" />
+                            ) : (
+                              <Check className="w-3.5 h-3.5 mr-1.5 text-blue-500" />
+                            )}
+                            Save &amp; Mark Reviewed
+                          </Button>
+
+                          <Button
+                            size="sm"
+                            disabled={isPublishingTrans}
+                            onClick={handlePublishTranslation}
+                            className="h-8 text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-semibold"
+                          >
+                            {isPublishingTrans ? (
+                              <Loader2 className="w-3.5 h-3.5 animate-spin mr-1.5" />
+                            ) : (
+                              <CheckCircle2 className="w-3.5 h-3.5 mr-1.5" />
+                            )}
+                            Publish Live
+                          </Button>
+                        </div>
+                      </div>
+
+                      {/* Warnings / Error Banners */}
+                      {isFailed && (
+                        <Alert variant="destructive">
+                          <AlertTriangle className="w-4 h-4" />
+                          <AlertTitle className="text-xs font-semibold">Translation Incomplete or Failed</AlertTitle>
+                          <AlertDescription className="text-xs flex items-center justify-between mt-1">
+                            <span>{activeItem.error_message || 'Translation failed during background processing.'}</span>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={handleRetryTranslation}
+                              disabled={isRetryingTrans}
+                              className="h-7 text-xs bg-rose-950 text-white hover:bg-rose-900 border-rose-800 ml-3"
+                            >
+                              <RotateCcw className="w-3 h-3 mr-1" /> Retry Now
+                            </Button>
+                          </AlertDescription>
+                        </Alert>
+                      )}
+
+                      {isNeedsUpdate && (
+                        <Alert className="border-amber-500/40 bg-amber-50/60 dark:bg-amber-950/30 text-amber-900 dark:text-amber-200">
+                          <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                          <AlertTitle className="text-xs font-semibold">Source Prompt Revised</AlertTitle>
+                          <AlertDescription className="text-xs flex items-center justify-between mt-1">
+                            <span>
+                              The source English prompt has been updated since this translation was created. Click Retry Translation to re-translate from the current version.
+                            </span>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={handleRetryTranslation}
+                              disabled={isRetryingTrans}
+                              className="h-7 text-xs ml-3 border-amber-600/40 hover:bg-amber-500/10"
+                            >
+                              <RotateCcw className="w-3 h-3 mr-1" /> Re-translate Version
+                            </Button>
+                          </AlertDescription>
+                        </Alert>
+                      )}
+
+                      {/* SIDE-BY-SIDE PROMPTS COMPARISON GRID */}
+                      {isDual ? (
+                        <div className="space-y-6">
+                          {/* 1. UI PROMPT COMPARISON */}
+                          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                            {/* Left: Source UI Prompt */}
+                            <div className="space-y-2 p-4 rounded-2xl bg-slate-50/70 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800">
+                              <div className="flex items-center justify-between text-xs">
+                                <Label className="font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
+                                  <span className="w-2 h-2 rounded-full bg-blue-500" />
+                                  Source UI Prompt (English Default)
+                                </Label>
+                                <span className="font-mono text-[10px] text-slate-400">
+                                  {sourceUi.length} chars • Read-Only
+                                </span>
+                              </div>
+                              <div className="p-3.5 rounded-xl bg-white dark:bg-[#070b14] border border-slate-200/80 dark:border-slate-800 font-mono text-xs leading-relaxed text-slate-800 dark:text-slate-200 max-h-60 overflow-y-auto whitespace-pre-wrap select-text">
+                                {sourceUi || '(No UI prompt specified for this template)'}
+                              </div>
+                            </div>
+
+                            {/* Right: Translated UI Prompt (Editable) */}
+                            <div className="space-y-2 p-4 rounded-2xl bg-blue-50/30 dark:bg-[#0c162e] border border-blue-200/80 dark:border-blue-900/50">
+                              <div className="flex items-center justify-between text-xs">
+                                <Label className="font-bold text-blue-900 dark:text-blue-300 flex items-center gap-1.5">
+                                  <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                                  Translated UI Prompt ({activeItem.language_name})
+                                </Label>
+                                <span className="font-mono text-[10px] text-slate-400">
+                                  {editUiPromptTrans.length} chars • Editable Review
+                                </span>
+                              </div>
+                              <Textarea
+                                value={editUiPromptTrans}
+                                onChange={(e) => setEditUiPromptTrans(e.target.value)}
+                                placeholder={`Translated UI Prompt for ${activeItem.language_name}...`}
+                                rows={8}
+                                className="font-mono text-xs leading-relaxed bg-white dark:bg-[#070b14] border-slate-300 dark:border-slate-700 resize-y"
+                              />
+                            </div>
+                          </div>
+
+                          {/* 2. CONTEXT PROMPT COMPARISON */}
+                          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                            {/* Left: Source Context Prompt */}
+                            <div className="space-y-2 p-4 rounded-2xl bg-slate-50/70 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800">
+                              <div className="flex items-center justify-between text-xs">
+                                <Label className="font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
+                                  <span className="w-2 h-2 rounded-full bg-purple-500" />
+                                  Source Context Prompt (English Default)
+                                </Label>
+                                <span className="font-mono text-[10px] text-slate-400">
+                                  {sourceContext.length} chars • Read-Only
+                                </span>
+                              </div>
+                              <div className="p-3.5 rounded-xl bg-white dark:bg-[#070b14] border border-slate-200/80 dark:border-slate-800 font-mono text-xs leading-relaxed text-slate-800 dark:text-slate-200 max-h-60 overflow-y-auto whitespace-pre-wrap select-text">
+                                {sourceContext || '(No context prompt specified for this template)'}
+                              </div>
+                            </div>
+
+                            {/* Right: Translated Context Prompt (Editable) */}
+                            <div className="space-y-2 p-4 rounded-2xl bg-purple-50/20 dark:bg-[#0c162e] border border-purple-200/80 dark:border-purple-900/50">
+                              <div className="flex items-center justify-between text-xs">
+                                <Label className="font-bold text-purple-900 dark:text-purple-300 flex items-center gap-1.5">
+                                  <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                                  Translated Context Prompt ({activeItem.language_name})
+                                </Label>
+                                <span className="font-mono text-[10px] text-slate-400">
+                                  {editContextPromptTrans.length} chars • Editable Review
+                                </span>
+                              </div>
+                              <Textarea
+                                value={editContextPromptTrans}
+                                onChange={(e) => setEditContextPromptTrans(e.target.value)}
+                                placeholder={`Translated Context Prompt for ${activeItem.language_name}...`}
+                                rows={8}
+                                className="font-mono text-xs leading-relaxed bg-white dark:bg-[#070b14] border-slate-300 dark:border-slate-700 resize-y"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        /* SINGLE PROMPT COMPARISON (e.g. Standard Midjourney/FLUX templates) */
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                          {/* Left: Source Prompt */}
+                          <div className="space-y-2 p-4 rounded-2xl bg-slate-50/70 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800">
+                            <div className="flex items-center justify-between text-xs">
+                              <Label className="font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
+                                <span className="w-2 h-2 rounded-full bg-blue-500" />
+                                Source Prompt Text (English Default)
+                              </Label>
+                              <span className="font-mono text-[10px] text-slate-400">
+                                {sourceGeneral.length} chars • Read-Only
+                              </span>
+                            </div>
+                            <div className="p-3.5 rounded-xl bg-white dark:bg-[#070b14] border border-slate-200/80 dark:border-slate-800 font-mono text-xs leading-relaxed text-slate-800 dark:text-slate-200 max-h-80 overflow-y-auto whitespace-pre-wrap select-text">
+                              {sourceGeneral}
+                            </div>
+                          </div>
+
+                          {/* Right: Translated Prompt (Editable) */}
+                          <div className="space-y-2 p-4 rounded-2xl bg-blue-50/30 dark:bg-[#0c162e] border border-blue-200/80 dark:border-blue-900/50">
+                            <div className="flex items-center justify-between text-xs">
+                              <Label className="font-bold text-blue-900 dark:text-blue-300 flex items-center gap-1.5">
+                                <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                                Translated Prompt Text ({activeItem.language_name})
+                              </Label>
+                              <span className="font-mono text-[10px] text-slate-400">
+                                {editPromptTextTrans.length} chars • Editable Review
+                              </span>
+                            </div>
+                            <Textarea
+                              value={editPromptTextTrans}
+                              onChange={(e) => setEditPromptTextTrans(e.target.value)}
+                              placeholder={`Translated prompt text for ${activeItem.language_name}...`}
+                              rows={10}
+                              className="font-mono text-xs leading-relaxed bg-white dark:bg-[#070b14] border-slate-300 dark:border-slate-700 resize-y"
+                            />
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Footer Actions & Governance Note */}
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-4 border-t border-slate-200 dark:border-slate-800 text-xs">
+                        <div className="text-slate-500 dark:text-slate-400 max-w-xl">
+                          <p>
+                            <strong>Governance Notice:</strong> Translations marked <em>Published</em> will be delivered live to subscribers requesting {activeItem.language_name}. If unpublished or unavailable, the platform automatically serves the default English baseline.
+                          </p>
+                        </div>
+
+                        <div className="flex items-center gap-2.5 shrink-0 self-end sm:self-auto">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            disabled={isSavingTrans}
+                            onClick={handleSaveAndReviewTranslation}
+                            className="text-xs"
+                          >
+                            {isSavingTrans ? (
+                              <Loader2 className="w-3.5 h-3.5 animate-spin mr-1.5" />
+                            ) : (
+                              <Check className="w-3.5 h-3.5 mr-1.5 text-blue-500" />
+                            )}
+                            Save Changes
+                          </Button>
+
+                          <Button
+                            size="sm"
+                            disabled={isPublishingTrans}
+                            onClick={handlePublishTranslation}
+                            className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold"
+                          >
+                            {isPublishingTrans ? (
+                              <Loader2 className="w-3.5 h-3.5 animate-spin mr-1.5" />
+                            ) : (
+                              <CheckCircle2 className="w-3.5 h-3.5 mr-1.5" />
+                            )}
+                            Approve &amp; Publish Live
+                          </Button>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                ))}
-            </div>
+                  );
+                })()}
+              </div>
+            )}
           </div>
         )}
       </Card>

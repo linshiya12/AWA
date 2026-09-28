@@ -34,6 +34,7 @@ import {
   SlidersHorizontal,
   RotateCcw,
   Check,
+  Globe,
 } from 'lucide-react';
 
 export default function Header() {
@@ -51,6 +52,9 @@ export default function Header() {
     toggleSidebar,
     searchQuery,
     setSearchQuery,
+    currentLanguage,
+    setLanguage,
+    availableLanguages,
   } = useAppContext();
 
   const [showComparisonModal, setShowComparisonModal] = useState(false);
@@ -208,17 +212,24 @@ export default function Header() {
             </button>
 
             {/* Language Selection */}
-            <div className="hidden sm:flex items-center">
+            <div className="hidden sm:flex items-center gap-1.5 px-2 py-1 rounded-lg border border-slate-200/80 dark:border-blue-900/50 bg-slate-50 dark:bg-blue-950/30 text-xs font-semibold text-slate-700 dark:text-slate-300">
+              <Globe className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 shrink-0" />
               <select
-                className="px-2 py-1.5 rounded-lg border border-slate-200/80 dark:border-blue-900/50 bg-slate-50 dark:bg-blue-950/30 text-xs font-semibold text-slate-700 dark:text-slate-300 focus:outline-none cursor-pointer hover:bg-slate-100 dark:hover:bg-blue-900/50 transition-colors"
-                title="Change Language"
                 aria-label="Change Language"
-                defaultValue="en"
+                title="Select language"
+                value={currentLanguage}
+                onChange={(e) => setLanguage(e.target.value)}
+                className="bg-transparent text-xs font-semibold text-slate-700 dark:text-slate-300 focus:outline-none cursor-pointer pr-1"
               >
-                <option value="en" className="bg-white dark:bg-[#0c1427] text-slate-900 dark:text-slate-100">EN</option>
-                <option value="es" className="bg-white dark:bg-[#0c1427] text-slate-900 dark:text-slate-100">ES</option>
-                <option value="fr" className="bg-white dark:bg-[#0c1427] text-slate-900 dark:text-slate-100">FR</option>
-                <option value="de" className="bg-white dark:bg-[#0c1427] text-slate-900 dark:text-slate-100">DE</option>
+                {availableLanguages.map((lang) => (
+                  <option
+                    key={lang.language_id}
+                    value={lang.language_id}
+                    className="bg-white dark:bg-[#0c1427] text-slate-900 dark:text-slate-100"
+                  >
+                    {lang.language_id.toUpperCase()} - {lang.name}
+                  </option>
+                ))}
               </select>
             </div>
 

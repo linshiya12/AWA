@@ -37,6 +37,8 @@ import {
   Sparkles,
   Edit3,
   RotateCcw,
+  Globe,
+  Info,
 } from 'lucide-react';
 
 interface TemplateStats {
@@ -121,7 +123,15 @@ export function TemplateDetailClient({
 }: TemplateDetailClientProps) {
   const router = useRouter();
 
-  const { isSubscribed, subscribe, toggleSubscribed, credits } = useAppContext();
+  const {
+    isSubscribed,
+    subscribe,
+    toggleSubscribed,
+    credits,
+    currentLanguage,
+    availableLanguages,
+    setLanguage,
+  } = useAppContext();
 
   const isWebsite = template.mainCategory === 'Websites';
   const categoryName = category.name;
@@ -138,6 +148,11 @@ export function TemplateDetailClient({
   const [guidanceList, setGuidanceList] = useState<GuidanceStep[]>(
     template.guidance || []
   );
+
+  // Active prompt language and fallback status
+  const [promptLanguage, setPromptLanguage] = useState<string>('en');
+  const [isFallbackLanguage, setIsFallbackLanguage] = useState<boolean>(false);
+  const [fallbackLanguage, setFallbackLanguage] = useState<string>('en');
 
   // Synchronize state immediately when template changes
   React.useEffect(() => {
@@ -165,16 +180,17 @@ export function TemplateDetailClient({
   const [showPlansModal, setShowPlansModal] = useState(false);
   const [activeDetailImageIndex, setActiveDetailImageIndex] = useState(0);
 
-  // Synchronize protected prompts and guidance with subscription entitlement
+  // Synchronize protected prompts and guidance with subscription entitlement & language
   // When unsubscribed: wipe prompts and lock guidance step 3+
-  // When subscribed: fetch protected payload from secure server API endpoint if not already loaded
+  // When subscribed: fetch protected payload from secure server API endpoint for the requested language
   React.useEffect(() => {
     if (isSubscribed) {
-      fetch(`/api/v1/templates/${template.id}/prompt`, {
+      fetch(`/api/v1/templates/${template.id}/prompt?lang=${encodeURIComponent(currentLanguage)}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'x-awa-subscribed': 'true',
+          'x-awa-language': currentLanguage,
         },
         body: JSON.stringify({}),
       })
@@ -189,6 +205,9 @@ export function TemplateDetailClient({
           if (data.guidance && Array.isArray(data.guidance) && data.guidance.length > 0) {
             setGuidanceList(data.guidance);
           }
+          setPromptLanguage(data.languageId || 'en');
+          setIsFallbackLanguage(Boolean(data.isFallback));
+          setFallbackLanguage(data.fallbackLanguage || 'en');
         })
         .catch(() => {
           if (template.uiPrompt) setCurrentUiPrompt(template.uiPrompt);
@@ -197,6 +216,9 @@ export function TemplateDetailClient({
           if (template.guidance && template.guidance.length > 0) {
             setGuidanceList(template.guidance);
           }
+          setPromptLanguage('en');
+          setIsFallbackLanguage(currentLanguage !== 'en');
+          setFallbackLanguage('en');
         });
     } else {
       setCurrentPrompt('');
@@ -208,7 +230,7 @@ export function TemplateDetailClient({
       setCustomizedContextPrompt(null);
       setIsCustomizingContext(false);
     }
-  }, [isSubscribed, template.id, template.uiPrompt, template.contextPrompt, template.basePrompt, template.guidance]);
+  }, [isSubscribed, template.id, currentLanguage, template.uiPrompt, template.contextPrompt, template.basePrompt, template.guidance]);
 
   const hasMotionPreview = Boolean(template.media.motionPreviewUrl || template.media.videoUrl);
   const [webDeviceView, setWebDeviceView] = useState<'motion' | 'desktop' | 'mobile'>(
@@ -976,24 +998,62 @@ export function TemplateDetailClient({
                   </div>
                 </div>
 
-                {/* Shadcn TabsList with UI Prompt & Context Prompt */}
-                <TabsList className="bg-zinc-100 dark:bg-[#070b16] border border-zinc-200/80 dark:border-blue-900/50 p-1 rounded-2xl h-auto">
-                  <TabsTrigger
-                    value="ui"
-                    className="px-4 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2"
-                  >
-                    <Sparkles className="w-3.5 h-3.5" />
-                    <span>UI Prompt</span>
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value="context"
-                    className="px-4 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2"
-                  >
-                    <Code2 className="w-3.5 h-3.5" />
-                    <span>Context Prompt</span>
-                  </TabsTrigger>
-                </TabsList>
+                <div className="flex flex-wrap items-center gap-3">
+                  {/* Language Selector */}
+                  <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-zinc-200/80 dark:border-blue-900/50 bg-white dark:bg-[#070b16] text-xs font-semibold text-zinc-700 dark:text-zinc-300 shadow-2xs">
+                    <Globe className="w-3.5 h-3.5 text-blue-500 shrink-0" />
+                    <select
+                      aria-label="Prompt Language"
+                      value={currentLanguage}
+                      onChange={(e) => setLanguage(e.target.value)}
+                      className="bg-transparent text-xs font-semibold text-zinc-800 dark:text-zinc-200 focus:outline-none cursor-pointer pr-1"
+                    >
+                      {availableLanguages.map((lang) => (
+                        <option
+                          key={lang.language_id}
+                          value={lang.language_id}
+                          className="bg-white dark:bg-[#0c1427] text-slate-900 dark:text-slate-100"
+                        >
+                          {lang.name} ({lang.language_id.toUpperCase()})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Shadcn TabsList with UI Prompt & Context Prompt */}
+                  <TabsList className="bg-zinc-100 dark:bg-[#070b16] border border-zinc-200/80 dark:border-blue-900/50 p-1 rounded-2xl h-auto">
+                    <TabsTrigger
+                      value="ui"
+                      className="px-4 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2"
+                    >
+                      <Sparkles className="w-3.5 h-3.5" />
+                      <span>UI Prompt</span>
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="context"
+                      className="px-4 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2"
+                    >
+                      <Code2 className="w-3.5 h-3.5" />
+                      <span>Context Prompt</span>
+                    </TabsTrigger>
+                  </TabsList>
+                </div>
               </div>
+
+              {/* Fallback indicator alert when translated version is missing/unpublished */}
+              {isFallbackLanguage && (
+                <div className="mb-4 p-3.5 rounded-2xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/40 flex items-center justify-between text-xs text-amber-900 dark:text-amber-200 shadow-2xs">
+                  <div className="flex items-center gap-2">
+                    <Info className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
+                    <span>
+                      The published translation for <strong>{availableLanguages.find(l => l.language_id === currentLanguage)?.name || currentLanguage.toUpperCase()}</strong> is pending or unpublished. Showing the default <strong>English</strong> blueprint.
+                    </span>
+                  </div>
+                  <Badge variant="outline" className="text-[10px] uppercase font-bold tracking-wider bg-amber-100 dark:bg-amber-900/50 text-amber-800 dark:text-amber-300 border-amber-300 dark:border-amber-700">
+                    Default Fallback
+                  </Badge>
+                </div>
+              )}
 
               {/* ───────────────────────────────────────────────────
                   TAB 1: UI PROMPT (Fixed & Unchanged)
@@ -1012,6 +1072,16 @@ export function TemplateDetailClient({
                           className="px-2.5 py-0.5 rounded text-[11px] font-bold bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border-blue-200/60 dark:border-blue-800/40"
                         >
                           {template.tools.map((t) => t.name).join(' • ') || 'Visual AI Engine'}
+                        </Badge>
+                        <Badge
+                          variant="outline"
+                          className={`px-2.5 py-0.5 rounded text-[11px] font-bold font-mono ${
+                            isFallbackLanguage
+                              ? 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-800/40'
+                              : 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800/40'
+                          }`}
+                        >
+                          {promptLanguage.toUpperCase()} {isFallbackLanguage ? '• Default Fallback' : '• Translated'}
                         </Badge>
                       </div>
                       <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed max-w-2xl">
@@ -1222,6 +1292,16 @@ export function TemplateDetailClient({
                             >
                               Original Blueprint
                             </Badge>
+                            <Badge
+                              variant="outline"
+                              className={`px-2.5 py-0.5 rounded text-[11px] font-bold font-mono ${
+                                isFallbackLanguage
+                                  ? 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-800/40'
+                                  : 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800/40'
+                              }`}
+                            >
+                              {promptLanguage.toUpperCase()} {isFallbackLanguage ? '• Default Fallback' : '• Translated'}
+                            </Badge>
                             <h3 className="text-sm sm:text-base font-bold text-zinc-900 dark:text-zinc-100">
                               Original Context Prompt
                             </h3>
@@ -1272,6 +1352,16 @@ export function TemplateDetailClient({
                             className="px-2.5 py-0.5 rounded text-[11px] font-bold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border-emerald-200/60 dark:border-emerald-800/40"
                           >
                             Claude • ChatGPT • Domain Context
+                          </Badge>
+                          <Badge
+                            variant="outline"
+                            className={`px-2.5 py-0.5 rounded text-[11px] font-bold font-mono ${
+                              isFallbackLanguage
+                                ? 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-800/40'
+                                : 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800/40'
+                            }`}
+                          >
+                            {promptLanguage.toUpperCase()} {isFallbackLanguage ? '• Default Fallback' : '• Translated'}
                           </Badge>
                         </div>
                         <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed max-w-2xl">

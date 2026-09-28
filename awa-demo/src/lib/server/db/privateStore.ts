@@ -18,6 +18,8 @@ import {
   SubscriptionReportMetrics,
   UserCollection,
   UserCollectionWithDetails,
+  TemplatePromptTranslation,
+  LanguageTranslationProgress,
 } from '../types';
 import { publicDb } from './publicStore';
 import { allTemplates } from '@/lib/mockData';
@@ -45,6 +47,8 @@ class PrivateDatabaseStore {
   private unmetNeeds: UnmetNeed[] = [];
   private auditLogs: AuditLogEntry[] = [];
   private userCollections: UserCollection[] = [];
+  private promptTranslations: TemplatePromptTranslation[] = [];
+  private languageProgress: Map<string, LanguageTranslationProgress> = new Map();
 
   constructor() {
     // Initialize default payment config (Razorpay, test mode, write-only credentials)
@@ -732,6 +736,8 @@ class PrivateDatabaseStore {
         current_version_id: versionId,
         status: 'published',
       });
+      // When a source prompt is revised, mark its existing translations as needing an update
+      this.markTranslationsNeedUpdate(templateId, versionId);
     }
 
     // Record audit log
@@ -748,6 +754,7 @@ class PrivateDatabaseStore {
   }
 
   // Deliver Prompt: Implements API-003 prompt delivery contract (07 §6.1, 08-API.md)
+  // Supports language-aware delivery and strict fallback to default language (07 §4.9)
   deliverPrompt(
     userId: string,
     templateId: string,
@@ -755,12 +762,46 @@ class PrivateDatabaseStore {
     parentPromptId?: string | null,
     promptTextOverride?: string,
     uiPromptOverride?: string,
-    contextPromptOverride?: string
-  ): DeliveredPrompt {
+    contextPromptOverride?: string,
+    languageId?: string | null
+  ): DeliveredPrompt & {
+    language_id?: string;
+    is_fallback?: boolean;
+    fallback_language?: string;
+  } {
     const versions = this.getVersionsForTemplate(templateId);
     const currentVersion = versions.find((v) => v.is_current) || versions[0];
     if (!currentVersion && !promptTextOverride) {
       throw new Error('No prompt version available for template');
+    }
+
+    let promptText = promptTextOverride || currentVersion?.prompt_text || '';
+    let uiPrompt = uiPromptOverride !== undefined ? uiPromptOverride : (currentVersion?.ui_prompt || null);
+    let contextPrompt = contextPromptOverride !== undefined ? contextPromptOverride : (currentVersion?.context_prompt || null);
+    let deliveredLang = 'en';
+    let isFallback = false;
+
+    // Check language translation and fallback (07 §4.9)
+    if (languageId && languageId !== 'en' && !promptTextOverride) {
+      const translation = this.promptTranslations.find(
+        (t) =>
+          t.template_id === templateId &&
+          (currentVersion ? t.version_id === currentVersion.version_id : true) &&
+          t.language_id === languageId &&
+          (t.status === 'completed' || t.review_status === 'published')
+      );
+
+      if (translation && (translation.prompt_text_translated || translation.ui_prompt_translated)) {
+        promptText = translation.prompt_text_translated || promptText;
+        uiPrompt = translation.ui_prompt_translated ?? uiPrompt;
+        contextPrompt = translation.context_prompt_translated ?? contextPrompt;
+        deliveredLang = languageId;
+        isFallback = false;
+      } else {
+        // Documented fallback to default language (English)
+        deliveredLang = 'en';
+        isFallback = true;
+      }
     }
 
     const delivered: DeliveredPrompt = {
@@ -768,16 +809,21 @@ class PrivateDatabaseStore {
       user_id: userId,
       template_id: templateId,
       base_version_id: currentVersion?.version_id || 'custom',
-      prompt_text: promptTextOverride || currentVersion?.prompt_text || '',
-      ui_prompt: uiPromptOverride !== undefined ? uiPromptOverride : (currentVersion?.ui_prompt || null),
-      context_prompt: contextPromptOverride !== undefined ? contextPromptOverride : (currentVersion?.context_prompt || null),
+      prompt_text: promptText,
+      ui_prompt: uiPrompt,
+      context_prompt: contextPrompt,
       is_customized: isCustomized,
       parent_delivered_prompt_id: parentPromptId || null,
       delivered_at: new Date().toISOString(),
     };
 
     this.deliveredPrompts.push(delivered);
-    return delivered;
+    return {
+      ...delivered,
+      language_id: deliveredLang,
+      is_fallback: isFallback,
+      fallback_language: isFallback ? 'en' : undefined,
+    };
   }
 
   // Restore old version: Rule 16 & 08 §4: Inserts a NEW version equal to the old one.
@@ -1752,11 +1798,266 @@ class PrivateDatabaseStore {
     this.userCollections = this.userCollections.filter((c) => !(c.collection_id === collectionId && c.user_id === userId));
     return this.userCollections.length < initial;
   }
+
+  // -----------------------------------------------------------------------
+  // PROMPT TRANSLATIONS (PRIVATE STORE — THE TRANSLATED PRODUCT)
+  // Preserves prompt structure & rules; stored in private database
+  // -----------------------------------------------------------------------
+  getPromptTranslations(filter?: {
+    template_id?: string;
+    language_id?: string;
+    version_id?: string;
+  }): TemplatePromptTranslation[] {
+    let result = [...this.promptTranslations];
+    if (filter?.template_id) {
+      result = result.filter((t) => t.template_id === filter.template_id);
+    }
+    if (filter?.language_id) {
+      result = result.filter((t) => t.language_id === filter.language_id);
+    }
+    if (filter?.version_id) {
+      result = result.filter((t) => t.version_id === filter.version_id);
+    }
+    return result;
+  }
+
+  getPromptTranslation(
+    templateId: string,
+    languageId: string,
+    versionId?: string
+  ): TemplatePromptTranslation | undefined {
+    return this.promptTranslations.find((t) => {
+      const matchTpl = t.template_id === templateId;
+      const matchLang = t.language_id === languageId;
+      const matchVer = versionId ? t.version_id === versionId : true;
+      return matchTpl && matchLang && matchVer;
+    });
+  }
+
+  savePromptTranslation(data: {
+    template_id: string;
+    version_id: string;
+    version_number: number;
+    language_id: string;
+    ui_prompt_source?: string | null;
+    ui_prompt_translated?: string | null;
+    context_prompt_source?: string | null;
+    context_prompt_translated?: string | null;
+    prompt_text_source: string;
+    prompt_text_translated: string;
+    status: TemplatePromptTranslation['status'];
+    review_status?: TemplatePromptTranslation['review_status'];
+    error_message?: string | null;
+    service_cost?: number | null;
+  }): TemplatePromptTranslation {
+    // Safe retry: Find existing by (template_id, version_id, language_id) to avoid duplicates
+    const existingIndex = this.promptTranslations.findIndex(
+      (t) =>
+        t.template_id === data.template_id &&
+        t.version_id === data.version_id &&
+        t.language_id === data.language_id
+    );
+
+    const now = new Date().toISOString();
+    if (existingIndex >= 0) {
+      const existing = this.promptTranslations[existingIndex];
+      const revStatus = data.review_status || existing.review_status || 'draft';
+      const updated: TemplatePromptTranslation = {
+        ...existing,
+        ...data,
+        review_status: revStatus,
+        publish_status: revStatus,
+        published_at: revStatus === 'published' ? (existing.published_at || now) : null,
+        updated_at: now,
+      };
+      this.promptTranslations[existingIndex] = updated;
+      return updated;
+    }
+
+    const revStatus = data.review_status || 'draft';
+    const newTrans: TemplatePromptTranslation = {
+      translation_id: `ptrans-${data.template_id}-${data.language_id}-${Date.now()}`,
+      template_id: data.template_id,
+      version_id: data.version_id,
+      version_number: data.version_number,
+      language_id: data.language_id,
+      ui_prompt_source: data.ui_prompt_source ?? null,
+      ui_prompt_translated: data.ui_prompt_translated ?? null,
+      context_prompt_source: data.context_prompt_source ?? null,
+      context_prompt_translated: data.context_prompt_translated ?? null,
+      prompt_text_source: data.prompt_text_source,
+      prompt_text_translated: data.prompt_text_translated,
+      status: data.status,
+      review_status: revStatus,
+      publish_status: revStatus,
+      published_at: revStatus === 'published' ? now : null,
+      error_message: data.error_message || null,
+      service_cost: data.service_cost ?? null,
+      created_at: now,
+      updated_at: now,
+    };
+
+    this.promptTranslations.push(newTrans);
+    return newTrans;
+  }
+
+  updatePromptTranslation(
+    translationId: string,
+    updates: Partial<TemplatePromptTranslation>,
+    actorId?: string
+  ): TemplatePromptTranslation {
+    const item = this.promptTranslations.find((t) => t.translation_id === translationId);
+    if (!item) {
+      throw new Error(`Translation ${translationId} not found`);
+    }
+
+    const before = { ...item };
+    if (updates.review_status) {
+      updates.publish_status = updates.review_status;
+      if (updates.review_status === 'published' && !item.published_at && !updates.published_at) {
+        updates.published_at = new Date().toISOString();
+      }
+    }
+    Object.assign(item, updates, { updated_at: new Date().toISOString() });
+
+    if (actorId) {
+      this.recordAuditLog(actorId, 'update_prompt_translation', 'prompt_translation', translationId, before, { ...item });
+    }
+
+    return item;
+  }
+
+  markTranslationsNeedUpdate(templateId: string, currentVersionId: string): void {
+    // When a source prompt is revised, mark its existing translations as needing an update
+    this.promptTranslations.forEach((t) => {
+      if (t.template_id === templateId && t.version_id !== currentVersionId) {
+        t.status = 'needs_update';
+        t.review_status = 'draft';
+        t.publish_status = 'draft';
+        t.updated_at = new Date().toISOString();
+      }
+    });
+  }
+
+  // -----------------------------------------------------------------------
+  // LANGUAGE TRANSLATION PROGRESS & SPEND CAP
+  // -----------------------------------------------------------------------
+  getLanguageProgress(languageId: string): LanguageTranslationProgress {
+    const publishedTemplates = publicDb.getPublishedTemplates();
+    const total = publishedTemplates.length;
+
+    // Aggregate translations for this language on current versions of published templates
+    const translationsForLang = publishedTemplates.map((t) => {
+      const versions = this.getVersionsForTemplate(t.template_id);
+      const curVersion = versions.find((v) => v.is_current) || versions[0];
+      const curVersionId = curVersion ? curVersion.version_id : t.current_version_id;
+      return this.promptTranslations.find(
+        (tr) =>
+          tr.template_id === t.template_id &&
+          (curVersionId ? tr.version_id === curVersionId : true) &&
+          tr.language_id === languageId
+      );
+    });
+
+    let completed = 0;
+    let pending = 0;
+    let failed = 0;
+    let inProgress = 0;
+
+    const pendingTemplateIds: string[] = [];
+    translationsForLang.forEach((tr, idx) => {
+      const t = publishedTemplates[idx];
+      if (!tr) {
+        pendingTemplateIds.push(`${t.template_id} (no-trans)`);
+        pending++;
+      } else if (tr.status === 'completed') {
+        completed++;
+      } else if (tr.status === 'failed') {
+        failed++;
+      } else if (tr.status === 'translating') {
+        inProgress++;
+      } else if (tr.status === 'pending' || tr.status === 'needs_update') {
+        pendingTemplateIds.push(`${t.template_id} (${tr.status})`);
+        pending++;
+      }
+    });
+
+    // Derive status: Do not report a language as complete while any template is pending or failed.
+    let status: LanguageTranslationProgress['status'] = 'idle';
+    if (total === 0) {
+      status = 'idle';
+    } else if (failed > 0) {
+      status = 'failed';
+    } else if (inProgress > 0 || (pending > 0 && completed > 0)) {
+      status = 'in_progress';
+    } else if (pending === total) {
+      status = 'pending';
+    } else if (completed === total && total > 0) {
+      status = 'completed';
+    }
+
+    const progress: LanguageTranslationProgress & { pending_template_ids?: string[] } = {
+      language_id: languageId,
+      total_templates: total,
+      completed,
+      pending,
+      failed,
+      in_progress: inProgress,
+      completed_templates: completed,
+      pending_templates: pending,
+      failed_templates: failed,
+      pending_template_ids: pendingTemplateIds,
+      status,
+      updated_at: new Date().toISOString(),
+    };
+
+    return progress;
+  }
+
+  getAllLanguageProgress(): Record<string, LanguageTranslationProgress> {
+    const languages = publicDb.getLanguages();
+    const result: Record<string, LanguageTranslationProgress> = {};
+    for (const lang of languages) {
+      result[lang.language_id] = this.getLanguageProgress(lang.language_id);
+    }
+    return result;
+  }
+
+  checkAiSpendCap(cost: number = 0.1): {
+    allowed: boolean;
+    isApproaching: boolean;
+    isPaused: boolean;
+    spent: number;
+    limit: number;
+  } {
+    const isPaused = this.spendPeriod.spent >= this.spendPeriod.limit;
+    const allowed = !isPaused && this.spendPeriod.spent + cost <= this.spendPeriod.limit;
+    const isApproaching = this.spendPeriod.spent >= this.spendPeriod.limit * 0.8;
+    return {
+      allowed,
+      isApproaching,
+      isPaused,
+      spent: this.spendPeriod.spent,
+      limit: this.spendPeriod.limit,
+    };
+  }
+
+  recordAiSpend(cost: number, reason: string): { spent: number; limit: number } {
+    this.spendPeriod.spent = Number((this.spendPeriod.spent + cost).toFixed(4));
+    if (this.spendPeriod.spent >= this.spendPeriod.limit * 0.8 && !this.spendPeriod.notified_at) {
+      this.spendPeriod.notified_at = new Date().toISOString();
+    }
+    return { spent: this.spendPeriod.spent, limit: this.spendPeriod.limit };
+  }
 }
 
 // Global singleton instance for private store
 declare global {
   var __awa_private_db__: PrivateDatabaseStore | undefined;
+}
+
+if (globalThis.__awa_private_db__) {
+  Object.setPrototypeOf(globalThis.__awa_private_db__, PrivateDatabaseStore.prototype);
 }
 
 export const privateDb: PrivateDatabaseStore =
