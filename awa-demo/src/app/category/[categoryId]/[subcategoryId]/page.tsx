@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { findCategory, findSubcategory } from '@/lib/mockData';
-import { TemplateCard } from '@/components/TemplateCard';
+import { TemplateGallery } from '@/components/TemplateGallery';
 import { ArrowLeft, Layers, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -26,7 +26,7 @@ export default async function SubcategoryPage({
   const siblingSubcategories = category.subcategories.filter((s) => s.id !== subcategory.id);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 pb-24">
+    <div className="w-full px-4 sm:px-6 md:px-8 lg:px-12 py-8 pb-24">
       {/* Breadcrumbs & Navigation Actions */}
       <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
         <nav className="flex flex-wrap items-center text-xs text-zinc-500 dark:text-zinc-400 gap-2">
@@ -103,11 +103,7 @@ export default async function SubcategoryPage({
           </span>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
-          {subcategory.templates.map((template) => (
-            <TemplateCard key={template.id} template={template} />
-          ))}
-        </div>
+        <TemplateGallery templates={subcategory.templates} />
       </main>
     </div>
   );

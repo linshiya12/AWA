@@ -2818,9 +2818,7 @@ declare global {
 
 if (globalThis.__awa_private_db__) {
   Object.setPrototypeOf(globalThis.__awa_private_db__, PrivateDatabaseStore.prototype);
-  if (!globalThis.__awa_private_db__.supportTickets || globalThis.__awa_private_db__.supportTickets.length === 0) {
-    globalThis.__awa_private_db__.ensureSupportTickets();
-  }
+  globalThis.__awa_private_db__.ensureSupportTickets();
 }
 
 export const privateDb: PrivateDatabaseStore =

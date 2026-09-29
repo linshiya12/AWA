@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { findCategory } from '@/lib/mockData';
-import { TemplateCard } from '@/components/TemplateCard';
+import { TemplateGallery } from '@/components/TemplateGallery';
 import { ArrowLeft, ArrowRight, Layers } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -20,7 +20,7 @@ export default async function CategoryPage({
   const allCategoryTemplates = category.subcategories.flatMap((s) => s.templates);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 pb-24">
+    <div className="w-full px-4 sm:px-6 md:px-8 lg:px-12 py-8 pb-24">
       {/* Breadcrumbs & Back Link */}
       <div className="flex items-center justify-between gap-4 mb-6">
         <nav className="flex items-center text-xs text-zinc-500 dark:text-zinc-400 gap-2">
@@ -112,11 +112,7 @@ export default async function CategoryPage({
           </span>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
-          {allCategoryTemplates.map((template) => (
-            <TemplateCard key={template.id} template={template} />
-          ))}
-        </div>
+        <TemplateGallery templates={allCategoryTemplates} />
       </section>
     </div>
   );

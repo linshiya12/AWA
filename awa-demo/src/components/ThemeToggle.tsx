@@ -3,10 +3,10 @@
 import React, { useState, useEffect } from 'react';
 
 export default function ThemeToggle({ className = '' }: { className?: string }) {
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(true);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+    // Synchronize with active class on mount
     setIsDarkMode(document.documentElement.classList.contains('dark'));
   }, []);
 
@@ -17,6 +17,7 @@ export default function ThemeToggle({ className = '' }: { className?: string }) 
       document.documentElement.classList.add('dark');
       try {
         localStorage.setItem('awa_theme', 'dark');
+        document.cookie = 'awa_theme=dark; path=/; max-age=31536000; SameSite=Lax';
       } catch {
         // LocalStorage unavailable
       }
@@ -24,6 +25,7 @@ export default function ThemeToggle({ className = '' }: { className?: string }) 
       document.documentElement.classList.remove('dark');
       try {
         localStorage.setItem('awa_theme', 'light');
+        document.cookie = 'awa_theme=light; path=/; max-age=31536000; SameSite=Lax';
       } catch {
         // LocalStorage unavailable
       }
@@ -34,7 +36,7 @@ export default function ThemeToggle({ className = '' }: { className?: string }) 
     <button
       type="button"
       onClick={handleToggleTheme}
-      className={`p-2 rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-300 transition-colors ${className}`}
+      className={`p-2 rounded-full hover:bg-slate-100 dark:hover:bg-blue-950/60 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer ${className}`}
       title={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
       aria-label={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
     >

@@ -149,7 +149,7 @@ export function TemplateCard({ template, className = '' }: TemplateCardProps) {
         - Clean dark-blue / neutral borders
         - Subtle hover scale on media without changing layout
       */}
-      <div className="relative w-full rounded-2xl overflow-hidden bg-slate-100 dark:bg-[#070e1e] border border-slate-200/80 dark:border-blue-900/40 group-hover:border-slate-300 dark:group-hover:border-[#6EA8FF]/45 transition-all duration-300 shadow-2xs group-hover:shadow-md dark:group-hover:shadow-[0_12px_32px_rgba(2,12,32,0.85)]">
+      <div className="relative w-full rounded-2xl overflow-hidden bg-slate-100 dark:bg-[#0c1427] border border-slate-200/80 dark:border-blue-900/40 group-hover:border-slate-300 dark:group-hover:border-blue-500/50 transition-all duration-300 shadow-2xs group-hover:shadow-md dark:group-hover:shadow-[0_12px_32px_rgba(2,12,32,0.85)]">
         {/* Base Still Preview / Poster */}
         {previewImage && !imgError ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -163,11 +163,11 @@ export function TemplateCard({ template, className = '' }: TemplateCardProps) {
             loading="lazy"
           />
         ) : (
-          <div className="w-full aspect-[4/3] flex flex-col items-center justify-center p-4 text-center bg-gradient-to-br from-slate-100 dark:from-[#0a1224] to-slate-200 dark:to-[#070d19]">
-            <span className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 truncate max-w-[90%]">
+          <div className="w-full aspect-[4/3] flex flex-col items-center justify-center p-4 text-center bg-gradient-to-br from-slate-100 dark:from-[#0c1427] to-slate-200 dark:to-[#080e1d]">
+            <span className="text-sm font-semibold text-slate-800 dark:text-slate-200 truncate max-w-[90%]">
               {template.name}
             </span>
-            <span className="text-xs text-zinc-400 dark:text-zinc-500 mt-1">
+            <span className="text-xs text-slate-500 dark:text-slate-400 mt-1">
               {template.category}
             </span>
           </div>
@@ -194,21 +194,21 @@ export function TemplateCard({ template, className = '' }: TemplateCardProps) {
         {/* Subtle Minimal Badges (Bottom Left) */}
         <div className="absolute bottom-2.5 left-2.5 z-20 pointer-events-none flex items-center gap-1.5 flex-wrap">
           {isVideo && (
-            <span className="px-2 py-0.5 rounded-full bg-black/60 backdrop-blur-md text-white text-[10px] font-medium flex items-center gap-1 border border-white/10 shadow-xs">
+            <span className="px-2 py-0.5 rounded-full bg-black/60 dark:bg-[#060c18]/85 backdrop-blur-md text-white text-[10px] font-medium flex items-center gap-1 border border-white/10 dark:border-blue-900/40 shadow-xs">
               <Play className={`w-2.5 h-2.5 fill-white ${isPlaying ? 'text-blue-400' : ''}`} />
               <span>{isPlaying ? 'Playing Preview' : 'Video Result'}</span>
             </span>
           )}
 
           {is3DWebsite && (
-            <span className="px-2 py-0.5 rounded-full bg-black/60 backdrop-blur-md text-white text-[10px] font-medium flex items-center gap-1 border border-white/10 shadow-xs">
+            <span className="px-2 py-0.5 rounded-full bg-black/60 dark:bg-[#060c18]/85 backdrop-blur-md text-white text-[10px] font-medium flex items-center gap-1 border border-white/10 dark:border-blue-900/40 shadow-xs">
               <Box className="w-2.5 h-2.5 text-sky-400" />
               <span>{isPlaying ? '3D Motion' : '3D WebGL'}</span>
             </span>
           )}
 
           {isSlides && (
-            <span className="px-2 py-0.5 rounded-full bg-black/60 backdrop-blur-md text-white text-[10px] font-medium flex items-center gap-1 border border-white/10 shadow-xs">
+            <span className="px-2 py-0.5 rounded-full bg-black/60 dark:bg-[#060c18]/85 backdrop-blur-md text-white text-[10px] font-medium flex items-center gap-1 border border-white/10 dark:border-blue-900/40 shadow-xs">
               <Layers className="w-2.5 h-2.5 text-purple-300" />
               <span>{template.media?.slides?.length || 4} Slides</span>
             </span>
@@ -228,7 +228,7 @@ export function TemplateCard({ template, className = '' }: TemplateCardProps) {
             templateId={template.id}
             templateName={template.name}
             variant="icon-only"
-            className="w-7 h-7 sm:w-8 sm:h-8 shadow-sm backdrop-blur-md bg-black/40 hover:bg-black/75 border border-white/15 text-white rounded-full transition-all"
+            className="w-7 h-7 sm:w-8 sm:h-8 shadow-sm backdrop-blur-md bg-black/40 hover:bg-black/75 dark:bg-[#060c18]/70 dark:hover:bg-blue-600 border border-white/15 dark:border-blue-700/50 text-white rounded-full transition-all"
           />
         </div>
 
@@ -253,16 +253,16 @@ export function TemplateCard({ template, className = '' }: TemplateCardProps) {
             href={`/template/${template.id}`}
             className="block focus:outline-none focus-visible:ring-1 focus-visible:ring-blue-500 rounded"
           >
-            <h3 className="font-semibold text-sm sm:text-[15px] text-zinc-900 dark:text-zinc-100 group-hover:text-blue-600 dark:group-hover:text-[#6EA8FF] transition-colors line-clamp-1 leading-snug font-['var(--font-heading)']">
+            <h3 className="font-semibold text-sm sm:text-[15px] text-slate-900 dark:text-slate-100 group-hover:text-blue-600 dark:group-hover:text-[#6EA8FF] transition-colors line-clamp-1 leading-snug font-['var(--font-heading)']">
               {template.name}
             </h3>
           </Link>
-          <p className="text-xs text-zinc-500 dark:text-[#94A3B8] mt-0.5 truncate font-normal">
+          <p className="text-xs text-slate-500 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-300 mt-0.5 truncate font-normal">
             {template.category}
           </p>
         </div>
 
-        <div className="shrink-0 pt-0.5 flex items-center text-zinc-400 dark:text-zinc-600 group-hover:text-blue-500 dark:group-hover:text-[#6EA8FF] transition-colors">
+        <div className="shrink-0 pt-0.5 flex items-center text-slate-400 dark:text-slate-500 group-hover:text-blue-500 dark:group-hover:text-[#6EA8FF] transition-colors">
           <ArrowUpRight className="w-3.5 h-3.5" />
         </div>
       </div>

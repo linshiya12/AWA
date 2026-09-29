@@ -4,7 +4,7 @@ import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { useAppContext, Collection } from '@/lib/AppContext';
 import { allTemplates, Template } from '@/lib/mockData';
-import { TemplateCard } from '@/components/TemplateCard';
+import { TemplateGallery } from '@/components/TemplateGallery';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
@@ -62,7 +62,7 @@ export default function CollectionsPage() {
 
   return (
     <div className="min-h-screen bg-transparent dark:bg-[#0a0e1a] text-zinc-900 dark:text-zinc-100 transition-colors duration-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 pb-24">
+      <div className="w-full px-4 sm:px-6 md:px-8 lg:px-12 py-8 pb-24">
         {/* Breadcrumbs */}
         <nav className="mb-6 flex items-center text-xs text-zinc-500 dark:text-zinc-400 gap-2">
           <Link href="/templates" className="hover:text-black dark:hover:text-white font-medium transition-colors">
@@ -253,11 +253,7 @@ export default function CollectionsPage() {
             </div>
 
             {collectionTemplates.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
-                {collectionTemplates.map((template) => (
-                  <TemplateCard key={template.id} template={template} />
-                ))}
-              </div>
+              <TemplateGallery templates={collectionTemplates} />
             ) : (
               /* Collection is empty */
               <div className="reference-card p-10 text-center max-w-md mx-auto my-8">

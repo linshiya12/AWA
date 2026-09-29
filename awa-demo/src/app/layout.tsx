@@ -28,11 +28,14 @@ export default async function RootLayout({
   const cookieStore = await cookies();
   const subscribedCookie = cookieStore.get("awa_subscribed")?.value;
   const initialSubscribed = subscribedCookie !== undefined ? subscribedCookie === "true" : true;
+  const themeCookie = cookieStore.get("awa_theme")?.value;
+  const isDark = themeCookie !== "light";
+
   return (
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${isDark ? "dark" : ""} h-full antialiased`}
     >
       <head>
         <script
@@ -40,10 +43,10 @@ export default async function RootLayout({
             __html: `(function() {
               try {
                 var theme = localStorage.getItem('awa_theme');
-                if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                  document.documentElement.classList.add('dark');
-                } else {
+                if (theme === 'light') {
                   document.documentElement.classList.remove('dark');
+                } else {
+                  document.documentElement.classList.add('dark');
                 }
               } catch(e) {}
             })();`,

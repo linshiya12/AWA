@@ -7,6 +7,7 @@ import type { Template, Category, Subcategory, GuidanceStep } from '@/lib/mockDa
 import { useAppContext } from '@/lib/AppContext';
 import { TemplateImage } from '@/components/TemplateImage';
 import { TemplateCard } from '@/components/TemplateCard';
+import { TemplateGallery } from '@/components/TemplateGallery';
 import { TemplateGuidanceFlow } from '@/components/TemplateGuidanceFlow';
 import { SaveToCollectionPopover } from '@/components/SaveToCollectionPopover';
 import { Button } from '@/components/ui/button';
@@ -1531,11 +1532,7 @@ export function TemplateDetailClient({
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          {similarTemplates.map((sim) => (
-            <TemplateCard key={sim.id} template={sim} />
-          ))}
-        </div>
+        <TemplateGallery templates={similarTemplates} />
       </section>
 
       {/* Plans Modal */}

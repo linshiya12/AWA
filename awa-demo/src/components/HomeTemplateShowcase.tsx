@@ -78,13 +78,13 @@ export function HomeTemplateShowcase() {
   }, [selectedCategory, sortBy, toolFilter]);
 
   return (
-    <section className="px-4 sm:px-6 max-w-7xl mx-auto mb-24">
+    <section className="w-full px-4 sm:px-6 md:px-8 lg:px-12 mb-24">
       {/* 
         COMPACT CATEGORY BAR (Image, Video, Slides, Websites)
         Left: Clean pill buttons
         Right: Quiet Sort & Tool dropdowns in AWA dark-blue theme
       */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 pb-2.5 border-b border-zinc-200/60 dark:border-[#94A3B8]/[0.12]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 pb-2.5 border-b border-slate-200/80 dark:border-blue-900/40">
         {/* Left: Category pills */}
         <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar py-0.5 scroll-smooth">
           {CATEGORIES.map((cat) => {
@@ -101,16 +101,16 @@ export function HomeTemplateShowcase() {
                 onClick={() => setSelectedCategory(cat.id)}
                 className={`px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all cursor-pointer flex items-center gap-1.5 ${
                   isActive
-                    ? 'bg-gradient-to-r from-[#6EA8FF] to-[#8AB4FF] text-[#020817] shadow-sm shadow-[#6EA8FF]/20 font-bold'
-                    : 'text-zinc-600 dark:text-[#94A3B8] hover:text-black dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-[#0A1428]'
+                    ? 'bg-blue-600 text-white dark:bg-gradient-to-r dark:from-[#6EA8FF] dark:to-[#8AB4FF] dark:text-[#020817] shadow-sm shadow-blue-500/20 font-bold'
+                    : 'text-slate-600 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-blue-950/60'
                 }`}
               >
                 <span>{cat.label}</span>
                 <span
                   className={`text-[10px] px-1.5 py-0.2 rounded-full ${
                     isActive
-                      ? 'bg-black/20 text-[#020817]'
-                      : 'bg-zinc-200/70 dark:bg-white/10 text-zinc-500 dark:text-zinc-400'
+                      ? 'bg-black/20 text-white dark:text-[#020817]'
+                      : 'bg-slate-200/70 dark:bg-blue-900/40 text-slate-600 dark:text-slate-300'
                   }`}
                 >
                   {count}
@@ -127,7 +127,7 @@ export function HomeTemplateShowcase() {
             <DropdownMenuTrigger asChild>
               <button
                 type="button"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border border-zinc-200 dark:border-[#94A3B8]/20 bg-zinc-50 dark:bg-[#0A1428]/60 text-zinc-700 dark:text-[#94A3B8] hover:text-black dark:hover:text-white hover:border-zinc-300 dark:hover:border-[#6EA8FF]/40 transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border border-slate-200 dark:border-blue-900/50 bg-white dark:bg-[#0c1427] text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white hover:border-slate-300 dark:hover:border-blue-500/50 dark:hover:bg-[#101c38] transition-colors cursor-pointer"
               >
                 <span>
                   {sortBy === 'recent'
@@ -136,33 +136,33 @@ export function HomeTemplateShowcase() {
                     ? 'Popular'
                     : 'A-Z'}
                 </span>
-                <ChevronDown className="w-3.5 h-3.5 text-zinc-400" />
+                <ChevronDown className="w-3.5 h-3.5 text-slate-400 dark:text-slate-400" />
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent
               align="end"
-              className="bg-white dark:bg-[#0B1528] border-zinc-200 dark:border-[#94A3B8]/20 text-xs min-w-[120px] rounded-xl shadow-xl"
+              className="bg-white dark:bg-[#0c1427] border-slate-200 dark:border-blue-900/50 text-xs min-w-[120px] rounded-xl shadow-xl text-slate-800 dark:text-slate-100"
             >
               <DropdownMenuItem
                 onClick={() => setSortBy('recent')}
-                className="flex items-center justify-between cursor-pointer"
+                className="flex items-center justify-between cursor-pointer dark:focus:bg-blue-950/70 dark:focus:text-white"
               >
                 <span>Recent</span>
-                {sortBy === 'recent' && <Check className="w-3.5 h-3.5 text-blue-500" />}
+                {sortBy === 'recent' && <Check className="w-3.5 h-3.5 text-blue-500 dark:text-[#6EA8FF]" />}
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => setSortBy('popular')}
-                className="flex items-center justify-between cursor-pointer"
+                className="flex items-center justify-between cursor-pointer dark:focus:bg-blue-950/70 dark:focus:text-white"
               >
                 <span>Popular</span>
-                {sortBy === 'popular' && <Check className="w-3.5 h-3.5 text-blue-500" />}
+                {sortBy === 'popular' && <Check className="w-3.5 h-3.5 text-blue-500 dark:text-[#6EA8FF]" />}
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => setSortBy('alpha')}
-                className="flex items-center justify-between cursor-pointer"
+                className="flex items-center justify-between cursor-pointer dark:focus:bg-blue-950/70 dark:focus:text-white"
               >
                 <span>Alphabetical</span>
-                {sortBy === 'alpha' && <Check className="w-3.5 h-3.5 text-blue-500" />}
+                {sortBy === 'alpha' && <Check className="w-3.5 h-3.5 text-blue-500 dark:text-[#6EA8FF]" />}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -172,7 +172,7 @@ export function HomeTemplateShowcase() {
             <DropdownMenuTrigger asChild>
               <button
                 type="button"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border border-zinc-200 dark:border-[#94A3B8]/20 bg-zinc-50 dark:bg-[#0A1428]/60 text-zinc-700 dark:text-[#94A3B8] hover:text-black dark:hover:text-white hover:border-zinc-300 dark:hover:border-[#6EA8FF]/40 transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border border-slate-200 dark:border-blue-900/50 bg-white dark:bg-[#0c1427] text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white hover:border-slate-300 dark:hover:border-blue-500/50 dark:hover:bg-[#101c38] transition-colors cursor-pointer"
               >
                 <span>
                   {toolFilter === 'all'
@@ -187,54 +187,54 @@ export function HomeTemplateShowcase() {
                     ? 'Spline 3D'
                     : 'v0'}
                 </span>
-                <ChevronDown className="w-3.5 h-3.5 text-zinc-400" />
+                <ChevronDown className="w-3.5 h-3.5 text-slate-400 dark:text-slate-400" />
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent
               align="end"
-              className="bg-white dark:bg-[#0B1528] border-zinc-200 dark:border-[#94A3B8]/20 text-xs min-w-[130px] rounded-xl shadow-xl"
+              className="bg-white dark:bg-[#0c1427] border-slate-200 dark:border-blue-900/50 text-xs min-w-[130px] rounded-xl shadow-xl text-slate-800 dark:text-slate-100"
             >
               <DropdownMenuItem
                 onClick={() => setToolFilter('all')}
-                className="flex items-center justify-between cursor-pointer"
+                className="flex items-center justify-between cursor-pointer dark:focus:bg-blue-950/70 dark:focus:text-white"
               >
                 <span>All Tools</span>
-                {toolFilter === 'all' && <Check className="w-3.5 h-3.5 text-blue-500" />}
+                {toolFilter === 'all' && <Check className="w-3.5 h-3.5 text-blue-500 dark:text-[#6EA8FF]" />}
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => setToolFilter('midjourney')}
-                className="flex items-center justify-between cursor-pointer"
+                className="flex items-center justify-between cursor-pointer dark:focus:bg-blue-950/70 dark:focus:text-white"
               >
                 <span>Midjourney</span>
-                {toolFilter === 'midjourney' && <Check className="w-3.5 h-3.5 text-blue-500" />}
+                {toolFilter === 'midjourney' && <Check className="w-3.5 h-3.5 text-blue-500 dark:text-[#6EA8FF]" />}
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => setToolFilter('flux')}
-                className="flex items-center justify-between cursor-pointer"
+                className="flex items-center justify-between cursor-pointer dark:focus:bg-blue-950/70 dark:focus:text-white"
               >
                 <span>FLUX.1</span>
-                {toolFilter === 'flux' && <Check className="w-3.5 h-3.5 text-blue-500" />}
+                {toolFilter === 'flux' && <Check className="w-3.5 h-3.5 text-blue-500 dark:text-[#6EA8FF]" />}
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => setToolFilter('runway')}
-                className="flex items-center justify-between cursor-pointer"
+                className="flex items-center justify-between cursor-pointer dark:focus:bg-blue-950/70 dark:focus:text-white"
               >
                 <span>Runway</span>
-                {toolFilter === 'runway' && <Check className="w-3.5 h-3.5 text-blue-500" />}
+                {toolFilter === 'runway' && <Check className="w-3.5 h-3.5 text-blue-500 dark:text-[#6EA8FF]" />}
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => setToolFilter('v0')}
-                className="flex items-center justify-between cursor-pointer"
+                className="flex items-center justify-between cursor-pointer dark:focus:bg-blue-950/70 dark:focus:text-white"
               >
                 <span>v0</span>
-                {toolFilter === 'v0' && <Check className="w-3.5 h-3.5 text-blue-500" />}
+                {toolFilter === 'v0' && <Check className="w-3.5 h-3.5 text-blue-500 dark:text-[#6EA8FF]" />}
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => setToolFilter('spline')}
-                className="flex items-center justify-between cursor-pointer"
+                className="flex items-center justify-between cursor-pointer dark:focus:bg-blue-950/70 dark:focus:text-white"
               >
                 <span>Spline 3D</span>
-                {toolFilter === 'spline' && <Check className="w-3.5 h-3.5 text-blue-500" />}
+                {toolFilter === 'spline' && <Check className="w-3.5 h-3.5 text-blue-500 dark:text-[#6EA8FF]" />}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -245,8 +245,8 @@ export function HomeTemplateShowcase() {
       <TemplateGallery
         templates={filteredTemplates}
         emptyState={
-          <div className="text-center py-20 border border-dashed border-zinc-300 dark:border-[#94A3B8]/20 rounded-2xl">
-            <p className="text-zinc-500 dark:text-[#94A3B8] text-sm mb-4">
+          <div className="text-center py-20 border border-dashed border-slate-300 dark:border-blue-900/40 rounded-2xl bg-white/50 dark:bg-[#0c1427]/40">
+            <p className="text-slate-500 dark:text-slate-400 text-sm mb-4">
               No templates found matching your active filter.
             </p>
             <Button
@@ -269,7 +269,7 @@ export function HomeTemplateShowcase() {
         <Button
           asChild
           size="lg"
-          className="rounded-full px-8 py-6 bg-zinc-900 dark:bg-white text-white dark:text-[#020817] hover:bg-black dark:hover:bg-zinc-200 text-sm font-bold shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all inline-flex items-center gap-2"
+          className="rounded-full px-8 py-6 bg-slate-900 hover:bg-slate-800 text-white dark:bg-[#0c1427] dark:hover:bg-[#121f3d] dark:text-white dark:border dark:border-blue-900/60 dark:hover:border-blue-600/60 text-sm font-bold shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all inline-flex items-center gap-2"
         >
           <Link href="/templates">
             <span>Explore All {allTemplates.length} Templates in Gallery</span>

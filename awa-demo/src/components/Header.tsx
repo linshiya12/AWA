@@ -59,7 +59,7 @@ export default function Header() {
   } = useAppContext();
 
   const [showComparisonModal, setShowComparisonModal] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(true);
 
   useEffect(() => {
     const isDark = document.documentElement.classList.contains('dark');
@@ -73,11 +73,13 @@ export default function Header() {
       document.documentElement.classList.add('dark');
       try {
         localStorage.setItem('awa_theme', 'dark');
+        document.cookie = 'awa_theme=dark; path=/; max-age=31536000; SameSite=Lax';
       } catch (e) {}
     } else {
       document.documentElement.classList.remove('dark');
       try {
         localStorage.setItem('awa_theme', 'light');
+        document.cookie = 'awa_theme=light; path=/; max-age=31536000; SameSite=Lax';
       } catch (e) {}
     }
   };
@@ -93,7 +95,7 @@ export default function Header() {
   return (
     <>
       <header className="sticky top-0 z-40 w-full border-b border-slate-200/90 dark:border-blue-900/40 bg-white/95 dark:bg-[#0a0e1a]/95 backdrop-blur-md transition-colors">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+        <div className="w-full px-4 sm:px-6 md:px-8 lg:px-12 h-16 flex items-center justify-between gap-4">
           
           {/* LEFT: Logo & Section Nav Labels (Templates / Saved / Support) */}
           <div className="flex items-center gap-3 sm:gap-6 shrink-0">
