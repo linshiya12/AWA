@@ -5,6 +5,11 @@ This repository contains the product documentation and demo web application for 
 - **Application Directory**: [`awa-demo/`](./awa-demo/) (Next.js 16 + Tailwind CSS)
 - **App Instructions**: [`awa-demo/AGENTS.md`](./awa-demo/AGENTS.md)
 
+## Git Policy
+
+- **Do NOT automatically commit or push to Git**: Never run `git commit`, `git push`, or automatically stage/commit changes unless explicitly instructed by the user.
+
+
 ## Project Documentation
 
 Below is the directory of core project specifications and guidelines located in this directory (`./`). Read these documents before undertaking relevant tasks:

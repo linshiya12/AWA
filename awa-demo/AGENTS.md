@@ -10,6 +10,10 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 # AWA Agent Instructions
 
+## Git Policy
+
+- **Do NOT automatically commit or push to Git**: Never run `git commit`, `git push`, or automatically stage/commit changes unless explicitly instructed by the user.
+
 ## Project Documentation
 
 Below is the directory of core project specifications and guidelines located in the parent documentation folder (`../`). Read these documents before undertaking relevant tasks:

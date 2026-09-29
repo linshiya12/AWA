@@ -78,10 +78,31 @@ export default function LandingPage() {
 
       {/* Main Content Area */}
       <main className="pt-16 sm:pt-20 pb-20 overflow-hidden relative w-full">
-        {/* Ambient Clean Background: restrained blue & indigo radial glow in dark blue palette */}
-        <div className="absolute top-0 left-0 w-full h-[650px] pointer-events-none z-0 overflow-hidden">
-          <div className="absolute top-[-100px] left-1/2 -translate-x-1/2 w-[1400px] max-w-full h-[450px] bg-[radial-gradient(ellipse_at_top,_rgba(59,130,246,0.14)_0%,_rgba(30,58,138,0.08)_50%,_transparent_75%)] blur-3xl"></div>
-          <div className="absolute top-[80px] left-1/2 -translate-x-1/2 w-[900px] max-w-full h-[260px] bg-[radial-gradient(ellipse_at_center,_rgba(110,168,255,0.08)_0%,_transparent_65%)] blur-2xl"></div>
+        {/* AWA Themed Hero Background representing Images, Videos, Slides, and Websites */}
+        <div className="absolute top-0 left-0 right-0 h-[640px] sm:h-[700px] lg:h-[740px] pointer-events-none z-0 overflow-hidden select-none">
+          {/* Original wide category visual asset */}
+          <img
+            src="/images/awa_hero_bg.jpg"
+            alt=""
+            aria-hidden="true"
+            className="w-full h-full object-cover object-[center_30%] opacity-90 dark:opacity-95"
+            loading="eager"
+          />
+
+          {/* Center dark vignette keeping heading, description, and CTA buttons visually quiet and highly legible */}
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_75%_65%_at_50%_36%,_rgba(10,14,26,0.78)_0%,_rgba(10,14,26,0.4)_65%,_transparent_100%)]"></div>
+
+          {/* Side balancing gradient */}
+          <div className="absolute inset-0 bg-gradient-to-r from-[#0a0e1a]/40 via-transparent to-[#0a0e1a]/40"></div>
+
+          {/* Top seamless blend under the fixed navbar */}
+          <div className="absolute top-0 inset-x-0 h-28 bg-gradient-to-b from-[#0a0e1a] via-[#0a0e1a]/70 to-transparent"></div>
+
+          {/* Bottom seamless blend into the 4 preview cards and showcase section */}
+          <div className="absolute bottom-0 inset-x-0 h-48 bg-gradient-to-t from-[#0a0e1a] via-[#0a0e1a]/85 to-transparent"></div>
+
+          {/* Light mode contrast scrim */}
+          <div className="absolute inset-0 bg-white/75 dark:hidden"></div>
         </div>
 
         {/* 2. HERO SECTION (Expanded full-width layout with consistent side padding) */}
